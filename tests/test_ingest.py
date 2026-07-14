@@ -53,3 +53,54 @@ def test_cap_keeps_strongest_cues():
 
 def test_zero_duration_yields_nothing():
     assert build_candidate_windows(0.0, [AudioPeak(time=1.0, rms=0.5)], [1.0]) == []
+
+
+# --- profiles: the two footage regimes are genuinely different problems -----
+
+def test_profile_is_detected_from_the_footage_not_asked_of_the_user():
+    """A directed feed cuts constantly; a camera on a pole never cuts. That one
+    number separates the regimes with no user input."""
+    from pipeline.ingest import detect_profile
+
+    assert detect_profile([], 2700.0) == "fixed"                    # 0 cuts in 45 min
+    assert detect_profile([1.0, 2.0], 2700.0) == "fixed"            # negligible
+    assert detect_profile([float(i) for i in range(240)], 6660.0) == "broadcast"  # 2.2/min
+
+
+def test_fixed_profile_keeps_the_verified_parameters():
+    """These were MEASURED at 2/2 goal recall with 25% of footage under review.
+    If someone 'improves' them to win a different dataset, this fails loudly —
+    which is exactly what happened twice while chasing the broadcast case."""
+    from pipeline.ingest import PROFILES
+
+    p = PROFILES["fixed"]
+    assert p["pre_roll"] == 5.0
+    assert p["post_roll"] == 10.0
+    assert p["merge_gap"] == 3.0
+    assert p["scoring"] == "cue_sum"
+
+
+def test_broadcast_profile_ranks_by_rarity_not_presence():
+    """On broadcast every window trips every cue, so cue PRESENCE discriminates
+    nothing — the old scoring saturated and all 40 windows tied, so the cap fell
+    back to timestamp order and the detector stopped looking two-thirds of the
+    way through the match, walking straight past the only goal."""
+    from pipeline.ingest import PROFILES
+
+    assert PROFILES["broadcast"]["scoring"] == "percentile"
+    assert PROFILES["broadcast"]["density_weight"] > 0    # a goal is a burst
+
+
+def test_broadcast_windows_do_not_all_share_one_score():
+    """The saturation bug, pinned: identical scores mean the cap degenerates into
+    'keep the earliest N', which silently blinds the detector to the rest."""
+    from pipeline.ingest import AudioPeak, MotionPeak, build_candidate_windows
+
+    audio = [AudioPeak(time=float(t), rms=0.05 + (t % 7) * 0.01) for t in range(20, 600, 20)]
+    motion = [MotionPeak(time=float(t) + 2, magnitude=0.1 + (t % 5) * 0.02)
+              for t in range(20, 600, 20)]
+    cuts = [float(t) + 1 for t in range(20, 600, 20)]
+
+    windows = build_candidate_windows(660.0, audio, cuts, motion, profile="broadcast")
+    scores = {w.score for w in windows}
+    assert len(scores) > 1, "all windows tied — the cap would degenerate to timestamp order"

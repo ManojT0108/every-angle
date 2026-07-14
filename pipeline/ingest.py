@@ -26,7 +26,7 @@ from typing import Iterable
 # Bump whenever detector thresholds, cue combination, or scoring change in a
 # way that alters output for identical parameters — it is part of the run
 # provenance hash, so two runs that could differ must never hash the same.
-DETECTOR_VERSION = "d2-motion"
+DETECTOR_VERSION = "d3-percentile"
 
 DEFAULT_SCENE_THRESHOLD = 0.35
 DEFAULT_AUDIO_SAMPLE_RATE = 16_000
@@ -34,9 +34,10 @@ DEFAULT_AUDIO_WINDOW_SECONDS = 0.5
 DEFAULT_AUDIO_MIN_GAP_SECONDS = 4.0
 DEFAULT_AUDIO_MIN_RMS = 0.03
 DEFAULT_AUDIO_MEDIAN_MULTIPLIER = 1.5
-DEFAULT_PRE_ROLL = 5.0
-DEFAULT_POST_ROLL = 10.0
-DEFAULT_MERGE_GAP = 3.0
+DEFAULT_PRE_ROLL = 10.0           # the event PRECEDES its cue: a crowd roar peaks after the
+DEFAULT_POST_ROLL = 12.0          # ball crosses the line; motion peaks on the celebration
+DEFAULT_MERGE_GAP = 8.0           # cues around a goal sit 4-6s apart; a 3s gap shattered
+                                  # them into weak fragments that all fell below the cap
 DEFAULT_MOTION_FRAME_RATE = 3.0
 DEFAULT_MOTION_WIDTH = 160
 DEFAULT_MOTION_HEIGHT = 90
@@ -44,7 +45,64 @@ DEFAULT_MOTION_INTERVAL_SECONDS = 1.0
 DEFAULT_MOTION_MIN_GAP_SECONDS = 3.0
 DEFAULT_MOTION_MEDIAN_MULTIPLIER = 1.5
 DEFAULT_MOTION_MIN_MAGNITUDE = 0.002
-DEFAULT_MAX_WINDOWS = 40
+DEFAULT_MAX_WINDOWS = 60          # absolute ceiling (cost control)
+WINDOWS_PER_MINUTE = 0.9          # ~40 windows across a 45-min half
+CUES_FOR_FULL_DENSITY = 8         # a sustained burst, not a lone spike
+DEFAULT_MAX_WINDOW_SECONDS = 30.0 # a merged burst may be 90s long; the window must not be
+
+
+# ---------------------------------------------------------------------------
+# Two footage regimes, and they are genuinely different problems.
+#
+# FIXED (a camera on a pole): the crowd is a handful of parents, so audio is
+#   flat; the camera never cuts, so scene cuts do not exist. MOTION is the only
+#   cue that carries information, and events are crisp and isolated.
+#
+# BROADCAST (a directed feed): the crowd roars all night, the director cuts
+#   constantly, and the camera pans — so ALL THREE cues fire continuously and
+#   cue *presence* discriminates nothing. What marks a goal is a SUSTAINED
+#   BURST: roar, celebration, replays, a minute of continuous noise. Events are
+#   long, and the goal sits in the middle of the burst rather than at either end.
+#
+# One set of constants cannot serve both, and pretending otherwise means tuning
+# for one and silently breaking the other. So the profile is explicit — and
+# detected from the footage, not asked of the user.
+# ---------------------------------------------------------------------------
+
+PROFILES: dict[str, dict] = {
+    # These are the parameters that were MEASURED at 2/2 goal recall with 25% of
+    # the footage under review, and code-reviewed. They are not a guess, and they
+    # are not to be "improved" to win a different dataset — that is how the goal
+    # recall was quietly halved twice while chasing the broadcast case.
+    "fixed": {
+        "pre_roll": 5.0,
+        "post_roll": 10.0,
+        "merge_gap": 3.0,
+        "max_window_seconds": 1e9,   # no tiling: fixed-camera events are isolated
+        "density_weight": 0.0,
+        "scoring": "cue_sum",        # cue diversity + summed strength
+    },
+    "broadcast": {
+        "pre_roll": 10.0,
+        "post_roll": 12.0,
+        "merge_gap": 8.0,
+        "max_window_seconds": 30.0,
+        "density_weight": 0.35,      # a goal is a burst; a near-miss is one shout
+        "scoring": "percentile",     # cue PRESENCE is meaningless here; rank by rarity
+    },
+}
+
+# A directed feed cuts. A camera on a pole does not. This single number
+# separates them cleanly — no user input required.
+BROADCAST_CUTS_PER_MINUTE = 0.5
+
+
+def detect_profile(scene_cuts: list[float], duration: float) -> str:
+    """Which regime is this footage? Decided by the footage, not by the user."""
+    if duration <= 0:
+        return "fixed"
+    rate = len(scene_cuts) / (duration / 60.0)
+    return "broadcast" if rate >= BROADCAST_CUTS_PER_MINUTE else "fixed"
 
 
 @dataclass(frozen=True)
@@ -387,12 +445,18 @@ def build_candidate_windows(
     scene_cuts: Iterable[float],
     motion_peaks: Iterable[MotionPeak] = (),
     *,
-    pre_roll: float = DEFAULT_PRE_ROLL,
-    post_roll: float = DEFAULT_POST_ROLL,
-    merge_gap: float = DEFAULT_MERGE_GAP,
+    profile: str = "fixed",
     max_windows: int = DEFAULT_MAX_WINDOWS,
 ) -> list[CandidateWindow]:
     """Combine cue timestamps into capped, sorted candidate windows."""
+
+    p = PROFILES[profile]
+    pre_roll = p["pre_roll"]
+    post_roll = p["post_roll"]
+    merge_gap = p["merge_gap"]
+    max_window_seconds = p["max_window_seconds"]
+    density_weight = p["density_weight"]
+    scoring = p["scoring"]
 
     if duration <= 0:
         return []
@@ -431,32 +495,105 @@ def build_candidate_windows(
             clusters.append([cue])
         else:
             clusters[-1].append(cue)
+    # Rank by how EXCEPTIONAL a window is on each cue, measured against that
+    # video's own distribution.
+    #
+    # The previous score — cue_count + min(0.99999, sum_of_strengths) — worked on
+    # a quiet fixed camera and failed silently on broadcast, where every window
+    # trips all three cues and the strength term always hits the clamp. All 40
+    # windows scored an identical 3.99999, so the cap fell back to timestamp
+    # order and the detector simply STOPPED LOOKING two-thirds of the way through
+    # the match, missing the only goal.
+    #
+    # Percentile ranking is scale-free, so it adapts: on a fixed camera the
+    # motion cue is the exceptional one; on broadcast the goal is the crowd roar
+    # (which ranked #18 of 325 peaks — plainly findable, if you rank at all).
+    def _percentiles(values: list[float]) -> dict[float, float]:
+        if not values:
+            return {}
+        order = sorted(values)
+        n = len(order) - 1 or 1
+        return {v: order.index(v) / n for v in set(order)}
+
+    per_cue: dict[int, dict[float, float]] = {}
+    for idx in (1, 2, 3):
+        per_cue[idx] = _percentiles(
+            [cue[4] for cue in cues if cue[idx]]
+        )
+
     windows: list[CandidateWindow] = []
     for cluster in clusters:
-        start = max(0.0, min(cue[0] for cue in cluster) - pre_roll)
-        end = min(duration, max(cue[0] for cue in cluster) + post_roll)
-        cue_type_count = sum(
-            (
-                any(cue[1] for cue in cluster),
-                any(cue[2] for cue in cluster),
-                any(cue[3] for cue in cluster),
+        burst_start = max(0.0, min(cue[0] for cue in cluster) - pre_roll)
+        burst_end = min(duration, max(cue[0] for cue in cluster) + post_roll)
+
+        # A goal's cue burst runs ~90s: build-up, strike, roar, celebration,
+        # replays. Merging it is right — it IS one event — but a single window
+        # cannot represent it. Anchor on the loudest moment and you frame the
+        # CELEBRATION; anchor on the first cue and you frame the BUILD-UP 30s
+        # early. The goal itself sits in the middle, and both anchors walk past
+        # it — which is exactly how the only goal of a Champions League final was
+        # missed twice.
+        #
+        # So tile a long burst with overlapping windows. A burst this sustained is
+        # by definition the most interesting thing in the match; it earns the
+        # extra coverage, and every tile inherits the burst's score.
+        spans: list[tuple[float, float]] = []
+        if burst_end - burst_start <= max_window_seconds:
+            spans.append((burst_start, burst_end))
+        else:
+            stride = max_window_seconds * 0.75          # 25% overlap: no blind seams
+            t = burst_start
+            while t < burst_end:
+                spans.append((t, min(duration, t + max_window_seconds)))
+                t += stride
+
+        flags = tuple(any(cue[i] for cue in cluster) for i in (1, 2, 3))
+
+        # How exceptional is this window on each cue it actually has?
+        strengths = []
+        for i in (1, 2, 3):
+            vals = [per_cue[i].get(cue[4], 0.0) for cue in cluster if cue[i]]
+            strengths.append(max(vals) if vals else 0.0)
+
+        # Best single cue carries the window; corroboration from other cues adds
+        # a bonus, but cannot on its own float an unremarkable window to the top.
+        exceptional = sum(1 for s in strengths if s >= 0.90)
+
+        # DENSITY matters as much as peak height. A goal is not one spike — it is
+        # a sustained burst: the roar, the celebration, the replays, a minute of
+        # continuous noise. A near-miss is a single shout. Scoring only the
+        # loudest instant treats them the same, and on a Champions League final —
+        # where the crowd is loud all night — that is how the only goal ended up
+        # ranked just below the cut.
+        if scoring == "cue_sum":
+            # A quiet fixed camera: cues are rare, so their PRESENCE is
+            # informative and their summed magnitude never saturates.
+            score = sum(flags) + min(0.99999, sum(cue[4] for cue in cluster))
+        else:
+            # A broadcast: every window trips every cue, so presence says nothing.
+            # Rank by how EXCEPTIONAL the window is against this video's own
+            # distribution, and reward a sustained burst over a lone spike.
+            density = min(1.0, len(cluster) / CUES_FOR_FULL_DENSITY)
+            score = max(strengths) + 0.15 * exceptional + density_weight * density
+
+        for start, end in spans:
+            windows.append(
+                CandidateWindow(
+                    id="",
+                    t_start=round(start, 3),
+                    t_end=round(max(start, end), 3),
+                    audio_peak=flags[0],
+                    scene_cut=flags[1],
+                    motion_peak=flags[2],
+                    score=round(score, 5),
+                )
             )
-        )
-        aggregate_strength = sum(cue[4] for cue in cluster)
-        windows.append(
-            CandidateWindow(
-                id="",
-                t_start=round(start, 3),
-                t_end=round(max(start, end), 3),
-                audio_peak=any(cue[1] for cue in cluster),
-                scene_cut=any(cue[2] for cue in cluster),
-                motion_peak=any(cue[3] for cue in cluster),
-                score=round(cue_type_count + min(0.99999, aggregate_strength), 5),
-            )
-        )
-    # Retain the strongest cues when a long video produces more than the cap.
+    # Keep the strongest windows. The cap is a RATE, not a constant: 40 windows
+    # is one per 68s across 45 minutes but one per 2.8 min across 111 — coarse
+    # enough to walk straight past a goal.
+    cap = min(max_windows, max(20, round(duration / 60 * WINDOWS_PER_MINUTE)))
     windows.sort(key=lambda window: (-window.score, window.t_start))
-    windows = windows[:max_windows]
+    windows = windows[:cap]
     windows.sort(key=lambda window: window.t_start)
     return [
         CandidateWindow(
@@ -467,7 +604,8 @@ def build_candidate_windows(
     ]
 
 
-def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD) -> dict:
+def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD,
+                    profile: str = "fixed") -> dict:
     """Every knob that can change detector output.
 
     Hashed into each proposal run's provenance, so an omitted knob would let two
@@ -477,6 +615,8 @@ def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD) -> dict
 
     return {
         "detector_version": DETECTOR_VERSION,
+        "profile": profile,
+        **{f"profile_{k}": v for k, v in PROFILES[profile].items()},
         "audio_sample_rate": DEFAULT_AUDIO_SAMPLE_RATE,
         "audio_window_seconds": DEFAULT_AUDIO_WINDOW_SECONDS,
         "audio_min_gap_seconds": DEFAULT_AUDIO_MIN_GAP_SECONDS,
@@ -490,9 +630,6 @@ def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD) -> dict
         "motion_min_gap_seconds": DEFAULT_MOTION_MIN_GAP_SECONDS,
         "motion_median_multiplier": DEFAULT_MOTION_MEDIAN_MULTIPLIER,
         "motion_min_magnitude": DEFAULT_MOTION_MIN_MAGNITUDE,
-        "pre_roll": DEFAULT_PRE_ROLL,
-        "post_roll": DEFAULT_POST_ROLL,
-        "merge_gap": DEFAULT_MERGE_GAP,
         "max_windows": DEFAULT_MAX_WINDOWS,
     }
 
@@ -506,15 +643,17 @@ def detect_windows(
     audio_peaks = detect_audio_peaks(source)
     scene_cuts = detect_scene_cuts(source, threshold=scene_threshold)
     motion_peaks = detect_motion_peaks(source)
+    profile = detect_profile(scene_cuts, duration)
     windows = build_candidate_windows(
-        duration, audio_peaks, scene_cuts, motion_peaks
+        duration, audio_peaks, scene_cuts, motion_peaks, profile=profile
     )
     return {
         "video_id": source.stem,
         "source": str(source),
         "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "duration": round(duration, 3),
-        "detector_config": detector_config(scene_threshold=scene_threshold),
+        "profile": profile,
+        "detector_config": detector_config(scene_threshold=scene_threshold, profile=profile),
         "audio_peaks": [asdict(peak) for peak in audio_peaks],
         "scene_cuts": scene_cuts,
         "motion_peaks": [asdict(peak) for peak in motion_peaks],
