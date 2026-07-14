@@ -12,9 +12,9 @@ No weights published. Seven dimensions: **innovation, technical implementation, 
 
 | Artifact | Status | Notes |
 |---|---|---|
-| Project Name | ☐ | |
-| Selected Track | ☐ | Track 3: Media, Content & Broadcasting |
-| **GitHub Repository** | ☐ | Repo must be pushed to GitHub — currently local-only, nothing committed. Needs user OK. |
+| Project Name | ☑ | **Every Angle** |
+| Selected Track | ☑ | Track 3: Media, Content & Broadcasting |
+| **GitHub Repository** | ☑ | **https://github.com/ManojT0108/every-angle** — public, pushed 2026-07-14. Public commit history from Jul 13 onward is provenance that it was built during the hackathon period. |
 | **Working Demo URL** | ☐ | Deployed app is REQUIRED, not optional — validates plan D9/D10. |
 | Project Description | ☐ | Draft Jul 16 alongside dry run. |
 | Demo Video | ☐ optional | Still record one — it's the reliability fallback if the live demo breaks. |
