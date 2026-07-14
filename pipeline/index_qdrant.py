@@ -79,6 +79,20 @@ def assert_no_mock_provenance(data_dir: Path, manifest: dict[str, Any]) -> None:
     """
     proposals_path = data_dir / "proposals.json"
     if not proposals_path.is_file():
+        # No proposals file is fine ONLY if nothing claims to be AI-proposed.
+        # Otherwise the events assert a provenance we cannot verify — and an
+        # unverifiable claim of "AI-proposed" is exactly what this gate exists
+        # to stop.
+        orphans = [
+            e.get("id") for e in manifest.get("events", [])
+            if e.get("from_proposal") is not None
+        ]
+        if orphans:
+            raise MockProposalError(
+                f"events {orphans} cite proposals, but {proposals_path} is missing — "
+                "their captioner cannot be verified, so they cannot be published as "
+                "AI-proposed"
+            )
         return
     payload = _read_json(proposals_path)
     runs = {r["run_id"]: r for r in payload.get("runs", [])}

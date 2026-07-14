@@ -115,3 +115,15 @@ def setup_module(module):
     d = Path(tempfile.mkdtemp())
     _JPG = d / "f.jpg"
     _JPG.write_bytes(b"\xff\xd8\xff\xdb" + b"\x00" * 64)
+
+
+def test_missing_proposals_file_blocks_ai_claims(tmp_path):
+    """An absent proposals.json must not silently wave through events that claim
+    AI provenance — an unverifiable claim is what the gate exists to stop."""
+    manifest = {"events": [{"id": "e-001", "from_proposal": "r-1-p-001"}]}
+    with pytest.raises(MockProposalError, match="missing"):
+        assert_no_mock_provenance(tmp_path, manifest)
+
+
+def test_missing_proposals_file_is_fine_for_a_purely_human_manifest(tmp_path):
+    assert_no_mock_provenance(tmp_path, {"events": [{"id": "e-001", "from_proposal": None}]})

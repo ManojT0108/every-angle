@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   EVERY ANGLE — design system
+
+   The subject is an edit suite, not a dashboard. The palette comes from the
+   world of the game: chalk lines on grass, sodium floodlights, timecode.
+
+   The two accents encode our actual differentiator — PROVENANCE:
+     sodium = machine-proposed, awaiting judgement
+     chalk  = human-verified truth   (pitch markings are chalk)
+   A viewer sees at a glance what the AI claimed vs what a person stood behind.
+   ============================================================================ */
+
+@theme {
+  /* night pitch: a blue-green ink, deliberately not pure black */
+  --color-ink-900: #0a100e;
+  --color-ink-800: #0e1613;
+  --color-ink-700: #141d19;
+  --color-ink-600: #1b2721;
+  --color-line: #22312a;
+  --color-line-soft: #1a2620;
+
+  --color-chalk: #f2f5ef;
+  --color-chalk-dim: #a9b5ac;
+  --color-chalk-faint: #6c7a70;
+
+  --color-sodium: #ffa23a;
+  --color-sodium-dim: #8a5a22;
+  --color-sodium-ink: #20150a; /* text ON sodium */
+
+  --color-turf: #4fa36b;
+  --color-tally: #ff4d3d;
+
+  /* Sport is numbers; the numbers must line up. */
+  --font-display: "Avenir Next Condensed", "HelveticaNeue-CondensedBold",
+    "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    background: var(--color-ink-900);
+    color: var(--color-chalk);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-sodium);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-sodium);
+    color: var(--color-sodium-ink);
+  }
+}
+
+@layer components {
+  /* An instrument, not a toy: squared corners, hairline rules, no shadows. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-chalk-faint);
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border: 1px solid var(--color-line);
+    color: var(--color-chalk-dim);
+    white-space: nowrap;
+    display: inline-block;
+  }
+  /* The pitch, rendered — behind empty players and thumbnails. */
+  .pitch-bg {
+    background:
+      radial-gradient(
+        120% 80% at 50% 120%,
+        color-mix(in srgb, var(--color-turf) 26%, transparent),
+        transparent 60%
+      ),
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-turf) 14%, transparent) 0 14px,
+        color-mix(in srgb, var(--color-turf) 8%, transparent) 14px 28px
+      );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
