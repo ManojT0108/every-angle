@@ -8,6 +8,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from .camera import filter_chain, needs_virtual_camera
+
 
 def _has_audio_stream(source: Path) -> bool:
     result = subprocess.run(
@@ -62,6 +64,17 @@ def cut_event(source: Path, event: dict[str, Any], clips_dir: Path) -> Path:
                 "anullsrc=channel_layout=stereo:sample_rate=48000",
             ]
         )
+    # A fixed wide camera gets a VIRTUAL CAMERA that tracks the ball. Letterboxing
+    # a 4096x1080 panorama into 16:9 yields a thin strip of pitch with the players
+    # as specks — technically a clip, but nothing anyone would watch. A broadcast
+    # feed is already framed by a director and is passed through untouched.
+    if needs_virtual_camera(source):
+        video_filter = filter_chain(source, start, end)
+    else:
+        video_filter = (
+            "scale=1280:720:force_original_aspect_ratio=decrease,"
+            "pad=1280:720:(ow-iw)/2:(oh-ih)/2,format=yuv420p"
+        )
     command.extend(
         [
             "-t",
@@ -71,7 +84,7 @@ def cut_event(source: Path, event: dict[str, Any], clips_dir: Path) -> Path:
             "-map",
             "0:a:0" if has_audio else "1:a:0",
             "-vf",
-            "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,format=yuv420p",
+            video_filter,
             "-c:v",
             "libx264",
             "-preset",

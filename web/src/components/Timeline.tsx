@@ -63,9 +63,13 @@ export function Timeline({
                 className="group absolute bottom-0 flex -translate-x-1/2 flex-col items-center"
                 aria-label={`${e.type} at ${timecode(e.t_start)}`}
               >
+                {/* Labels collide when moments cluster, so only GOALS are labelled
+                    at rest — the rest reveal on hover. The marks stay legible. */}
                 <span
-                  className={`mb-1 whitespace-nowrap font-mono text-[9px] uppercase tracking-wider transition-colors ${
-                    active ? "text-chalk" : "text-chalk-dim group-hover:text-chalk"
+                  className={`mb-1 whitespace-nowrap rounded-[1px] bg-ink-800/90 px-1 font-mono text-[9px] uppercase tracking-wider transition-opacity ${
+                    e.type === "goal" || active
+                      ? "text-chalk opacity-100"
+                      : "text-chalk-dim opacity-0 group-hover:opacity-100"
                   }`}
                 >
                   {e.type === "goal" ? "Goal" : "Break"} {timecode(e.t_start)}
@@ -88,9 +92,9 @@ export function Timeline({
               key={r.proposal_id}
               style={{ left: `${pct(r.t_start)}%` }}
               title={`Rejected by a human — ${r.caption}`}
-              className="absolute bottom-0 flex -translate-x-1/2 flex-col items-center opacity-70"
+              className="group absolute bottom-0 flex -translate-x-1/2 flex-col items-center opacity-70"
             >
-              <span className="mb-1 whitespace-nowrap font-mono text-[9px] uppercase tracking-wider text-chalk-faint line-through">
+              <span className="mb-1 whitespace-nowrap rounded-[1px] bg-ink-800/90 px-1 font-mono text-[9px] uppercase tracking-wider text-chalk-faint line-through opacity-0 transition-opacity group-hover:opacity-100">
                 {timecode(r.t_start)}
               </span>
               <span className="-mb-px size-2.5 border border-dashed border-chalk-faint" />

@@ -6,3 +6,6 @@ anthropic==0.116.0
 Pillow==11.3.0
 python-dotenv==1.1.1
 
+fastapi==0.129.0
+uvicorn[standard]==0.41.0
+httpx==0.28.1

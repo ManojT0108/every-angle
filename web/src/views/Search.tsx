@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { api, isHumanAdded, timecode, type SearchHit } from "../lib/api";
+import { api, isHumanAdded, mediaUrl, timecode, type SearchHit } from "../lib/api";
 import { Button, ClipThumb, Empty, ErrorNote, Provenance, TypeChip } from "../components/bits";
 
 const GOLDEN = [
@@ -92,7 +92,13 @@ export function Search({
       {!isFetching && data && data.length > 0 && (
         <div className="grid gap-px border border-line bg-line">
           {data.map((hit) => (
-            <Hit key={hit.id} hit={hit} onAdd={onAdd} added={inReel.has(hit.id)} />
+            <Hit
+              key={hit.id}
+              hit={hit}
+              matchId={matchId}
+              onAdd={onAdd}
+              added={inReel.has(hit.id)}
+            />
           ))}
         </div>
       )}
@@ -108,16 +114,18 @@ export function Search({
 
 function Hit({
   hit,
+  matchId,
   onAdd,
   added,
 }: {
   hit: SearchHit;
+  matchId: string;
   onAdd: (id: string) => void;
   added: boolean;
 }) {
   return (
     <article className="flex items-center gap-4 bg-ink-800 p-4 transition-colors hover:bg-ink-700">
-      <ClipThumb src={`/media/${hit.clip.replace(/^\/+/, "")}`} t={hit.t_start} />
+      <ClipThumb src={mediaUrl(matchId, hit.clip)} t={hit.t_start} />
       <div className="min-w-0 flex-1">
         <p className="mb-2 text-[14px] leading-relaxed">{hit.caption}</p>
         <div className="flex flex-wrap items-center gap-1.5">

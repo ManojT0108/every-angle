@@ -140,6 +140,14 @@ export const api = {
     }),
 };
 
+/**
+ * Media is served from the DATA ROOT, so a clip path stored in the manifest
+ * ("clips/e-005.mp4") must be namespaced by its match to resolve.
+ */
+export function mediaUrl(videoId: string, relativePath: string): string {
+  return `/media/${videoId}/${relativePath.replace(/^\/+/, "")}`;
+}
+
 /** 2705 -> "45:05". Match clock, not wall clock. */
 export function timecode(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));

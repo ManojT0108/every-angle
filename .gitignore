@@ -13,3 +13,6 @@ __pycache__/
 # Codex peer-thread state (thread ids, event logs)
 .ai/codex-state/
 .venv/
+
+# virtual-camera sendcmd timelines (regenerated per cut)
+data/**/.vcam-*.cmds
