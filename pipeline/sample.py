@@ -34,6 +34,7 @@ from .track import probe_size, track
 DEFAULT_TIGHT_FRAMES = 5
 DEFAULT_WIDE_FRAMES = 3
 AFTERMATH_SECONDS = 8.0      # look PAST the window: the restart is the evidence
+MAX_SIGHTING_GAP_FRAMES = 25 # a sighting >1s from the sample time tells us nothing useful
 TIGHT_CROP_W, TIGHT_CROP_H = 1400, 788      # 16:9 window around the ball
 WIDE_HEIGHT_FRACTION = 0.65                 # drop empty foreground turf from wide shots
 
@@ -124,24 +125,33 @@ def extract_frames(
         span_end = min(duration or t_end, t_end + 1.0)
         xs, ys, seen = track(source, t_start, max(0.5, span_end - t_start))
 
-        # Crop only around frames where the ball was ACTUALLY SEEN. A coasted
-        # guess is worse than useless: it points the crop at empty grass, and the
-        # model then reports "nothing happened" for a goal. Snap each sample time
-        # to the nearest confident sighting.
+        # Crop only around frames where the ball was ACTUALLY SEEN, and only when
+        # the sighting is CLOSE IN TIME. A coasted guess — or a sighting eight
+        # seconds away — points the crop at empty grass, and the model then
+        # dutifully reports "nothing happened" for a goal. When we don't know
+        # where the ball is, say so: fall back to an honest whole-pitch frame
+        # rather than a confident-looking crop of turf.
         seen_idx = [i for i, ok in enumerate(seen) if ok]
 
-        def ball_at(t: float) -> tuple[float, float]:
+        def ball_at(t: float) -> tuple[float, float] | None:
             if not seen_idx or not xs:
-                return (size[0] / 2, size[1] / 2)
+                return None
             want = int((t - t_start) * 25)
             best = min(seen_idx, key=lambda i: abs(i - want))
+            if abs(best - want) > MAX_SIGHTING_GAP_FRAMES:
+                return None
             return (xs[best], ys[best])
 
         paths: list[str] = []
+        blind = 0
         for i, t in enumerate(tights, 1):
             ball = ball_at(t)
             rel = Path(run_id) / window_id / f"tight-{i:03d}.jpg"
-            extract_tight(source, t, ball, size, output_dir / rel)
+            if ball is None:
+                blind += 1
+                extract_wide(source, t, size, output_dir / rel)
+            else:
+                extract_tight(source, t, ball, size, output_dir / rel)
             paths.append(rel.as_posix())
         for i, t in enumerate(wides, 1):
             rel = Path(run_id) / window_id / f"wide-{i:03d}.jpg"
@@ -154,10 +164,12 @@ def extract_frames(
             "t_end": t_end,
             "frames": paths,
             "ball_tracked": (sum(seen) / len(seen)) if seen else 0.0,
+            "tight_frames_without_ball": blind,
         })
+        note = f", {blind} fell back to wide (no nearby sighting)" if blind else ""
         print(
             f"  {window_id}: {len(tights)} tight + {len(wides)} wide  "
-            f"(ball tracked {sampled[-1]['ball_tracked']:.0%})",
+            f"(ball tracked {sampled[-1]['ball_tracked']:.0%}{note})",
             file=sys.stderr,
         )
 

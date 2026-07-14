@@ -64,6 +64,45 @@ def _safe_relative_path(value: str, *, label: str) -> PurePosixPath:
     return path
 
 
+class MockProposalError(RuntimeError):
+    """A published event traces back to a MockCaptioner run."""
+
+
+def assert_no_mock_provenance(data_dir: Path, manifest: dict[str, Any]) -> None:
+    """Refuse to publish events derived from mock captions.
+
+    The plan's central honesty claim is that moments are AI-proposed. proposals.json
+    accumulates runs, and a mock run sits right alongside the real ones — so without
+    this check a demo could be quietly powered by canned text while claiming to be
+    AI-generated. Resolve every event's proposal back to its run and reject mock.
+    Human-added events (from_proposal = null) are fine: a human is not a mock.
+    """
+    proposals_path = data_dir / "proposals.json"
+    if not proposals_path.is_file():
+        return
+    payload = _read_json(proposals_path)
+    runs = {r["run_id"]: r for r in payload.get("runs", [])}
+    by_id = {p["id"]: p for p in payload.get("proposals", [])}
+
+    for event in manifest.get("events", []):
+        pid = event.get("from_proposal")
+        if pid is None:
+            continue                                   # human-added; legitimate
+        proposal = by_id.get(pid)
+        if proposal is None:
+            raise MockProposalError(
+                f"event {event.get('id')} cites unknown proposal {pid!r}"
+            )
+        run = runs.get(proposal.get("run_id"), {})
+        captioner = (run.get("captioner") or {}).get("name")
+        if captioner != "claude":
+            raise MockProposalError(
+                f"event {event.get('id')} derives from proposal {pid!r} whose run "
+                f"used captioner {captioner!r} — refusing to publish mock-derived "
+                "moments as AI-proposed"
+            )
+
+
 def stage_revision(
     data_dir: Path, manifest_path: Path, revision: int | None = None
 ) -> Path:
@@ -77,6 +116,7 @@ def stage_revision(
     manifest = _read_json(manifest_path)
     if not isinstance(manifest.get("events"), list):
         raise ValueError("manifest.json must contain an events list")
+    assert_no_mock_provenance(data_dir, manifest)
     source_clips: list[tuple[PurePosixPath, Path]] = []
     for event in manifest["events"]:
         clip_value = event.get("clip")

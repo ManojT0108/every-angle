@@ -120,6 +120,27 @@ scripts/         run_pipeline.sh  codex-review.sh
 - **M3 (Gate 3, midday Jul 15):** Search + Reel views complete, template commentary, deployed, demo script written. Feature freeze.
 - **M4 (Jul 15 PM+, only if green):** layered additions in ideation-plan order; each gets its own task dir.
 
+## Broadcast footage readiness (user supplying a 1h50m directed broadcast, 1 goal)
+
+The pipeline was built and tuned on a FIXED-camera amateur panorama. A directed
+broadcast breaks several assumptions — most of them in our favour, one badly against.
+
+| Component | On fixed amateur camera | On directed broadcast | Action |
+|---|---|---|---|
+| Audio-RMS cue | inert (flat amateur audio) | **strong** — crowd roar + commentator shouting on a goal | keep; it finally earns its place |
+| Scene-cut cue | inert (a fixed camera never cuts) | **strong, but noisy** — hundreds of cuts (replays, close-ups, crowd) | keep; the ≤40-window cap and cue-count scoring must stop cuts from flooding candidates |
+| Motion-density cue | **the only working cue** | **likely harmful** — the camera pans and zooms, so frame-differencing lights up the WHOLE frame on every pan; every camera move looks like a motion peak | must gate: suppress motion cue when global motion dominates (a pan moves everything; a play moves a region) |
+| Ball tracker | needed, works (92–98%) | **will degrade** — it assumes a static background; a panning camera makes everything "moving" | not needed: broadcast frames are already zoomed and legible |
+| Tight ball-crops for captioning | **essential** (players ~5px) | **unnecessary** — the director already framed the action | add a framing mode: `ball` (fixed camera) vs `native` (broadcast) |
+| Virtual camera | the differentiator | not applicable — a human already directed it | skip for broadcast; it is the grassroots half of the story |
+| Replays | none | **a goal is shown 2–3x** → duplicate detections | dedup near-identical events, or treat replays as evidence (a replayed moment IS important) |
+| Runtime | 54s for 45 min | ~2.5 min for 110 min (linear) | fine |
+
+**The headline risk is the motion cue inverting**: on a moving camera it goes from our best
+signal to our worst. Audio + scene cuts should carry the broadcast case, which is the mirror
+image of the amateur case — a nice demonstration that the three-cue design is the right one,
+but only if we actually gate the motion cue rather than trusting it blindly.
+
 ## Risks & mitigations
 
 | Risk | Mitigation |

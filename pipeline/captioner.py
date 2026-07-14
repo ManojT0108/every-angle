@@ -129,10 +129,12 @@ class ClaudeCaptioner(Captioner):
         api_key: str | None = None,
         model: str = "claude-opus-4-8",
         budget_usd: float | None = None,
+        max_tokens: int = 400,
     ) -> None:
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model = model
         self.budget_usd = budget_usd
+        self.max_tokens = max_tokens
         self.spent_usd = 0.0
         self.calls = 0
         self._client = None
@@ -144,16 +146,31 @@ class ClaudeCaptioner(Captioner):
             + usage.output_tokens * rate_out / 1e6
         )
 
+    # Worst-case input tokens for one image at our sizes. Deliberately generous:
+    # a budget cap that can be exceeded is not a cap.
+    MAX_TOKENS_PER_IMAGE = 5000
+
+    def _worst_case_cost(self, n_frames: int) -> float:
+        rate_in, rate_out = PRICES.get(self.model, (5.0, 25.0))
+        est_in = n_frames * self.MAX_TOKENS_PER_IMAGE + 2000     # + prompt overhead
+        return est_in * rate_in / 1e6 + self.max_tokens * rate_out / 1e6
+
     def caption(self, frames: Sequence[Path], window: dict[str, Any]) -> CaptionResult:
         if not self.api_key:
             raise RuntimeError("ClaudeCaptioner requires ANTHROPIC_API_KEY")
-        if self.budget_usd is not None and self.spent_usd >= self.budget_usd:
-            raise RuntimeError(
-                f"budget exhausted: spent ${self.spent_usd:.2f} of "
-                f"${self.budget_usd:.2f} after {self.calls} windows"
-            )
         if not frames:
             return CaptionResult(caption="No frames sampled.", type="none", confidence="low")
+        if self.budget_usd is not None:
+            # RESERVE the worst case before sending. Checking only what we have
+            # already spent lets a single call sail past the cap — which is
+            # exactly the failure a "hard budget" is supposed to prevent.
+            projected = self.spent_usd + self._worst_case_cost(len(frames))
+            if projected > self.budget_usd:
+                raise RuntimeError(
+                    f"budget stop: spent ${self.spent_usd:.2f} of ${self.budget_usd:.2f} "
+                    f"after {self.calls} windows; the next window could reach "
+                    f"${projected:.2f}. Raise --budget-usd to continue."
+                )
 
         if self._client is None:
             import anthropic
@@ -195,7 +212,7 @@ class ClaudeCaptioner(Captioner):
 
         response = self._client.messages.create(
             model=self.model,
-            max_tokens=400,
+            max_tokens=self.max_tokens,
             system=SYSTEM_PROMPT,
             output_config={"format": {"type": "json_schema", "schema": RESULT_SCHEMA}},
             messages=[{"role": "user", "content": content}],
@@ -206,12 +223,21 @@ class ClaudeCaptioner(Captioner):
         if response.stop_reason == "refusal":
             return CaptionResult(caption="Model declined to describe this window.",
                                  type="none", confidence="low")
-        payload = json.loads(next(b.text for b in response.content if b.type == "text"))
-        return CaptionResult(
-            caption=payload["caption"],
-            type=payload["type"],
-            confidence=payload["confidence"],
-        )
+        # A malformed or truncated response must not destroy a paid run: degrade
+        # this ONE window to "none" and let the human see it in Verify.
+        try:
+            payload = json.loads(next(b.text for b in response.content if b.type == "text"))
+            return CaptionResult(
+                caption=payload["caption"],
+                type=payload["type"],
+                confidence=payload["confidence"],
+            )
+        except (StopIteration, json.JSONDecodeError, KeyError) as exc:
+            return CaptionResult(
+                caption=f"Unreadable model response ({type(exc).__name__}); needs human review.",
+                type="none",
+                confidence="low",
+            )
 
 
 def make_captioner(name: str, *, budget_usd: float | None = None) -> Captioner:

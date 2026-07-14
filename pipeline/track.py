@@ -36,11 +36,18 @@ GATE_PX = 45
 MAX_GATE_GROWTH = 6              # px of extra gate per missed frame (bounded)
 LOST_AFTER = 12                  # frames of no detection before we stop trusting the track
 MIN_ISOLATION = 0.80             # ring around the blob must be mostly grass
-# Re-acquisition must stay near where we last saw the ball. Without this, the
-# tracker happily jumps to a SPARE BALL lying on the touchline — which has
-# perfect isolation (it is, after all, a football on grass) and never moves. That
-# is exactly how the first run lost the second goal.
-REACQUIRE_RADIUS = 260
+# Re-acquisition must stay near where we last saw the ball, or the tracker jumps
+# to a SPARE BALL on the touchline — perfect isolation (it is, after all, a
+# football on grass), never moves, and never gives the real ball back. That is
+# exactly how the first run lost the second goal.
+#
+# But the radius cannot be FIXED either: while we are lost the ball keeps moving,
+# so the search must widen with time — just never far enough to cross the pitch.
+REACQUIRE_RADIUS = 260           # starting search radius, analysis px
+REACQUIRE_GROWTH = 12            # widen per frame still lost
+REACQUIRE_MAX = 620              # hard ceiling: ~1/3 of the pitch, never the touchline
+REACQUIRE_MIN_ISOLATION = 0.90   # re-acquisition needs a BALL, not a plausible blob
+CERTAIN_BALL_ISOLATION = 0.95    # good enough to jump anywhere on the pitch for
 
 
 def _frames(src: Path, start: float, dur: float):
@@ -117,7 +124,12 @@ def track(src: Path, start: float, dur: float) -> tuple[list[float], list[float]
     """Return per-frame ball (x, y) in SOURCE px, plus whether it was actually seen."""
 
     SRC_W, SRC_H = probe_size(src)
-    SCALE = SRC_W / W
+    # Independent scales per axis. Deriving ONE scale from width happens to be
+    # correct for a 4096x1080 panorama (both axes halve) and is wrong for every
+    # other aspect ratio — a 1920x1080 broadcast would place every y at 47% of
+    # its true value, putting all the tight crops in the wrong place.
+    scale_x = SRC_W / W
+    scale_y = SRC_H / H
     prev_gray = None
     pos: np.ndarray | None = None
     vel = np.zeros(2, np.float32)
@@ -166,13 +178,38 @@ def track(src: Path, start: float, dur: float) -> tuple[list[float], list[float]
                 # ball (the true ball scored 0.95 against 137 rivals at 0.90) —
                 # but ONLY near where we last saw it, or we lock onto a spare ball
                 # on the touchline and never come back.
-                near = blobs
+                # RE-ACQUIRING demands more evidence than merely continuing a
+                # track. A ball alone on grass is unmistakably isolated; a scrap
+                # of a white shirt is only borderline. With the same loose bar,
+                # re-acquisition lands on a player and stays there.
+                near = [
+                    bl for bl in blobs
+                    if _isolation(grass, bl[0], bl[1]) >= REACQUIRE_MIN_ISOLATION
+                ]
                 if pos is not None:
-                    near = [
-                        bl for bl in blobs
-                        if np.hypot(bl[0] - pos[0], bl[1] - pos[1]) <= REACQUIRE_RADIUS
-                    ] or blobs
-                pick = max(near, key=lambda bl: _isolation(grass, bl[0], bl[1]))
+                    # Bounded search that widens with time lost. The unbounded
+                    # version teleported across the pitch; a purely bounded one
+                    # traps the tracker on whatever it mistakenly locked onto.
+                    radius = min(
+                        REACQUIRE_MAX,
+                        REACQUIRE_RADIUS + REACQUIRE_GROWTH * max(0, missing - LOST_AFTER),
+                    )
+                    bounded = [
+                        bl for bl in near
+                        if np.hypot(bl[0] - pos[0], bl[1] - pos[1]) <= radius
+                    ]
+                    # Escape hatch, deliberately narrow: a blob ANYWHERE may be
+                    # taken only if it is near-certainly a ball. A spare ball on
+                    # the touchline cannot qualify — it never moves, so it never
+                    # survives the motion mask in the first place.
+                    if not bounded:
+                        bounded = [
+                            bl for bl in near
+                            if _isolation(grass, bl[0], bl[1]) >= CERTAIN_BALL_ISOLATION
+                        ]
+                    near = bounded
+                if near:
+                    pick = max(near, key=lambda bl: _isolation(grass, bl[0], bl[1]))
             else:
                 gate = GATE_PX + MAX_GATE_GROWTH * missing
                 gated = [
@@ -203,7 +240,7 @@ def track(src: Path, start: float, dur: float) -> tuple[list[float], list[float]
             xs.append(SRC_W / 2)
             ys.append(SRC_H / 2)
         else:
-            xs.append(float(pos[0]) * SCALE)
-            ys.append(float(pos[1]) * SCALE)
+            xs.append(float(pos[0]) * scale_x)
+            ys.append(float(pos[1]) * scale_y)
 
     return xs, ys, seen

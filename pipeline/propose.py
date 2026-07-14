@@ -156,6 +156,21 @@ def build_proposals(
     }
     new_proposals: list[dict[str, Any]] = []
     created_dirs: list[Path] = []
+
+    def checkpoint() -> None:
+        """Persist what has been paid for so far.
+
+        Captions cost real money. Holding a whole run in memory and writing once
+        at the end means a failure on the last window throws away every earlier
+        window's spend. Write after each one; a resumed run re-uses them.
+        """
+        if not new_proposals:
+            return
+        snapshot = dict(artifact)
+        snapshot["runs"] = [*artifact["runs"], run]
+        snapshot["proposals"] = [*artifact["proposals"], *new_proposals]
+        _write_json_atomic(proposals_path, snapshot)
+
     try:
         for index, window in enumerate(windows_artifact.get("windows", []), 1):
             proposal_id = f"{run_id}-p-{index:03d}"
@@ -190,14 +205,18 @@ def build_proposals(
                     },
                 }
             )
+            checkpoint()          # this window is paid for — never lose it
         all_proposals = [*artifact["proposals"], *new_proposals]
         validate_evidence_ownership(all_proposals, output_dir)
         artifact["runs"].append(run)
         artifact["proposals"] = all_proposals
         _write_json_atomic(proposals_path, artifact)
     except Exception:
-        for evidence_dir in created_dirs:
-            shutil.rmtree(evidence_dir, ignore_errors=True)
+        # Keep whatever was already paid for and its evidence; only discard the
+        # half-written window that actually failed.
+        checkpoint()
+        if created_dirs and len(created_dirs) > len(new_proposals):
+            shutil.rmtree(created_dirs[-1], ignore_errors=True)
         raise
     return artifact
 
