@@ -1,0 +1,8 @@
+# Python 3.11 runtime pins for the M0 scaffold.
+streamlit==1.45.1
+qdrant-client==1.14.2
+fastembed==0.7.1
+anthropic==0.57.1
+Pillow==11.3.0
+python-dotenv==1.1.1
+

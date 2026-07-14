@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+CLAUDE.local.md
+
+# Generated media and pipeline artifacts (source footage stays local)
+data/
+__pycache__/
+*.py[cod]
+
+
+# Codex peer-thread state (thread ids, event logs)
+.ai/codex-state/
+.venv/
