@@ -1,4 +1,4 @@
-"""PROTOTYPE — ball tracker for the virtual camera.
+"""Ball tracker: finds the ball in a wide fixed-camera shot.
 
 Finding a football in a wide shot is hard for a reason: the ball is a ~6px white
 blob, and the frame is FULL of white things — one team's kit, every pitch line,
@@ -24,26 +24,30 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent
-SRC = REPO / "data/match-001/source/117093_panorama_1st_half.mp4"
-
-SRC_W, SRC_H = 4096, 1080
-W, H = 2048, 540                 # analysis res (2x down): ball ~3px, player shirt ~10px
+W, H = 2048, 540                 # analysis res: ball ~3px, a player's shirt ~10px
 FPS = 25.0
-SCALE = SRC_W / W                # analysis px -> source px
 
 MOTION_THRESH = 26               # 0-255 gray delta
 MIN_BLOB, MAX_BLOB = 2, 26       # px area at analysis res. A shirt is 60-150.
-GATE_PX = 70                     # how far the ball may plausibly move between frames
+# A struck ball tops out around 35 m/s. On a ~105m pitch spanning ~1800 analysis
+# px, that is ~24 px/frame at 25fps. Anything faster is not a ball — it is the
+# tracker teleporting. Keep the gate near the physical limit.
+GATE_PX = 45
+MAX_GATE_GROWTH = 6              # px of extra gate per missed frame (bounded)
 LOST_AFTER = 12                  # frames of no detection before we stop trusting the track
 MIN_ISOLATION = 0.80             # ring around the blob must be mostly grass
+# Re-acquisition must stay near where we last saw the ball. Without this, the
+# tracker happily jumps to a SPARE BALL lying on the touchline — which has
+# perfect isolation (it is, after all, a football on grass) and never moves. That
+# is exactly how the first run lost the second goal.
+REACQUIRE_RADIUS = 260
 
 
-def _frames(start: float, dur: float):
+def _frames(src: Path, start: float, dur: float):
     """Stream RGB frames at analysis resolution."""
     proc = subprocess.Popen(
         ["ffmpeg", "-hide_banner", "-loglevel", "error",
-         "-ss", f"{start:.3f}", "-t", f"{dur:.3f}", "-i", str(SRC),
+         "-ss", f"{start:.3f}", "-t", f"{dur:.3f}", "-i", str(src),
          "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo",
          "-pix_fmt", "rgb24", "pipe:1"],
         stdout=subprocess.PIPE)
@@ -100,8 +104,20 @@ def _isolation(grass: np.ndarray, cx: float, cy: float, rad: int = 7) -> float:
     return ring_green / ring_total if ring_total > 0 else 0.0
 
 
-def track(start: float, dur: float) -> tuple[list[float], list[float], list[bool]]:
+def probe_size(src: Path) -> tuple[int, int]:
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream=width,height", "-of", "csv=p=0", str(src)],
+        capture_output=True, check=True).stdout.decode().strip()
+    w, h = out.split(",")[:2]
+    return int(w), int(h)
+
+
+def track(src: Path, start: float, dur: float) -> tuple[list[float], list[float], list[bool]]:
     """Return per-frame ball (x, y) in SOURCE px, plus whether it was actually seen."""
+
+    SRC_W, SRC_H = probe_size(src)
+    SCALE = SRC_W / W
     prev_gray = None
     pos: np.ndarray | None = None
     vel = np.zeros(2, np.float32)
@@ -111,7 +127,7 @@ def track(start: float, dur: float) -> tuple[list[float], list[float], list[bool
     ys: list[float] = []
     seen: list[bool] = []
 
-    for frame in _frames(start, dur):
+    for frame in _frames(src, start, dur):
         r, g, b = frame[..., 0], frame[..., 1], frame[..., 2]
         gray = frame.mean(2)
 
@@ -127,7 +143,9 @@ def track(start: float, dur: float) -> tuple[list[float], list[float], list[bool
 
         if prev_gray is None:
             prev_gray = gray
-            xs.append(SRC_W / 2); ys.append(SRC_H / 2); seen.append(False)
+            xs.append(SRC_W / 2)
+            ys.append(SRC_H / 2)
+            seen.append(False)
             continue
 
         moving = np.abs(gray - prev_gray) > MOTION_THRESH
@@ -144,15 +162,22 @@ def track(start: float, dur: float) -> tuple[list[float], list[float], list[bool
         pick = None
         if blobs:
             if pred is None:
-                # Acquire (or RE-acquire after a long loss): take the most
-                # isolated blob. Isolation is what actually identifies a ball —
-                # at the goal frame the true ball scores 0.95 while 137 other
-                # size-passing blobs sit at 0.90 or below.
-                pick = max(blobs, key=lambda bl: _isolation(grass, bl[0], bl[1]))
+                # Acquire, or RE-acquire after a long loss. Isolation identifies a
+                # ball (the true ball scored 0.95 against 137 rivals at 0.90) —
+                # but ONLY near where we last saw it, or we lock onto a spare ball
+                # on the touchline and never come back.
+                near = blobs
+                if pos is not None:
+                    near = [
+                        bl for bl in blobs
+                        if np.hypot(bl[0] - pos[0], bl[1] - pos[1]) <= REACQUIRE_RADIUS
+                    ] or blobs
+                pick = max(near, key=lambda bl: _isolation(grass, bl[0], bl[1]))
             else:
+                gate = GATE_PX + MAX_GATE_GROWTH * missing
                 gated = [
                     bl for bl in blobs
-                    if np.hypot(bl[0] - pred[0], bl[1] - pred[1]) <= GATE_PX + 8 * missing
+                    if np.hypot(bl[0] - pred[0], bl[1] - pred[1]) <= gate
                 ]
                 if gated:
                     pick = min(
@@ -175,19 +200,10 @@ def track(start: float, dur: float) -> tuple[list[float], list[float], list[bool
             seen.append(False)
 
         if pos is None:
-            xs.append(SRC_W / 2); ys.append(SRC_H / 2)
+            xs.append(SRC_W / 2)
+            ys.append(SRC_H / 2)
         else:
             xs.append(float(pos[0]) * SCALE)
             ys.append(float(pos[1]) * SCALE)
 
     return xs, ys, seen
-
-
-if __name__ == "__main__":
-    # Goal 1 is at 1412.5s; track the 4s around it and report.
-    xs, ys, seen = track(1410.5, 4.0)
-    hits = sum(seen)
-    print(f"frames: {len(xs)}   ball detected in {hits} ({hits / len(xs):.0%})")
-    for i in range(0, len(xs), 10):
-        flag = "seen " if seen[i] else "coast"
-        print(f"  t={1410.5 + i / FPS:7.2f}s  {flag}  ball=({xs[i]:6.0f},{ys[i]:5.0f})")

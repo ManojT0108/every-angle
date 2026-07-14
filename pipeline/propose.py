@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
-from .captioner import CONFIDENCE_LEVELS, EVENT_TYPES, Captioner, make_captioner
+from .captioner import CONFIDENCE_LEVELS, PROPOSAL_TYPES, Captioner, make_captioner
 
 
 def utc_now() -> str:
@@ -166,7 +166,7 @@ def build_proposals(
             )
             created_dirs.append(evidence_dir)
             result = captioner.caption(source_frames, window)
-            if result.type not in EVENT_TYPES:
+            if result.type not in PROPOSAL_TYPES:
                 raise ValueError(
                     f"captioner returned invalid event type: {result.type!r}"
                 )
@@ -221,24 +221,31 @@ def main() -> None:
     )
     parser.add_argument("--frames-dir", type=Path, default=None)
     parser.add_argument("--captioner", choices=("mock", "claude"), default="mock")
+    parser.add_argument("--budget-usd", type=float, default=None,
+                        help="hard spend cap; the run aborts rather than exceed it")
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--asset", default=None)
     args = parser.parse_args()
     windows_artifact = json.loads(args.windows.read_text(encoding="utf-8"))
     source = args.source or Path(windows_artifact["source"])
     frames_dir = args.frames_dir or args.output_dir / "frames"
+    captioner = make_captioner(args.captioner, budget_usd=args.budget_usd)
     artifact = build_proposals(
         windows_artifact,
         source=source,
         output_dir=args.output_dir,
         frames_dir=frames_dir,
-        captioner=make_captioner(args.captioner),
+        captioner=captioner,
         run_id=args.run_id,
         asset=args.asset,
     )
     print(
-        f"wrote {len(artifact['proposals'])} proposals across {len(artifact['runs'])} runs to {args.output_dir / 'proposals.json'}"
+        f"wrote {len(artifact['proposals'])} proposals across {len(artifact['runs'])} runs "
+        f"to {args.output_dir / 'proposals.json'}"
     )
+    spent = getattr(captioner, "spent_usd", None)
+    if spent is not None:
+        print(f"API spend this run: ${spent:.4f} over {captioner.calls} windows")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,23 @@
-"""Extract a small, fixed set of JPEG frames inside candidate windows."""
+"""Extract the frames a vision model actually needs to judge a candidate window.
+
+Naive sampling FAILS on wide fixed-camera football, and it fails silently. The
+first real run captioned both goals as "nothing happened", for two reasons:
+
+  1. The whole 100m pitch squeezed into 960px makes players ~5px tall. Nothing
+     is legible — not the ball, not a shot, not a keeper.
+  2. Evenly-spaced samples across the window missed the goal entirely, because
+     the motion peak fires on the CELEBRATION, so the goal sits near the window
+     start.
+
+So we sample two kinds of frame:
+
+  TIGHT — cropped around the tracked BALL, so the model can see the actual play.
+  WIDE  — the whole pitch, AFTER the window, so the model can see the
+          consequences. At this camera distance you usually cannot see the ball
+          cross the line; what you can see is every player walking back to the
+          centre circle for a kickoff, which is what a goal actually looks like
+          from the stand.
+"""
 
 from __future__ import annotations
 
@@ -10,50 +29,71 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from .track import probe_size, track
 
-DEFAULT_MAX_FRAMES = 4
-
-
-def _frame_times(window: dict[str, Any], max_frames: int) -> list[float]:
-    start = float(window["t_start"])
-    end = float(window["t_end"])
-    duration = max(0.0, end - start)
-    if duration == 0:
-        return [start]
-    fractions = [0.1, 0.4, 0.7, 0.95]
-    return [
-        round(start + duration * fraction, 3) for fraction in fractions[:max_frames]
-    ]
+DEFAULT_TIGHT_FRAMES = 5
+DEFAULT_WIDE_FRAMES = 3
+AFTERMATH_SECONDS = 8.0      # look PAST the window: the restart is the evidence
+TIGHT_CROP_W, TIGHT_CROP_H = 1400, 788      # 16:9 window around the ball
+WIDE_HEIGHT_FRACTION = 0.65                 # drop empty foreground turf from wide shots
 
 
-def extract_frame(source: Path, timestamp: float, destination: Path) -> None:
-    """Extract one frame, leaving ffmpeg's source seeking outside Python."""
+def _tight_times(window: dict[str, Any], n: int) -> list[float]:
+    """Spread across the FIRST 75% of the window: the event is early (the motion
+    peak that created the window fires on the aftermath)."""
+    start, end = float(window["t_start"]), float(window["t_end"])
+    span = max(0.1, (end - start) * 0.75)
+    if n == 1:
+        return [start + span / 2]
+    return [round(start + span * i / (n - 1), 3) for i in range(n)]
 
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    if destination.exists() and destination.stat().st_size > 0:
-        return
-    command = [
-        "ffmpeg",
-        "-hide_banner",
-        "-loglevel",
-        "error",
-        "-ss",
-        f"{max(0.0, timestamp):.3f}",
-        "-i",
-        str(source),
-        "-frames:v",
-        "1",
-        "-vf",
-        "scale=960:-2,format=yuvj420p",
-        "-q:v",
-        "2",
-        "-y",
-        str(destination),
-    ]
-    result = subprocess.run(command, capture_output=True)
+
+def _wide_times(window: dict[str, Any], n: int, duration: float) -> list[float]:
+    """From late in the window into the aftermath — where the restart happens."""
+    start, end = float(window["t_start"]), float(window["t_end"])
+    lo = start + (end - start) * 0.8
+    hi = min(duration - 0.1, end + AFTERMATH_SECONDS)
+    if hi <= lo or n == 1:
+        return [min(duration - 0.1, end)]
+    return [round(lo + (hi - lo) * i / (n - 1), 3) for i in range(n)]
+
+
+def _run_ffmpeg(cmd: list[str], what: str) -> None:
+    result = subprocess.run(cmd, capture_output=True)
     if result.returncode != 0:
-        message = result.stderr.decode(errors="replace").strip()
-        raise RuntimeError(f"frame extraction failed at {timestamp:.3f}s: {message}")
+        raise RuntimeError(f"{what} failed: {result.stderr.decode(errors='replace').strip()}")
+
+
+def extract_tight(source: Path, t: float, ball: tuple[float, float],
+                  size: tuple[int, int], destination: Path) -> None:
+    """Crop around the ball so the play is legible."""
+    src_w, src_h = size
+    cw, ch = min(TIGHT_CROP_W, src_w), min(TIGHT_CROP_H, src_h)
+    x = max(0.0, min(float(src_w - cw), ball[0] - cw / 2))
+    y = max(0.0, min(float(src_h - ch), ball[1] - ch / 2))
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    _run_ffmpeg(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-ss", f"{max(0.0, t):.3f}",
+         "-i", str(source), "-frames:v", "1",
+         "-vf", f"crop={cw}:{ch}:{x:.0f}:{y:.0f},scale=960:-2,format=yuvj420p",
+         "-q:v", "2", "-y", str(destination)],
+        f"tight frame at {t:.2f}s",
+    )
+
+
+def extract_wide(source: Path, t: float, size: tuple[int, int], destination: Path) -> None:
+    """Whole pitch, so the model can read the consequences (restart, celebration)."""
+    src_w, src_h = size
+    ch = int(src_h * WIDE_HEIGHT_FRACTION)
+    y = int(src_h * 0.06)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    _run_ffmpeg(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-ss", f"{max(0.0, t):.3f}",
+         "-i", str(source), "-frames:v", "1",
+         "-vf", f"crop={src_w}:{ch}:0:{y},scale=1280:-2,format=yuvj420p",
+         "-q:v", "2", "-y", str(destination)],
+        f"wide frame at {t:.2f}s",
+    )
 
 
 def extract_frames(
@@ -62,37 +102,72 @@ def extract_frames(
     output_dir: Path,
     *,
     run_id: str,
-    max_frames: int = DEFAULT_MAX_FRAMES,
+    tight_frames: int = DEFAULT_TIGHT_FRAMES,
+    wide_frames: int = DEFAULT_WIDE_FRAMES,
 ) -> dict[str, Any]:
-    """Extract frames under ``frames/<run_id>/<window-id>/``."""
+    """Extract ball-tracked tight frames + wide aftermath frames per window."""
 
-    if max_frames < 1 or max_frames > DEFAULT_MAX_FRAMES:
-        raise ValueError(f"max_frames must be between 1 and {DEFAULT_MAX_FRAMES}")
+    if tight_frames < 1 or wide_frames < 0:
+        raise ValueError("need at least one tight frame and non-negative wide frames")
+    size = probe_size(source)
+    duration = float(windows_artifact.get("duration") or 0.0)
     output_dir.mkdir(parents=True, exist_ok=True)
-    windows = windows_artifact.get("windows", [])
+
     sampled: list[dict[str, Any]] = []
-    for window in windows:
+    for window in windows_artifact.get("windows", []):
         window_id = str(window["id"])
-        frame_paths: list[str] = []
-        for index, timestamp in enumerate(_frame_times(window, max_frames), 1):
-            relative_path = Path(run_id) / window_id / f"frame-{index:03d}.jpg"
-            destination = output_dir / relative_path
-            extract_frame(source, timestamp, destination)
-            frame_paths.append(relative_path.as_posix())
-        sampled.append(
-            {
-                "window_id": window_id,
-                "t_start": window["t_start"],
-                "t_end": window["t_end"],
-                "frames": frame_paths,
-            }
+        t_start, t_end = float(window["t_start"]), float(window["t_end"])
+        tights = _tight_times(window, tight_frames)
+        wides = _wide_times(window, wide_frames, duration or t_end + AFTERMATH_SECONDS)
+
+        # Track the ball once across the window (+ a little slack for the crops).
+        span_end = min(duration or t_end, t_end + 1.0)
+        xs, ys, seen = track(source, t_start, max(0.5, span_end - t_start))
+
+        # Crop only around frames where the ball was ACTUALLY SEEN. A coasted
+        # guess is worse than useless: it points the crop at empty grass, and the
+        # model then reports "nothing happened" for a goal. Snap each sample time
+        # to the nearest confident sighting.
+        seen_idx = [i for i, ok in enumerate(seen) if ok]
+
+        def ball_at(t: float) -> tuple[float, float]:
+            if not seen_idx or not xs:
+                return (size[0] / 2, size[1] / 2)
+            want = int((t - t_start) * 25)
+            best = min(seen_idx, key=lambda i: abs(i - want))
+            return (xs[best], ys[best])
+
+        paths: list[str] = []
+        for i, t in enumerate(tights, 1):
+            ball = ball_at(t)
+            rel = Path(run_id) / window_id / f"tight-{i:03d}.jpg"
+            extract_tight(source, t, ball, size, output_dir / rel)
+            paths.append(rel.as_posix())
+        for i, t in enumerate(wides, 1):
+            rel = Path(run_id) / window_id / f"wide-{i:03d}.jpg"
+            extract_wide(source, t, size, output_dir / rel)
+            paths.append(rel.as_posix())
+
+        sampled.append({
+            "window_id": window_id,
+            "t_start": t_start,
+            "t_end": t_end,
+            "frames": paths,
+            "ball_tracked": (sum(seen) / len(seen)) if seen else 0.0,
+        })
+        print(
+            f"  {window_id}: {len(tights)} tight + {len(wides)} wide  "
+            f"(ball tracked {sampled[-1]['ball_tracked']:.0%})",
+            file=sys.stderr,
         )
+
     return {
         "video_id": windows_artifact.get("video_id", source.stem),
         "run_id": run_id,
         "source": str(source),
         "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "max_frames_per_window": max_frames,
+        "tight_frames_per_window": tight_frames,
+        "wide_frames_per_window": wide_frames,
         "windows": sampled,
     }
 
@@ -106,37 +181,31 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, required=True, help="Source MP4 path")
-    parser.add_argument(
-        "--windows", type=Path, required=True, help="ingest.py windows JSON"
-    )
-    parser.add_argument(
-        "--output-dir", type=Path, required=True, help="frames/ directory"
-    )
-    parser.add_argument(
-        "--output", type=Path, default=None, help="Optional samples JSON path"
-    )
-    parser.add_argument("--run-id", required=True, help="Run-scoped evidence namespace")
-    parser.add_argument("--max-frames", type=int, default=DEFAULT_MAX_FRAMES)
+    parser.add_argument("--input", type=Path, required=True,
+                        help="SOURCE MP4 (use the highest resolution available — the tight "
+                             "crops come out of it)")
+    parser.add_argument("--windows", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--tight-frames", type=int, default=DEFAULT_TIGHT_FRAMES)
+    parser.add_argument("--wide-frames", type=int, default=DEFAULT_WIDE_FRAMES)
     args = parser.parse_args()
     if not args.input.is_file():
         parser.error(f"input does not exist: {args.input}")
     if not args.windows.is_file():
         parser.error(f"windows artifact does not exist: {args.windows}")
+
     windows_artifact = json.loads(args.windows.read_text(encoding="utf-8"))
     artifact = extract_frames(
-        args.input,
-        windows_artifact,
-        args.output_dir,
+        args.input, windows_artifact, args.output_dir,
         run_id=args.run_id,
-        max_frames=args.max_frames,
+        tight_frames=args.tight_frames,
+        wide_frames=args.wide_frames,
     )
     output = args.output or args.output_dir.parent / "samples.json"
     _write_json(output, artifact)
-    print(
-        f"sampled {len(artifact['windows'])} windows into {args.output_dir}",
-        file=sys.stderr,
-    )
+    print(f"sampled {len(artifact['windows'])} windows into {args.output_dir}", file=sys.stderr)
 
 
 if __name__ == "__main__":

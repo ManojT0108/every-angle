@@ -7,6 +7,8 @@ implementation once the API key and prompt have been approved.
 
 from __future__ import annotations
 
+import base64
+import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -15,6 +17,10 @@ from typing import Any, Sequence
 
 
 EVENT_TYPES = ("goal", "save", "penalty", "card", "counterattack")
+# A proposal may also come back as "none": the model looked and found nothing
+# notable. That is a GOOD outcome — most candidate windows are ordinary play,
+# and forcing every window into an exciting label is how you get a lying demo.
+PROPOSAL_TYPES = (*EVENT_TYPES, "none")
 CONFIDENCE_LEVELS = ("high", "medium", "low")
 
 
@@ -66,34 +72,153 @@ class MockCaptioner(Captioner):
         )
 
 
+SYSTEM_PROMPT = """You are labelling candidate moments from a football (soccer) match for a \
+highlights tool. The frames are consecutive samples from ONE short window of a fixed wide-angle \
+camera; players are small.
+
+Your job is to say what — if anything — notable happens in this window.
+
+Rules:
+- Describe ONLY what you can see. Never invent player names, team names, scores, or minutes: the \
+  camera is too far away to read them, and downstream commentary is generated from your caption.
+- Most windows are NOT notable. Ordinary passing, players jogging, a throw-in, a restart, or a \
+  stoppage should be reported as type "none" with low confidence. Do not force an exciting label.
+- You will be given TIGHT frames (zoomed on the ball, so you can see the play) and then WIDE \
+  frames of the whole pitch (so you can see what happened next). Read them in order.
+- The camera is far away, so you often CANNOT see the ball cross the line. Judge a goal by its \
+  consequences, exactly as a human watching from the stand would: an attack on the box, then all \
+  players walking back and lining up for a **restart from the centre circle**, is strong evidence \
+  a goal was scored — a shot that misses or is saved is followed by a goal kick, a corner, or \
+  play simply continuing. If you see the attack and then a centre-circle restart, label it "goal".
+- Write the caption the way someone would SEARCH for the moment later, e.g. "low shot from the \
+  edge of the box beats the keeper at the near post" — not "players are moving"."""
+
+# Per-million-token prices, for spend tracking. Keep in sync with the model.
+PRICES = {
+    "claude-opus-4-8": (5.0, 25.0),
+    "claude-sonnet-5": (3.0, 15.0),
+    "claude-haiku-4-5": (1.0, 5.0),
+}
+
+RESULT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "type": {"type": "string", "enum": [*EVENT_TYPES, "none"]},
+        "confidence": {"type": "string", "enum": list(CONFIDENCE_LEVELS)},
+        "caption": {"type": "string"},
+    },
+    "required": ["type", "confidence", "caption"],
+    "additionalProperties": False,
+}
+
+
 class ClaudeCaptioner(Captioner):
-    """Configuration skeleton for the planned Anthropic vision captioner."""
+    """Anthropic vision captioner: sampled frames -> event type + searchable caption.
+
+    This is the step that turns "something moved at t=1412s" into "a low finish at
+    the near post" — i.e. the thing that is actually searchable, verifiable, and
+    worth putting in a reel. Tracks spend so a run cannot silently blow a budget.
+    """
 
     name = "claude"
-    prompt_version = "p1"
+    prompt_version = "p2-strict-none"
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
         model: str = "claude-opus-4-8",
+        budget_usd: float | None = None,
     ) -> None:
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model = model
+        self.budget_usd = budget_usd
+        self.spent_usd = 0.0
+        self.calls = 0
+        self._client = None
+
+    def _cost(self, usage: Any) -> float:
+        rate_in, rate_out = PRICES.get(self.model, (5.0, 25.0))
+        return (
+            usage.input_tokens * rate_in / 1e6
+            + usage.output_tokens * rate_out / 1e6
+        )
 
     def caption(self, frames: Sequence[Path], window: dict[str, Any]) -> CaptionResult:
         if not self.api_key:
             raise RuntimeError("ClaudeCaptioner requires ANTHROPIC_API_KEY")
-        raise NotImplementedError(
-            "Claude vision request is reserved for M1; use --captioner mock for M0"
+        if self.budget_usd is not None and self.spent_usd >= self.budget_usd:
+            raise RuntimeError(
+                f"budget exhausted: spent ${self.spent_usd:.2f} of "
+                f"${self.budget_usd:.2f} after {self.calls} windows"
+            )
+        if not frames:
+            return CaptionResult(caption="No frames sampled.", type="none", confidence="low")
+
+        if self._client is None:
+            import anthropic
+
+            self._client = anthropic.Anthropic(api_key=self.api_key)
+
+        content: list[dict[str, Any]] = []
+        for path in frames:
+            content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": base64.standard_b64encode(path.read_bytes()).decode(),
+                    },
+                }
+            )
+        cues = [
+            name
+            for name, flag in (
+                ("crowd/audio spike", window.get("audio_peak")),
+                ("scene cut", window.get("scene_cut")),
+                ("burst of motion", window.get("motion_peak")),
+            )
+            if flag
+        ]
+        content.append(
+            {
+                "type": "text",
+                "text": (
+                    f"{len(frames)} frames sampled in order across a "
+                    f"{float(window['t_end']) - float(window['t_start']):.0f}s window.\n"
+                    f"Why this window was flagged: {', '.join(cues) or 'unspecified'}.\n"
+                    "What happens here?"
+                ),
+            }
+        )
+
+        response = self._client.messages.create(
+            model=self.model,
+            max_tokens=400,
+            system=SYSTEM_PROMPT,
+            output_config={"format": {"type": "json_schema", "schema": RESULT_SCHEMA}},
+            messages=[{"role": "user", "content": content}],
+        )
+        self.calls += 1
+        self.spent_usd += self._cost(response.usage)
+
+        if response.stop_reason == "refusal":
+            return CaptionResult(caption="Model declined to describe this window.",
+                                 type="none", confidence="low")
+        payload = json.loads(next(b.text for b in response.content if b.type == "text"))
+        return CaptionResult(
+            caption=payload["caption"],
+            type=payload["type"],
+            confidence=payload["confidence"],
         )
 
 
-def make_captioner(name: str) -> Captioner:
+def make_captioner(name: str, *, budget_usd: float | None = None) -> Captioner:
     """Build a captioner by the CLI-facing name."""
 
     if name == "mock":
         return MockCaptioner()
     if name == "claude":
-        return ClaudeCaptioner()
+        return ClaudeCaptioner(budget_usd=budget_usd)
     raise ValueError(f"unknown captioner {name!r}; choose mock or claude")
