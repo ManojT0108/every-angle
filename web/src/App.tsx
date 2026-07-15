@@ -12,12 +12,13 @@ type Tab = "verify" | "search" | "reel";
 export default function App() {
   const [tab, setTab] = useState<Tab>("search");
   const [reel, setReel] = useState<string[]>([]);
+  const [picked, setPicked] = useState<string | null>(null);
 
   const { data: matches, error: matchErr } = useQuery({
     queryKey: ["matches"],
     queryFn: api.matches,
   });
-  const matchId = matches?.[0]?.video_id;
+  const matchId = picked ?? matches?.[0]?.video_id;
 
   const { data: tl } = useQuery({
     queryKey: ["timeline", matchId],
@@ -25,9 +26,18 @@ export default function App() {
     enabled: Boolean(matchId),
   });
 
+  const shellProps = {
+    matches: matches ?? [],
+    matchId,
+    onPick: (id: string) => {
+      setPicked(id);
+      setReel([]);
+    },
+  };
+
   if (matchErr)
     return (
-      <Shell>
+      <Shell {...shellProps}>
         <ErrorNote>
           Could not reach the API — is the backend running on :8000?
           <br />
@@ -38,7 +48,7 @@ export default function App() {
 
   if (!matchId || !tl)
     return (
-      <Shell>
+      <Shell {...shellProps}>
         <Empty>Loading match…</Empty>
       </Shell>
     );
@@ -47,7 +57,7 @@ export default function App() {
   const goals = tl.events.filter((e) => e.type === "goal").length;
 
   return (
-    <Shell matchId={matchId} duration={tl.duration}>
+    <Shell {...shellProps} duration={tl.duration}>
       <Figures>
         <Figure
           label="Footage to review"
@@ -101,15 +111,30 @@ export default function App() {
   );
 }
 
+// Attribution is per-source and must be honest: SoccerTrack is CC BY and
+// shippable; a broadcast is copyrighted and local-only. Getting this wrong is
+// not a cosmetic bug.
+const SOURCES: Record<string, { label: string; license: string }> = {
+  "match-001": { label: "SoccerTrack v2", license: "CC BY 4.0" },
+};
+function sourceOf(id: string) {
+  return SOURCES[id] ?? { label: "Uploaded footage", license: "local only" };
+}
+
 function Shell({
   children,
+  matches,
   matchId,
   duration,
+  onPick,
 }: {
   children: ReactNode;
+  matches?: { video_id: string; duration: number }[];
   matchId?: string;
   duration?: number;
+  onPick?: (id: string) => void;
 }) {
+  const src = matchId ? sourceOf(matchId) : null;
   return (
     <div className="mx-auto max-w-[1180px] px-6 pb-24 pt-7">
       <header className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-4">
@@ -117,19 +142,40 @@ function Shell({
           <h1 className="display m-0 text-[30px] leading-none">Every&nbsp;Angle</h1>
           <span className="eyebrow">Moment intelligence</span>
         </div>
-        {matchId && (
-          <div className="tnum font-mono text-[11px] tracking-wide text-chalk-dim">
-            MATCH <b className="font-semibold text-chalk">{matchId}</b>
-            {duration ? ` · ${timecode(duration)}` : ""} ·{" "}
-            <b className="font-semibold text-chalk">SoccerTrack v2</b> CC BY 4.0
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-4">
+          {matches && matches.length > 1 && onPick && (
+            <div className="flex border border-line">
+              {matches.map((m) => (
+                <button
+                  key={m.video_id}
+                  onClick={() => onPick(m.video_id)}
+                  aria-pressed={m.video_id === matchId}
+                  className={`px-3 py-1.5 font-mono text-[11px] tracking-wide transition-colors ${
+                    m.video_id === matchId
+                      ? "bg-sodium text-sodium-ink"
+                      : "text-chalk-dim hover:text-chalk"
+                  }`}
+                >
+                  {sourceOf(m.video_id).label}
+                </button>
+              ))}
+            </div>
+          )}
+          {matchId && src && (
+            <div className="tnum font-mono text-[11px] tracking-wide text-chalk-dim">
+              {duration ? `${timecode(duration)} · ` : ""}
+              <b className="font-semibold text-chalk">{src.label}</b> {src.license}
+            </div>
+          )}
+        </div>
       </header>
 
       <main>{children}</main>
 
       <footer className="mt-11 flex flex-wrap justify-between gap-4 border-t border-line pt-4 font-mono text-[10.5px] tracking-wide text-chalk-faint">
-        <span>Match footage: SoccerTrack v2 © Atom Scott et al. · CC BY 4.0 · edited</span>
+        <span>
+          {matchId ? `${sourceOf(matchId).label} · ${sourceOf(matchId).license}` : ""}
+        </span>
         <span>Qdrant · Claude vision · FFmpeg</span>
       </footer>
     </div>

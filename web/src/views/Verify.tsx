@@ -234,7 +234,7 @@ function AddMoment({ matchId }: { matchId: string }) {
             onChange={(e) => setType(e.target.value as EventType)}
             className="border border-line bg-ink-900 px-2 py-1.5 text-[13px] outline-none focus:border-sodium"
           >
-            {["goal", "save", "penalty", "card", "counterattack"].map((t) => (
+            {["goal", "save", "penalty", "card", "counterattack", "celebration"].map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>

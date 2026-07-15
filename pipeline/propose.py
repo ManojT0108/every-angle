@@ -248,7 +248,11 @@ def main() -> None:
     windows_artifact = json.loads(args.windows.read_text(encoding="utf-8"))
     source = args.source or Path(windows_artifact["source"])
     frames_dir = args.frames_dir or args.output_dir / "frames"
-    captioner = make_captioner(args.captioner, budget_usd=args.budget_usd)
+    captioner = make_captioner(
+        args.captioner,
+        budget_usd=args.budget_usd,
+        profile=str(windows_artifact.get("profile", "fixed")),
+    )
     artifact = build_proposals(
         windows_artifact,
         source=source,

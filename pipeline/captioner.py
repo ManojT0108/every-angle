@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 
-EVENT_TYPES = ("goal", "save", "penalty", "card", "counterattack")
+EVENT_TYPES = ("goal", "save", "penalty", "card", "counterattack", "celebration")
 # A proposal may also come back as "none": the model looked and found nothing
 # notable. That is a GOOD outcome — most candidate windows are ordinary play,
 # and forcing every window into an exciting label is how you get a lying demo.
@@ -90,6 +90,37 @@ Rules:
   players walking back and lining up for a **restart from the centre circle**, is strong evidence \
   a goal was scored — a shot that misses or is saved is followed by a goal kick, a corner, or \
   play simply continuing. If you see the attack and then a centre-circle restart, label it "goal".
+- Label "goal" whenever the frames show evidence of a specific recent goal: the strike, a replay \
+  of it, a changed scoreline graphic, the immediate goal celebration, or players returning for a \
+  centre-circle restart. Reserve "celebration" exclusively for match-ending or ceremonial scenes: \
+  full-time celebrations, a lap of honour, players mobbing at the final whistle, a trophy lift, or \
+  a medal ceremony — celebration not attributable to a specific in-window goal. When in doubt \
+  between "goal" and "celebration", choose "goal".
+- Write the caption the way someone would SEARCH for the moment later, e.g. "low shot from the \
+  edge of the box beats the keeper at the near post" — not "players are moving"."""
+
+SYSTEM_PROMPT_BROADCAST = """You are labelling candidate moments from a football (soccer) match \
+for a highlights tool. The frames are consecutive samples from one short window of a directed \
+television broadcast, which may include close-ups, wide shots, replays, and camera cuts.
+
+Your job is to say what — if anything — notable happens in this window.
+
+Rules:
+- Describe ONLY what you can see. Never invent player names, team names, scores, or minutes, even \
+  if an on-screen graphic is only partly legible; downstream commentary is generated from your \
+  caption.
+- Most windows are NOT notable. Ordinary passing, players jogging, a throw-in, a restart, or a \
+  stoppage should be reported as type "none" with low confidence. Do not force an exciting label.
+- Read the frames in order. A directed broadcast can often show the ball, a shot, the net, player \
+  celebrations, and on-screen graphics, but camera cuts and replays may change viewpoint or time.
+- Base the label on visible evidence across the sequence. A replay or celebration can support an \
+  event label, but do not infer an event from a camera cut or crowd shot alone.
+- Label "goal" whenever the frames show evidence of a specific recent goal: the strike, a replay \
+  of it, a changed scoreline graphic, the immediate goal celebration, or players returning for a \
+  centre-circle restart. Reserve "celebration" exclusively for match-ending or ceremonial scenes: \
+  full-time celebrations, a lap of honour, players mobbing at the final whistle, a trophy lift, or \
+  a medal ceremony — celebration not attributable to a specific in-window goal. When in doubt \
+  between "goal" and "celebration", choose "goal".
 - Write the caption the way someone would SEARCH for the moment later, e.g. "low shot from the \
   edge of the box beats the keeper at the near post" — not "players are moving"."""
 
@@ -121,23 +152,36 @@ class ClaudeCaptioner(Captioner):
     """
 
     name = "claude"
-    prompt_version = "p2-strict-none"
+    prompt_version = "p3-celebration"
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
-        model: str = "claude-opus-4-8",
+        model: str = "claude-sonnet-5",
         budget_usd: float | None = None,
         max_tokens: int = 400,
+        profile: str = "fixed",
     ) -> None:
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model = model
         self.budget_usd = budget_usd
         self.max_tokens = max_tokens
+        self.profile = profile
+        self.prompt_version = (
+            "p3-broadcast-celebration"
+            if profile == "broadcast"
+            else "p3-celebration"
+        )
         self.spent_usd = 0.0
         self.calls = 0
         self._client = None
+
+    @property
+    def system_prompt(self) -> str:
+        if self.profile == "broadcast":
+            return SYSTEM_PROMPT_BROADCAST
+        return SYSTEM_PROMPT
 
     def _cost(self, usage: Any) -> float:
         rate_in, rate_out = PRICES.get(self.model, (5.0, 25.0))
@@ -213,7 +257,7 @@ class ClaudeCaptioner(Captioner):
         response = self._client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
-            system=SYSTEM_PROMPT,
+            system=self.system_prompt,
             output_config={"format": {"type": "json_schema", "schema": RESULT_SCHEMA}},
             messages=[{"role": "user", "content": content}],
         )
@@ -240,11 +284,16 @@ class ClaudeCaptioner(Captioner):
             )
 
 
-def make_captioner(name: str, *, budget_usd: float | None = None) -> Captioner:
+def make_captioner(
+    name: str,
+    *,
+    budget_usd: float | None = None,
+    profile: str = "fixed",
+) -> Captioner:
     """Build a captioner by the CLI-facing name."""
 
     if name == "mock":
         return MockCaptioner()
     if name == "claude":
-        return ClaudeCaptioner(budget_usd=budget_usd)
+        return ClaudeCaptioner(budget_usd=budget_usd, profile=profile)
     raise ValueError(f"unknown captioner {name!r}; choose mock or claude")

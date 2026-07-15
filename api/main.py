@@ -34,7 +34,9 @@ from pipeline.index_qdrant import (
 
 DATA_ROOT = Path(os.getenv("DATA_ROOT", "data")).resolve()
 FRONTEND_DIST = Path(__file__).resolve().parents[1] / "web" / "dist"
-EVENT_TYPES = Literal["goal", "save", "penalty", "card", "counterattack"]
+EVENT_TYPES = Literal[
+    "goal", "save", "penalty", "card", "counterattack", "celebration"
+]
 
 _EMBEDDING_MODEL_INSTANCE: Any | None = None
 _EMBEDDING_LOAD_ERROR: str | None = None

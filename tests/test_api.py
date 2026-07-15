@@ -265,6 +265,25 @@ def test_adding_human_event_updates_only_the_draft(
     assert [event["id"] for event in timeline["events"]] == ["e-published"]
 
 
+def test_adding_human_celebration_is_supported(
+    api_client: tuple[TestClient, Path],
+) -> None:
+    client, _ = api_client
+
+    response = client.post(
+        "/api/matches/match-test/events",
+        json={
+            "t_start": 80.0,
+            "t_end": 90.0,
+            "type": "celebration",
+            "caption": "team lifts the trophy after full time",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["type"] == "celebration"
+
+
 def test_search_returns_503_when_qdrant_is_down(
     api_client: tuple[TestClient, Path], monkeypatch: pytest.MonkeyPatch
 ) -> None:

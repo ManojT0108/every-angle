@@ -6,7 +6,13 @@
  * hard to forget which one you are holding.
  */
 
-export type EventType = "goal" | "save" | "penalty" | "card" | "counterattack";
+export type EventType =
+  | "goal"
+  | "save"
+  | "penalty"
+  | "card"
+  | "counterattack"
+  | "celebration";
 export type ProposalType = EventType | "none";
 export type Confidence = "high" | "medium" | "low";
 export type Decision = "pending" | "accepted" | "rejected";

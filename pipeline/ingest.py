@@ -26,7 +26,7 @@ from typing import Iterable
 # Bump whenever detector thresholds, cue combination, or scoring change in a
 # way that alters output for identical parameters — it is part of the run
 # provenance hash, so two runs that could differ must never hash the same.
-DETECTOR_VERSION = "d3-percentile"
+DETECTOR_VERSION = "d4-tail"
 
 DEFAULT_SCENE_THRESHOLD = 0.35
 DEFAULT_AUDIO_SAMPLE_RATE = 16_000
@@ -49,6 +49,8 @@ DEFAULT_MAX_WINDOWS = 60          # absolute ceiling (cost control)
 WINDOWS_PER_MINUTE = 0.9          # ~40 windows across a 45-min half
 CUES_FOR_FULL_DENSITY = 8         # a sustained burst, not a lone spike
 DEFAULT_MAX_WINDOW_SECONDS = 30.0 # a merged burst may be 90s long; the window must not be
+TAIL_WINDOW_SECONDS = 30
+MAX_TAIL_WINDOWS = 6
 
 
 # ---------------------------------------------------------------------------
@@ -132,6 +134,54 @@ class CandidateWindow:
     scene_cut: bool
     motion_peak: bool
     score: float
+    tail: bool = False
+
+
+def ensure_tail_coverage(
+    kept_windows: list[CandidateWindow], duration: float
+) -> list[CandidateWindow]:
+    """Append fixed EOF-aligned tiles wherever the trailing region has gaps."""
+
+    windows = list(kept_windows)
+    covered: list[tuple[float, float]] = []
+    for window in sorted(kept_windows, key=lambda item: item.t_start):
+        start = max(0.0, window.t_start)
+        end = min(duration, window.t_end)
+        if end <= start:
+            continue
+        if covered and start <= covered[-1][1]:
+            covered[-1] = (covered[-1][0], max(covered[-1][1], end))
+        else:
+            covered.append((start, end))
+
+    tiles: list[tuple[float, float]] = []
+    for k in range(1, MAX_TAIL_WINDOWS + 1):
+        t_end = round(duration - (k - 1) * TAIL_WINDOW_SECONDS, 3)
+        t_start = round(max(0.0, duration - k * TAIL_WINDOW_SECONDS), 3)
+        if t_end <= 0 or t_end <= t_start:
+            continue
+        tiles.append((t_start, t_end))
+
+    tail_count = 0
+    for t_start, t_end in reversed(tiles):
+        if any(start <= t_start and end >= t_end for start, end in covered):
+            continue
+        windows.append(
+            CandidateWindow(
+                id=f"w-{len(windows) + 1:03d}",
+                t_start=t_start,
+                t_end=t_end,
+                audio_peak=False,
+                scene_cut=False,
+                motion_peak=False,
+                score=0.0,
+                tail=True,
+            )
+        )
+        tail_count += 1
+
+    assert tail_count <= MAX_TAIL_WINDOWS
+    return windows
 
 
 def _run(command: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
@@ -448,7 +498,7 @@ def build_candidate_windows(
     profile: str = "fixed",
     max_windows: int = DEFAULT_MAX_WINDOWS,
 ) -> list[CandidateWindow]:
-    """Combine cue timestamps into capped, sorted candidate windows."""
+    """Combine cue timestamps into capped windows with additive tail coverage."""
 
     p = PROFILES[profile]
     pre_roll = p["pre_roll"]
@@ -477,17 +527,16 @@ def build_candidate_windows(
     )
     cues.sort(key=lambda cue: cue[0])
     if not cues:
-        return [
-            CandidateWindow(
-                id="w-001",
-                t_start=0.0,
-                t_end=round(min(duration, pre_roll + post_roll), 3),
-                audio_peak=False,
-                scene_cut=False,
-                motion_peak=False,
-                score=0.0,
-            )
-        ]
+        fallback = CandidateWindow(
+            id="w-001",
+            t_start=0.0,
+            t_end=round(min(duration, pre_roll + post_roll), 3),
+            audio_peak=False,
+            scene_cut=False,
+            motion_peak=False,
+            score=0.0,
+        )
+        return ensure_tail_coverage([fallback], duration)
 
     clusters: list[list[tuple[float, bool, bool, bool, float]]] = []
     for cue in cues:
@@ -595,13 +644,14 @@ def build_candidate_windows(
     windows.sort(key=lambda window: (-window.score, window.t_start))
     windows = windows[:cap]
     windows.sort(key=lambda window: window.t_start)
-    return [
+    kept_windows = [
         CandidateWindow(
             id=f"w-{index:03d}",
             **{key: value for key, value in asdict(window).items() if key != "id"},
         )
         for index, window in enumerate(windows, 1)
     ]
+    return ensure_tail_coverage(kept_windows, duration)
 
 
 def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD,
@@ -631,6 +681,9 @@ def detector_config(*, scene_threshold: float = DEFAULT_SCENE_THRESHOLD,
         "motion_median_multiplier": DEFAULT_MOTION_MEDIAN_MULTIPLIER,
         "motion_min_magnitude": DEFAULT_MOTION_MIN_MAGNITUDE,
         "max_windows": DEFAULT_MAX_WINDOWS,
+        "tail_window_seconds": TAIL_WINDOW_SECONDS,
+        "max_tail_windows": MAX_TAIL_WINDOWS,
+        "tail_region_seconds": MAX_TAIL_WINDOWS * TAIL_WINDOW_SECONDS,
     }
 
 

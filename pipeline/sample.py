@@ -33,6 +33,7 @@ from .track import probe_size, track
 
 DEFAULT_TIGHT_FRAMES = 5
 DEFAULT_WIDE_FRAMES = 3
+DEFAULT_BROADCAST_FRAMES = 8
 AFTERMATH_SECONDS = 8.0      # look PAST the window: the restart is the evidence
 MAX_SIGHTING_GAP_FRAMES = 25 # a sighting >1s from the sample time tells us nothing useful
 TIGHT_CROP_W, TIGHT_CROP_H = 1400, 788      # 16:9 window around the ball
@@ -97,6 +98,18 @@ def extract_wide(source: Path, t: float, size: tuple[int, int], destination: Pat
     )
 
 
+def extract_full(source: Path, t: float, size: tuple[int, int], destination: Path) -> None:
+    """Extract an aspect-preserving full frame from directed broadcast footage."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    _run_ffmpeg(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-ss", f"{max(0.0, t):.3f}",
+         "-i", str(source), "-frames:v", "1",
+         "-vf", "scale=1280:-2,format=yuvj420p",
+         "-q:v", "2", "-y", str(destination)],
+        f"full frame at {t:.2f}s",
+    )
+
+
 def extract_frames(
     source: Path,
     windows_artifact: dict[str, Any],
@@ -107,6 +120,61 @@ def extract_frames(
     wide_frames: int = DEFAULT_WIDE_FRAMES,
 ) -> dict[str, Any]:
     """Extract ball-tracked tight frames + wide aftermath frames per window."""
+
+    profile = str(windows_artifact.get("profile", "fixed"))
+    if profile == "broadcast":
+        size = probe_size(source)
+        duration = float(windows_artifact.get("duration") or 0.0)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        sampled: list[dict[str, Any]] = []
+        for window in windows_artifact.get("windows", []):
+            window_id = str(window["id"])
+            t_start, t_end = float(window["t_start"]), float(window["t_end"])
+            # Cap the last sample strictly inside the file. Sampling at exactly
+            # `duration` makes ffmpeg exit cleanly WITHOUT writing a frame (the
+            # same trap _wide_times() guards against), which would make
+            # samples.json overclaim the frame count. Fall back when duration is
+            # absent so a missing top-level duration cannot collapse the window.
+            reach = t_end + AFTERMATH_SECONDS
+            end = min(duration - 0.1, reach) if duration else reach
+            times = [
+                round(
+                    t_start + (end - t_start) * i / (DEFAULT_BROADCAST_FRAMES - 1),
+                    3,
+                )
+                for i in range(DEFAULT_BROADCAST_FRAMES)
+            ]
+
+            paths: list[str] = []
+            for i, t in enumerate(times, 1):
+                rel = Path(run_id) / window_id / f"frame-{i:03d}.jpg"
+                extract_full(source, t, size, output_dir / rel)
+                paths.append(rel.as_posix())
+
+            sampled.append({
+                "window_id": window_id,
+                "t_start": t_start,
+                "t_end": t_end,
+                "frames": paths,
+                "profile": "broadcast",
+                "ball_tracked": None,
+            })
+            print(
+                f"  {window_id}: {len(times)} full broadcast frames "
+                "(ball tracking skipped)",
+                file=sys.stderr,
+            )
+
+        return {
+            "video_id": windows_artifact.get("video_id", source.stem),
+            "run_id": run_id,
+            "source": str(source),
+            "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "profile": "broadcast",
+            "frames_per_window": DEFAULT_BROADCAST_FRAMES,
+            "windows": sampled,
+        }
 
     if tight_frames < 1 or wide_frames < 0:
         raise ValueError("need at least one tight frame and non-negative wide frames")

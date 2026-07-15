@@ -43,3 +43,15 @@ def test_every_detector_knob_is_in_the_provenance_config():
 def test_config_carries_a_detector_version():
     assert ingest.detector_config()["detector_version"] == ingest.DETECTOR_VERSION
     assert isinstance(ingest.DETECTOR_VERSION, str) and ingest.DETECTOR_VERSION
+
+
+def test_config_carries_tail_coverage_geometry():
+    config = ingest.detector_config()
+
+    assert config["detector_version"] == "d4-tail"
+    assert config["tail_window_seconds"] == ingest.TAIL_WINDOW_SECONDS
+    assert config["max_tail_windows"] == ingest.MAX_TAIL_WINDOWS
+    assert config["tail_region_seconds"] == (
+        ingest.MAX_TAIL_WINDOWS * ingest.TAIL_WINDOW_SECONDS
+    )
+    assert "tail_covered_fraction" not in config
