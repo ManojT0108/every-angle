@@ -49,7 +49,7 @@ redistribute `match-002`.
   manifest path are guarded without copying real media in the test.
 - [x] Run Ruff, pytest, frontend tests, frontend build/lint, `git diff --check`, and a Docker build.
 - [x] Run the independent code-review loop and preserve its final verdict.
-- [ ] Commit and push the release to `main` (authorized by the user's request to update the live demo),
+- [x] Commit and push the release to `main` (authorized by the user's request to update the live demo),
   then trigger/observe Render's deployment and live-smoke both match IDs, match-002 search, one
   broadcast clip, and reel assembly.
 
