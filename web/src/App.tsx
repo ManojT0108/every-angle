@@ -291,11 +291,11 @@ function WorkspaceLink({
   );
 }
 
-// Attribution is per-source and must be honest: SoccerTrack is CC BY and
-// shippable; a broadcast is copyrighted and local-only. Getting this wrong is
-// not a cosmetic bug.
+// Attribution is per-source and must be honest. Getting this wrong is not a
+// cosmetic bug.
 const SOURCES: Record<string, { label: string; license: string }> = {
   "match-001": { label: "SoccerTrack v2", license: "CC BY 4.0" },
+  "match-002": { label: "Broadcast feed", license: "user-provided" },
 };
 function sourceOf(id: string) {
   return SOURCES[id] ?? { label: "Uploaded footage", license: "local only" };

@@ -20,11 +20,17 @@ Fields: source URL, creator, license + version, attribution text, download date,
   - RISK: amateur-match audio may lack crowd-roar peaks → D3 audio gating may underperform; fallback = scene-motion/optical-flow density gate. Validate on first ingest.
   - 4K files are large: download ONE match, transcode a 720p working copy, archive the original.
 
-## match-002 (BACKUP) — YouTube CC-BY amateur/semi-pro match
+## match-002 (PUBLIC DEMO) — user-provided broadcast feed
 
-- **Source:** to be selected via YouTube search with Creative Commons filter (yt-dlp verifies `license: Creative Commons Attribution` in metadata before download).
-- **License:** CC BY (YouTube's only CC option). MUST verify per-video via yt-dlp metadata, not the search filter alone; reject anything with Content ID claims or broadcast graphics/commentary.
-- **Status:** not yet selected — only needed if match-001 footage proves unusable (e.g., panoramic view unacceptable for demo).
+- **Source:** provided directly by the user; source footage and rights-holder details are not stored in this repository.
+- **Creator / rights holder:** not recorded in the repository; the user affirmed that they hold the required redistribution permission.
+- **License / authorization:** direct user authorization, not an open-license claim. On 2026-07-16, the user confirmed that they have permission to publicly redistribute `match-002` and explicitly authorized its processed artifacts for the public Every Angle demo.
+- **Derivatives allowed:** public distribution of the processed artifacts listed below is authorized; no broader rights claim is made.
+- **Download date:** not recorded; the source remains local and is excluded from the repository and deploy image.
+- **Attribution label:** `Broadcast feed · user-provided`.
+- **Shipped derivatives:** `CURRENT_REV`, `windows.json`, `proposals.json`, `decisions.json`, `staging/rev-3/manifest.json` (30 events), 35 accepted/rejected notable-event clips (`clips/e-001.mp4` through `clips/e-035.mp4`), and 66 latest-run Review posters (`frames/r-20260715T075521Z-bc-p-001/frame-001.jpg` through `...-p-066/frame-001.jpg`).
+- **Excluded:** the 2.9 GB source video, sampled-frame index, generated reels, old staging revisions, staging clip duplicates, and the other seven evidence frames per proposal.
+- **Notes:** no team, score, scorer, or event fact is hardcoded in the product; the UI reads the reviewed manifest and proposal artifacts.
 
 ## Rejected sources (do not use)
 

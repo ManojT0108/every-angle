@@ -1,4 +1,4 @@
-"""Seed Qdrant Cloud with match-001's verified events — create-if-missing + upsert-verify.
+"""Seed Qdrant Cloud with a bundle's verified events — create-if-missing + upsert-verify.
 
 Non-destructive by default (safe re-run); destructive rebuild requires --force.
 Env: QDRANT_URL, QDRANT_API_KEY. Run: ./.venv/bin/python -m scripts.seed_qdrant
@@ -38,8 +38,10 @@ def main() -> None:
         sys.exit("QDRANT_URL is required (source .env.deploy)")
 
     bundle = Path(args.bundle)
-    manifest = json.loads((bundle / "staging/rev-1/manifest.json").read_text())
     revision = int((bundle / "CURRENT_REV").read_text().strip())
+    manifest = json.loads(
+        (bundle / f"staging/rev-{revision}/manifest.json").read_text()
+    )
     coll = collection_name(revision)
     events = manifest["events"]
 

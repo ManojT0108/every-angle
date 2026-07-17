@@ -73,10 +73,13 @@ python3 -m venv .venv
 ./.venv/bin/pip install -r requirements.txt
 (cd web && npm ci)
 
-mkdir -p data/match-001
+mkdir -p data/match-001 data/match-002
 cp -R deploy/bundle/match-001/. data/match-001/
+cp -R deploy/bundle/match-002/. data/match-002/
 QDRANT_URL=http://localhost:6333 ./.venv/bin/python -m scripts.seed_qdrant \
-  --bundle data/match-001
+  --bundle data/match-001 --video-id match-001
+QDRANT_URL=http://localhost:6333 ./.venv/bin/python -m scripts.seed_qdrant \
+  --bundle data/match-002 --video-id match-002
 
 ./scripts/run_app.sh --dev
 ```
@@ -96,12 +99,16 @@ by Qdrant Cloud. The container builds the Vite application, preloads the local e
 ships only the redistributable demo bundle, restores that baseline on restart, and serves the UI,
 API, and media from one origin.
 
-Import the Blueprint in Render, then provide `QDRANT_URL` and `QDRANT_API_KEY` as secrets. The
-Qdrant collection must be seeded once before the first demo:
+Import the Blueprint in Render, then provide `QDRANT_URL` and `QDRANT_API_KEY` as secrets. Both
+Qdrant collections must be seeded once before the first demo:
 
 ```bash
 QDRANT_URL=https://your-cluster QDRANT_API_KEY=your-key \
-  ./.venv/bin/python -m scripts.seed_qdrant
+  ./.venv/bin/python -m scripts.seed_qdrant \
+  --bundle deploy/bundle/match-001 --video-id match-001
+QDRANT_URL=https://your-cluster QDRANT_API_KEY=your-key \
+  ./.venv/bin/python -m scripts.seed_qdrant \
+  --bundle deploy/bundle/match-002 --video-id match-002
 ```
 
 After that one-time index seed, the Docker build and `/api/matches` health check are
@@ -109,13 +116,11 @@ self-contained; startup reconciles the seeded points with the restored manifest.
 
 ## Demo data and licensing
 
-The public bundle contains only one edited SoccerTrack v2 match half. SoccerTrack v2 is licensed
-under CC BY 4.0; full source and attribution details are recorded in
-[`docs/assets-manifest.md`](docs/assets-manifest.md).
-
-Professional broadcast footage was used locally to test the alternate already-directed input
-profile. It is copyrighted and is not present in Git, the deploy image, screenshots, or the demo
-video. Every public claim and shot must remain grounded in the CC-BY match.
+The public bundle contains two processed matches. The edited SoccerTrack v2 match half is licensed
+under CC BY 4.0. The second is an authorized, user-provided broadcast feed; only its detector
+timeline, proposals, review decisions, verified manifest, event clips, and Review posters ship.
+Neither source video is included. Full attribution, authorization, and derivative details are
+recorded in [`docs/assets-manifest.md`](docs/assets-manifest.md).
 
 ## Reproducible checks
 

@@ -36,12 +36,13 @@ COPY pipeline/ pipeline/
 COPY scripts/seed_qdrant.py scripts/
 COPY --from=web /web/dist web/dist
 COPY deploy/bundle/match-001 /app/baseline/match-001
+COPY deploy/bundle/match-002 /app/baseline/match-002
 COPY deploy/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Build-time guard: the baseline must NOT contain a source video or match-002.
-RUN if [ -e /app/baseline/match-002 ] || find /app/baseline -path '*source*' -name '*.mp4' | grep -q . ; then \
-      echo "FORBIDDEN content in baseline (source video or match-002)"; exit 1; fi
+# Build-time guard: neither processed baseline may contain source footage.
+RUN if find /app/baseline -path '*source*' -name '*.mp4' | grep -q . ; then \
+      echo "FORBIDDEN source video in baseline"; exit 1; fi
 
 EXPOSE 10000
 ENTRYPOINT ["/app/entrypoint.sh"]

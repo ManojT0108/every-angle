@@ -7,7 +7,7 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/matches
-    autoDeploy: false
+    autoDeployTrigger: commit
     envVars:
       - key: QDRANT_URL
         sync: false

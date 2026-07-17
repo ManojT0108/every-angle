@@ -1,0 +1,2822 @@
+{
+  "video_id": "match-002",
+  "asset": "docs/assets-manifest.md#match-002",
+  "runs": [
+    {
+      "run_id": "r-20260715T053511Z-bc",
+      "created_at": "2026-07-15T05:36:42.701196Z",
+      "source_sha256": "806934e289d0d2dbd293a7713fd087c7a04e3844592089f8cadbfd4b9f629c68",
+      "detector_config_hash": "bb9073269949219b4414d696b63730d9db4bd31c406885265b78abe2341c60b4",
+      "captioner": {
+        "name": "claude",
+        "model": "claude-opus-4-8",
+        "prompt_version": "p2-broadcast"
+      }
+    },
+    {
+      "run_id": "r-20260715T072150Z-bc",
+      "created_at": "2026-07-15T07:26:49.401569Z",
+      "source_sha256": "806934e289d0d2dbd293a7713fd087c7a04e3844592089f8cadbfd4b9f629c68",
+      "detector_config_hash": "2903a1f90ecdc36ae6cc75925b980e96703e471705aa44f9eded5392da15b3cc",
+      "captioner": {
+        "name": "claude",
+        "model": "claude-opus-4-8",
+        "prompt_version": "p3-broadcast-celebration"
+      }
+    },
+    {
+      "run_id": "r-20260715T075521Z-bc",
+      "created_at": "2026-07-15T07:56:29.282204Z",
+      "source_sha256": "806934e289d0d2dbd293a7713fd087c7a04e3844592089f8cadbfd4b9f629c68",
+      "detector_config_hash": "2903a1f90ecdc36ae6cc75925b980e96703e471705aa44f9eded5392da15b3cc",
+      "captioner": {
+        "name": "claude",
+        "model": "claude-opus-4-8",
+        "prompt_version": "p3-broadcast-celebration"
+      }
+    }
+  ],
+  "proposals": [
+    {
+      "id": "r-20260715T053511Z-bc-p-001",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 177.25,
+      "t_end": 207.25,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Pre-match coin toss between the two captains and match officials, followed by an on-screen team lineup graphic",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-001/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-001/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-002",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 199.75,
+      "t_end": 229.75,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Pre-match coin toss between captains at centre circle with match officials, followed by broadcast lineup graphics and a close-up of a player before kick-off",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-002/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-002/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-003",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 222.25,
+      "t_end": 252.25,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Pre-match starting lineup graphic for Real Madrid CF followed by close-up shots of players from both teams before the 2022 final in Paris",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-003/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-003/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-004",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 244.75,
+      "t_end": 274.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Pre-match player close-ups and wide shots of a packed stadium before kickoff of a Champions League final, with teams taking a knee and lining up at the centre circle",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-004/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-004/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-005",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 267.25,
+      "t_end": 297.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Champions League final kickoff, players take a knee before the opening minutes with the score 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-005/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-005/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-006",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 280.75,
+      "t_end": 310.75,
+      "type": "none",
+      "confidence": "high",
+      "caption": "kickoff of the Champions League final, Liverpool vs Real Madrid at 0-0, teams building play from the halfway line in the opening seconds",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-006/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-006/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-007",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 303.25,
+      "t_end": 333.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Opening minute of the match, teams in white and red build up play in midfield with the red team pressing into the attacking third near the box, no clear chance created",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-007/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-007/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-008",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 325.75,
+      "t_end": 355.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Early-match midfield build-up in the opening minutes, with a brief crowd tifo shot, no clear goal or shot on target",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-008/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-008/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-009",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 1482.75,
+      "t_end": 1512.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking side works the ball into the box and forces the goalkeeper into a low save at his near post, gathering the ball on the ground before defenders clear",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-009/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-009/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-010",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 1505.25,
+      "t_end": 1535.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield challenge and tussle near the halfway line with score shown 0-0, followed by a replay of a red-shirted player being fouled and going to ground; no shot or goal in this window",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-010/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-010/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-011",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 2830.75,
+      "t_end": 2860.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "white-shirted striker forces the ball toward goal in a goalmouth scramble but the effort is disallowed, play continues at 0-0 with replays shown",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-011/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-011/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-012",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 2853.25,
+      "t_end": 2883.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "striker in white slots the ball past the keeper into the net near the goal line but the effort is ruled out for offside, referee talks to the number 9 forward with the score still 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-012/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-012/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-013",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 2875.75,
+      "t_end": 2905.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "number 9 forward turns the ball home past the goalkeeper in a goalmouth scramble but the goal is disallowed, referee talks to the striker with score remaining 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-013/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-013/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-014",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 2898.25,
+      "t_end": 2928.25,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "striker fires the ball into the net from close range in a crowded penalty area, sparking celebration, but the goal is under VAR goal check review with the scoreboard still reading 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-014/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-014/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-015",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 3935.5,
+      "t_end": 3965.5,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "Liverpool attack with a shot inside the box in a crowded goalmouth scramble, but the Real Madrid keeper and defenders keep it out; score stays 0-0 as play resets to midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-015/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-015/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-016",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 3958.0,
+      "t_end": 3988.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Player close-ups and a manager on the touchline followed by midfield build-up play with the score at 0-0; no notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-016/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-016/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-017",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 3980.5,
+      "t_end": 4010.5,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "RMA break forward and finish at the near post to open the scoring, scoreline changes from 0-0 to 0-1, with the scorer wheeling away in celebration in front of the crowd and teammates mobbing near the corner",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-017/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-017/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-018",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4012.75,
+      "t_end": 4042.75,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "team in white opens the scoring, sliding finish into the empty net at the far post, scoreline changes from 0-0 to 0-1 as players celebrate by the corner flag with replays of the tap-in",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-018/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-018/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-019",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4035.25,
+      "t_end": 4065.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "white team break through on the counter, a low finish slides past the diving keeper into the bottom corner, sparking wild celebrations and team pile-on in front of the crowd",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-019/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-019/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-020",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4057.75,
+      "t_end": 4087.75,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "striker slides the ball past the diving goalkeeper into the net, sparking wild celebrations among teammates and setting the score to 0-1 for the away side",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-020/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-020/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-021",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4080.25,
+      "t_end": 4110.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "Real Madrid celebrate the opening goal, scored by number 20, with fans setting off a flare in the stands and the scoreboard showing 0-1 before play restarts from the halfway line",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-021/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-021/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-022",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4102.75,
+      "t_end": 4132.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Midfield build-up play around the halfway line with no clear chance; scoreline shows 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-022/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-022/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-023",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4191.75,
+      "t_end": 4221.75,
+      "type": "card",
+      "confidence": "high",
+      "caption": "Liverpool number 3 Fabinho shown a yellow card by the referee for a foul on a Real Madrid player, with a replay of the challenge near the touchline",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-023/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-023/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-024",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4214.25,
+      "t_end": 4244.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Midfield foul as a white-shirted player drives past two red-shirted opponents and a red number 3 goes to ground, followed by a coaching-staff reaction shot and play resuming with the score shown as 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-024/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-024/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-025",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4929.25,
+      "t_end": 4959.25,
+      "type": "save",
+      "confidence": "high",
+      "caption": "number 66 in red drives a low shot from the edge of the box at goal, but the goalkeeper makes the save, with a red shirt player holding his head in frustration",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-025/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-025/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-026",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4951.75,
+      "t_end": 4981.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Stoppage in play around the 74th minute with a red-shirted player receiving attention from the medical staff on the touchline before the game resumes in midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-026/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-026/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-027",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4974.25,
+      "t_end": 5004.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with a throw-in and a player from the white team going down injured, followed by a broadcast graphic transition",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-027/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-027/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-028",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 4996.04,
+      "t_end": 5026.04,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play then a stoppage as a white-shirted player goes down injured, with a replay of the challenge shown before play resumes",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-028/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-028/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-029",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5018.54,
+      "t_end": 5048.54,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Champions League final at 0-1, play resumes with a restart near the box and possession moves into midfield; no clear goal or save visible",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-029/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-029/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-030",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5041.04,
+      "t_end": 5071.04,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Champions League final resumes with midfield play, score 0-1; graphic notes earlier goal, no new notable event in this window",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-030/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-030/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-031",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5323.75,
+      "t_end": 5353.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "players in red appeal to the referee near the edge of the box before a free-kick restart, with the referee gesturing and play resuming",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-031/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-031/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-032",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5346.25,
+      "t_end": 5376.25,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking side works the ball into the box and forces a scramble in front of goal, with defenders clearing off the line and a defender reacting in disbelief with hands on head",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-032/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-032/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-033",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5368.75,
+      "t_end": 5398.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking team works the ball into the box, number 8 fires a shot toward goal but the goalkeeper makes a save at his near post, followed by a defender reacting with raised fists before play resumes",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-033/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-033/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-034",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5417.75,
+      "t_end": 5447.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking break down the right, low shot forced a diving save from the keeper with a replay showing the ball pushed wide, leading to a corner kick",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-034/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-034/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-035",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5440.25,
+      "t_end": 5470.25,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "Goalkeeper smothers the ball at the near post to deny a red-shirted attacker, then the team wins a corner which is played in and cleared before play moves back to the centre circle at 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-035/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-035/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-036",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5462.5,
+      "t_end": 5492.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play around the 83rd minute with the ball moving between the halves before the goalkeeper collects it for a restart",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-036/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-036/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-037",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5462.75,
+      "t_end": 5492.75,
+      "type": "save",
+      "confidence": "low",
+      "caption": "attacking team works the ball forward and gets a shot away that the goalkeeper deals with, before he sets up to restart play from his own box",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-037/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-037/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-038",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5485.0,
+      "t_end": 5515.0,
+      "type": "save",
+      "confidence": "high",
+      "caption": "red-shirted attacker breaks into the box and shoots low toward the near post, but the green-kitted goalkeeper makes a sprawling save, replay shows the striker slotting a shot that the keeper blocks",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-038/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-038/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-039",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5562.0,
+      "t_end": 5592.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution for the white team in the 84th minute, number 15 Federico Valverde replaced by number 25 Eduardo Camavinga, with the outgoing player applauding the crowd as the fourth official holds up the board",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-039/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-039/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-040",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5584.5,
+      "t_end": 5614.5,
+      "type": "none",
+      "confidence": "high",
+      "caption": "substitution for the white team, number 15 Valverde off and number 25 Camavinga on, applauded as he leaves the pitch before play resumes",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-040/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-040/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-041",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5607.0,
+      "t_end": 5637.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Substitution shown with Camavinga replacing Valverde, followed by resumption of midfield play in the second half",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-041/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-041/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-042",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5629.5,
+      "t_end": 5659.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield build-up play with the white team keeping possession, one side dribbling past a defender near the touchline, no shot or goal in this window",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-042/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-042/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-043",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5734.36,
+      "t_end": 5764.36,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Late-game build-up around the 87th minute with the trailing team pressing; players gather in the penalty area for a set-piece, but no shot or clear event is visible",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-043/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-043/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-044",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5756.86,
+      "t_end": 5786.86,
+      "type": "save",
+      "confidence": "high",
+      "caption": "Corner delivered into a crowded six-yard box, goalkeeper number 1 claims the ball ahead of attacking number 5 with players jostling at the near post",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-044/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-044/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-045",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5779.36,
+      "t_end": 5809.36,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "players surround the referee protesting after a challenge, followed by replays of the goalkeeper claiming a high ball under pressure from an attacker, then a substitute preparing to come on with the score 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-045/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-045/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-046",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5801.86,
+      "t_end": 5831.86,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Substitution being prepared around the 88th minute with a player waiting on the touchline next to the manager, plus close-ups of players before midfield play resumes at 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-046/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-046/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-047",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5824.36,
+      "t_end": 5854.36,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Substitution for the team in white (number 19 D. Ceballos coming on) late in the match with the fourth official holding up the electronic board",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-047/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-047/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-048",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5836.44,
+      "t_end": 5866.44,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Substitution made in the 89th minute, number 10 replaced by number 19 (D. Ceballos on), with the substituted player walking off and fans in the stands",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-048/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-048/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-049",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5858.94,
+      "t_end": 5888.94,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Real Madrid substitution in the 89th minute, number 10 Modric off and number 19 Dani Ceballos on, followed by midfield play resuming",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-049/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-049/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-050",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5881.44,
+      "t_end": 5911.44,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Late-game midfield build-up around the 90th minute with a scoreline of 0-1, ending in a close tussle between an attacker and defender near the touchline",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-050/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-050/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-051",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 5978.25,
+      "t_end": 6008.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Late attacking build-up near the box in stoppage time before a broadcast graphic transition and a wide shot of the packed crowd",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-051/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-051/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-052",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6000.75,
+      "t_end": 6030.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "stats graphic and player close-ups during a stoppage late in the second half, with crowd shots and restart from the centre circle at 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-052/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-052/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-053",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6023.25,
+      "t_end": 6053.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "late stoppage-time play near the touchline with a physical challenge between two players by the advertising boards; flares visible in the crowd",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-053/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-053/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-054",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6169.5,
+      "t_end": 6199.5,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "Goalkeeper in green smothers the ball on the ground near the touchline in stoppage time, followed by close-ups of players and midfield build-up play",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-054/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-054/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-055",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6192.0,
+      "t_end": 6222.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Final whistle at 90:00 with score 0-1, players and substitutes in tracksuits run onto the pitch to celebrate the Champions League final victory",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-055/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-055/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-056",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6205.44,
+      "t_end": 6235.44,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Final whistle at 90:00 with the score 0-1; players and substitutes in green tracksuits sprint onto the pitch to celebrate the trophy win while a beaten player sits dejected on the grass and VIPs in the stands applaud",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-056/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-056/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-057",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6227.94,
+      "t_end": 6257.94,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "final whistle celebrations as white-shirted team wins the final 1-0, players in tracksuits sprint onto the pitch, one player collapses to the ground overcome with emotion while dejected red-shirted opponents kneel",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-057/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-057/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-058",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6250.44,
+      "t_end": 6280.44,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "post-match celebration and emotional reactions as players in white celebrate on the pitch while dejected players in red look on after a final",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-058/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-058/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-059",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6272.94,
+      "t_end": 6302.94,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Full-time celebrations after the final: winning team players celebrate together in front of their fans while opposition players slump dejected, with on-screen graphic showing a 0-1 final score and the winning goal scored in the 59th minute",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-059/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-059/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T053511Z-bc-p-060",
+      "run_id": "r-20260715T053511Z-bc",
+      "t_start": 6295.44,
+      "t_end": 6325.44,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Full-time scenes after a Champions League final, winning team players and staff in green celebrate on the pitch while the losing team's players and bench look dejected; on-screen graphic reads Full Time 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T053511Z-bc-p-060/frame-001.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-002.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-003.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-004.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-005.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-006.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-007.jpg",
+          "frames/r-20260715T053511Z-bc-p-060/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-001",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 177.25,
+      "t_end": 207.25,
+      "type": "none",
+      "confidence": "high",
+      "caption": "pre-match coin toss between captains with match officials, followed by team lineup graphic on screen",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-001/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-001/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-002",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 199.75,
+      "t_end": 229.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "pre-match captains coin toss with referees, followed by Real Madrid starting lineup graphic and a close-up of a player before kickoff",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-002/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-002/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-003",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 222.25,
+      "t_end": 252.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "pre-match team lineup graphic followed by close-up shots of individual players before kickoff of the final",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-003/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-003/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-004",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 244.75,
+      "t_end": 274.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "pre-match player close-ups and teams lining up at the centre circle before kick-off in a Champions League final at the Stade de France",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-004/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-004/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-005",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 267.25,
+      "t_end": 297.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Champions League final kickoff, players line up and take a knee before the opening minute with the score 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-005/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-005/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-006",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 280.75,
+      "t_end": 310.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Kick-off of the Champions League final, teams playing out from the centre circle with the score 0-0 in the opening 30 seconds",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-006/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-006/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-007",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 303.25,
+      "t_end": 333.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "opening minute of the match, red team building an attack into the final third with players pressing near the box but no shot on goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-007/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-007/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-008",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 325.75,
+      "t_end": 355.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "early-game midfield build-up play in the opening minutes with the score at 0-0, referee gesturing and crowd tifo banner shown",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-008/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-008/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-009",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 1482.75,
+      "t_end": 1512.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "goalkeeper dives to smother a shot in the box, scoreline stays 0-0, with a replay of the attacking move",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-009/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-009/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-010",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 1505.25,
+      "t_end": 1535.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield battle with a player fouled and going to ground, score shown 0-0, play continues with defenders challenging for the ball",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-010/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-010/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-011",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 2830.75,
+      "t_end": 2860.75,
+      "type": "goal",
+      "confidence": "low",
+      "caption": "white-shirted striker forces the ball past the keeper at close range in a goalmouth scramble but the effort is disallowed, followed by replays of the buildup with the score staying 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-011/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-011/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-012",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 2853.25,
+      "t_end": 2883.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "striker in white slots the ball into the empty net from close range after a scramble, but the goal is disallowed with the scoreline remaining 0-0 as the referee speaks to the number 9",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-012/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-012/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-013",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 2875.75,
+      "t_end": 2905.75,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "striker slots the ball past the keeper in a crowded box but the goal is disallowed after review, score remains 0-0 as the number 9 pleads with the referee",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-013/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-013/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-014",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 2898.25,
+      "t_end": 2928.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "striker slots home from close range inside the six-yard box and wheels away in celebration, but the goal is disallowed after a VAR goal check with the score still shown as 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-014/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-014/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T072150Z-bc-p-015",
+      "run_id": "r-20260715T072150Z-bc",
+      "t_start": 3935.5,
+      "t_end": 3965.5,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking build-up into the box, number 11 in red gets a shot away in a crowded penalty area but the effort is blocked/saved, play continues with score still 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T072150Z-bc-p-015/frame-001.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-002.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-003.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-004.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-005.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-006.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-007.jpg",
+          "frames/r-20260715T072150Z-bc-p-015/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-001",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 177.25,
+      "t_end": 207.25,
+      "type": "none",
+      "confidence": "high",
+      "caption": "pre-match coin toss between the two captains with referees, followed by team line-up graphic",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-001/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-002",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 199.75,
+      "t_end": 229.75,
+      "type": "none",
+      "confidence": "high",
+      "caption": "Pre-match captains coin toss with referees, followed by team lineup graphics and a close-up of a player before kickoff",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-002/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-003",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 222.25,
+      "t_end": 252.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Pre-match lineup graphic for Real Madrid followed by close-up shots of individual players before the Champions League final in Paris",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-003/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-004",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 244.75,
+      "t_end": 274.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "pre-match player close-ups and teams lining up around the centre circle for kick-off in a Champions League final at Stade de France",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-004/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-005",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 267.25,
+      "t_end": 297.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "kick-off of the Champions League final, players line up at centre circle with score 0-0 in the opening seconds",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-005/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-006",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 280.75,
+      "t_end": 310.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "kickoff of the Champions League final with the score 0-0, early build-up play in the opening minute",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-006/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-007",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 303.25,
+      "t_end": 333.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "early build-up play in the opening minute with the red team attacking into the white team's half near the penalty area, score still 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-007/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-008",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 325.75,
+      "t_end": 355.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "early first-minute midfield build-up play with a brief crowd tifo display shown, score still 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-008/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-009",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 1482.75,
+      "t_end": 1512.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "goalkeeper gathers the ball at his near post to deny an attacking move as the score stays level, with a close-up replay of the goalmouth scramble",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-009/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-010",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 1505.25,
+      "t_end": 1535.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield challenge and physical duel between red and white shirts, ball worked around the centre circle with score at 0-0, no clear goal or shot on target",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-010/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-011",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 2830.75,
+      "t_end": 2860.75,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "striker in white bundles the ball in near the goal line but the score stays 0-0, replay shows a scramble in front of the keeper and a possible offside or disallowed goal in the penalty area",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-011/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-012",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 2853.25,
+      "t_end": 2883.25,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "striker in white tucks the ball into the empty net near the far post but it is disallowed, replays show the finish and a scoreline still reading 0-0 as the referee speaks to the number 9",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-012/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-013",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 2875.75,
+      "t_end": 2905.75,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "striker rounds a scramble in the six-yard box and forces the ball over the line but the goal is disallowed, scoreline stays 0-0 as the number 9 pleads with the referee",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-013/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-014",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 2898.25,
+      "t_end": 2928.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "striker turns in a close-range finish inside the six-yard box and celebrates, but the goal is under VAR goal check with the graphic still showing 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-014/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-015",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 3935.5,
+      "t_end": 3965.5,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking pressure in the box with a shot number 11 in red hits at goal but the keeper and defenders block on the line, scoreline stays 0-0",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-015/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-016",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 3958.0,
+      "t_end": 3988.0,
+      "type": "none",
+      "confidence": "low",
+      "caption": "Player close-ups and manager cutaway with score 0-0, then midfield build-up play with no notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-016/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-017",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 3980.5,
+      "t_end": 4010.5,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "right-wing attacker taps in at the far post to open the scoring, then wheels away to celebrate in front of the fans as the scoreline changes to 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-017/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-018",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4012.75,
+      "t_end": 4042.75,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "White-shirted team scores to make it 0-1, players celebrate by the corner flag with replays showing a low finish slotted past the diving keeper at the far post",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-018/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-019",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4035.25,
+      "t_end": 4065.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "counterattack down the right, cutback across the six-yard box tucked past the diving keeper into the far corner, followed by player kissing the badge and team celebration",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-019/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-020",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4057.75,
+      "t_end": 4087.75,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "striker slides the ball past the sprawling keeper into the empty net, sparking wild bench and player celebrations before the graphic shows a 0-1 scoreline and players return for the centre-circle restart",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-020/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-021",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4080.25,
+      "t_end": 4110.25,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "Vinicius Junior scoring graphic shown with fans celebrating and flares in the stand, close-up of the scorer and centre-circle restart with the scoreline at 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-021/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-022",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4102.75,
+      "t_end": 4132.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play around the halfway line with the score shown as 0-1, ordinary passing and no notable action in this window",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-022/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-023",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4191.75,
+      "t_end": 4221.75,
+      "type": "card",
+      "confidence": "high",
+      "caption": "referee shows a yellow card to number 3 Fabinho, with a replay of the tackle on an opponent in the Liverpool half",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-023/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-024",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4214.25,
+      "t_end": 4244.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfielder in white rides a challenge and tumbles a red-shirted defender in midfield, play continues in open midfield around the 62nd minute with the score 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-024/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-025",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4929.25,
+      "t_end": 4959.25,
+      "type": "save",
+      "confidence": "high",
+      "caption": "number 66 shoots from the edge of the box but the goalkeeper makes the save, ball goes for a goal kick as the attacker holds his head in frustration",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-025/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-026",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4951.75,
+      "t_end": 4981.75,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "stoppage in play around the 74th minute as a red-shirted player receives instructions from a coach on the touchline before play resumes with a goalkeeper distribution",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-026/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-027",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4974.25,
+      "t_end": 5004.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "play continues in midfield before a stoppage as a player in white goes down injured on the pitch",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-027/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-028",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 4996.04,
+      "t_end": 5026.04,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "play stoppage after a white-shirted player goes down injured on the pitch, with a replay of a challenge shown before play resumes",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-028/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-029",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5018.54,
+      "t_end": 5048.54,
+      "type": "none",
+      "confidence": "low",
+      "caption": "substitution and stoppage around the 75th minute before play restarts in midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-029/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-030",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5041.04,
+      "t_end": 5071.04,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play with the score at 0-1, graphic recaps earlier goal but no new notable action in this window",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-030/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-031",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5323.75,
+      "t_end": 5353.75,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players appeal to the referee near the edge of the box before play restarts with a build-up from the back, score unchanged",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-031/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-032",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5346.25,
+      "t_end": 5376.25,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking side works the ball into the box and forces a scramble in front of goal, with a shot blocked or cleared off the line as defenders react in disbelief",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-032/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-033",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5368.75,
+      "t_end": 5398.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacking corner or set-piece scramble in the six-yard box, red number 8 gets a shot away but it is blocked by defenders in front of the keeper, play resumes with score still 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-033/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-034",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5417.75,
+      "t_end": 5447.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attacker in red breaks through on goal but the goalkeeper saves at his feet, ball diverted wide, followed by a corner kick being taken",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-034/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-035",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5440.25,
+      "t_end": 5470.25,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "goalkeeper dives to smother the ball at the near post as attackers close in, then play continues with a corner routine and build-up around 82 minutes",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-035/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-036",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5462.5,
+      "t_end": 5492.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play around the halfway line before the goalkeeper collects the ball for a goal kick",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-036/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-037",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5462.75,
+      "t_end": 5492.75,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "attack builds towards the goal in the second half, goalkeeper in green gathers the ball and prepares to restart with a goal kick",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-037/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-038",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5485.0,
+      "t_end": 5515.0,
+      "type": "save",
+      "confidence": "high",
+      "caption": "red-shirted attacker in the box forces a low near-post save from the green-shirted goalkeeper, replay shows the keeper diving to keep out the shot",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-038/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-039",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5562.0,
+      "t_end": 5592.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution board shown as number 15 is replaced by number 25 for the white team during a stoppage",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-039/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-040",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5584.5,
+      "t_end": 5614.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution as number 15 Valverde comes off for number 25 Camavinga, player applauds the crowd while walking off",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-040/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-041",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5607.0,
+      "t_end": 5637.0,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution in the 85th minute with number 25 coming on for number 15, followed by open midfield play in the Champions League final",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-041/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-042",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5629.5,
+      "t_end": 5659.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with the ball moving around the centre circle and out toward the touchline, no clear chance created",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-042/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-043",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5734.36,
+      "t_end": 5764.36,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attacking team wins a corner or set piece in the box late in the game, players jostling for position while the score stays 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-043/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-044",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5756.86,
+      "t_end": 5786.86,
+      "type": "save",
+      "confidence": "high",
+      "caption": "corner or set-piece delivery into a crowded box, goalkeeper claims and catches the ball under pressure from an attacker challenging him at the near post",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-044/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-045",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5779.36,
+      "t_end": 5809.36,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "goalkeeper claims a high ball under pressure from an attacker at a corner or cross before play restarts",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-045/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-046",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5801.86,
+      "t_end": 5831.86,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution being prepared in the late stages as a number 19 player waits to come on near the touchline, with ongoing midfield play at 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-046/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-047",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5824.36,
+      "t_end": 5854.36,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "Substitution board held up in the 89th minute as a player is brought on, with play continuing in midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-047/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-048",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5836.44,
+      "t_end": 5866.44,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution late in the match with number 10 replaced by number 19 for the white team, score shown as 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-048/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-049",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5858.94,
+      "t_end": 5888.94,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "substitution late in the match, number 10 replaced by number 19, followed by normal midfield play with score 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-049/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-050",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5881.44,
+      "t_end": 5911.44,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play in stoppage time with a duel between two players near the touchline, score reads 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-050/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-051",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 5978.25,
+      "t_end": 6008.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "late attacking play in stoppage time around the penalty area with the score at 0-1, followed by a wide shot of the packed stadium and crowd",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-051/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-052",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6000.75,
+      "t_end": 6030.75,
+      "type": "goal",
+      "confidence": "high",
+      "caption": "attacker in white finishes past the keeper for a 0-1 lead, player stat graphic shows goals 1 and on-target 1, followed by celebrations in front of fans and a centre-circle restart",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-052/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-053",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6023.25,
+      "t_end": 6053.25,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "late stoppage-time play near the byline with a player stat graphic shown and a tussle for the ball by the touchline while flares smoke in the stand",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-053/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-054",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6169.5,
+      "t_end": 6199.5,
+      "type": "save",
+      "confidence": "medium",
+      "caption": "goalkeeper in green gathers the ball at his feet under pressure in stoppage time, followed by close-ups of players and midfield play resuming",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-054/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-055",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6192.0,
+      "t_end": 6222.0,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "final whistle celebrations as the winning team's players and substitutes rush onto the pitch to celebrate the 1-0 Champions League final victory",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-055/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-056",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6205.44,
+      "t_end": 6235.44,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "full-time whistle at 90:00 with the winning side 1-0 up, players and substitutes pour onto the pitch celebrating the final victory while beaten opponents sit dejected",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-056/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-057",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6227.94,
+      "t_end": 6257.94,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Full-time celebrations as the winning team's players run onto the pitch, sliding on their knees and embracing while the losing side in red look dejected, with final score graphic reading 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-057/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-058",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6250.44,
+      "t_end": 6280.44,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "players in white kneel and celebrate emotionally at full-time as squad and staff mob together on the pitch, while defeated red-shirted players look dejected in a Champions League final ending",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-058/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-059",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6272.94,
+      "t_end": 6302.94,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Full-time celebrations after the Champions League final as the winning team in white and green mob together on the pitch, players saluting fans in a packed stadium, with a full-time graphic showing the final scoreline 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-059/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-060",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6295.44,
+      "t_end": 6325.44,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Full-time scenes at the Champions League Paris Final 2022, winning team and staff mob together in celebration on the pitch while dejected losing players and substitutes look on",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-060/frame-001.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": true
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-061",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6478.577,
+      "t_end": 6508.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "players collect winners' medals from officials on the podium during the trophy ceremony after the final",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-061/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-062",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6508.577,
+      "t_end": 6538.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Champions League final winners' medal ceremony on the podium, players receiving medals from officials and celebrating with medals around their necks",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-062/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-063",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6538.577,
+      "t_end": 6568.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "players in white receive winners' medals on the podium from dignitaries during the trophy presentation ceremony, one player emotional with medal around neck",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-063/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-064",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6568.577,
+      "t_end": 6598.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Champions League trophy presentation as the captain in white receives the trophy from officials, lifts it and poses with medal-wearing teammates for the winners' team photo",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-064/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-065",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6598.577,
+      "t_end": 6628.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Champions League 2021/2022 winners lift the trophy on the podium amid confetti and fireworks, followed by an aerial night shot of the illuminated stadium",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-065/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260715T075521Z-bc-p-066",
+      "run_id": "r-20260715T075521Z-bc",
+      "t_start": 6628.577,
+      "t_end": 6658.577,
+      "type": "celebration",
+      "confidence": "high",
+      "caption": "Champions League final trophy celebration under a 'Winners' arch with confetti and fireworks over the stadium, medal-wearing manager on the pitch, full-time graphic showing 0-1",
+      "evidence": {
+        "frames": [
+          "frames/r-20260715T075521Z-bc-p-066/frame-001.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    }
+  ]
+}

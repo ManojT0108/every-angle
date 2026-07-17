@@ -1,5 +1,5 @@
 # Deny-by-default: the build context must NOT include data/ (11 GB, gitignored),
-# source videos, match-002 (copyrighted), secrets, or node_modules.
+# source videos, secrets, or node_modules. Only allowlisted processed bundles ship.
 *
 
 # --- allowlist: only what the image needs ---
