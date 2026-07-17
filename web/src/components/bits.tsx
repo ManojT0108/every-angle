@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { timecode } from "../lib/api";
 
 /**
@@ -100,7 +100,7 @@ export function Button({
   );
 }
 
-/** A clip thumbnail that plays on hover — cheap, and it makes the list feel alive. */
+/** A compact clip preview with a full-size player on demand. */
 export function ClipThumb({
   src,
   t,
@@ -110,28 +110,157 @@ export function ClipThumb({
   t: number;
   poster?: string;
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="relative aspect-video w-[132px] shrink-0 overflow-hidden border border-line-soft bg-ink-700">
-      {src ? (
+    <ClipThumbPlayer
+      src={src}
+      t={t}
+      poster={poster}
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+    />
+  );
+}
+
+export function ClipThumbPlayer({
+  src,
+  t,
+  poster,
+  open,
+  onOpen,
+  onClose,
+}: {
+  src?: string;
+  t: number;
+  poster?: string;
+  open: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}) {
+  const label = `Play clip at ${timecode(t)}`;
+
+  return (
+    <>
+      <div className="relative aspect-video w-[132px] shrink-0 overflow-hidden border border-line-soft bg-ink-700">
+        {src ? (
+          <video
+            src={src}
+            poster={poster}
+            muted
+            playsInline
+            preload="metadata"
+            className="size-full object-cover"
+            onMouseEnter={(e) => void e.currentTarget.play().catch(() => {})}
+            onMouseLeave={(e) => {
+              e.currentTarget.pause();
+              e.currentTarget.currentTime = 0;
+            }}
+          />
+        ) : (
+          <div className="pitch-bg size-full" />
+        )}
+        {src && (
+          <button
+            type="button"
+            aria-label={label}
+            onClick={onOpen}
+            className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/15 text-white transition-colors hover:bg-black/35"
+          >
+            <span
+              aria-hidden="true"
+              className="flex size-9 items-center justify-center rounded-full border border-white/80 bg-black/60 pl-0.5 text-[15px]"
+            >
+              ▶
+            </span>
+          </button>
+        )}
+        <span className="tnum pointer-events-none absolute bottom-1 right-1 bg-black/60 px-1 font-mono text-[9px] text-white">
+          {timecode(t)}
+        </span>
+      </div>
+
+      <ClipModal
+        src={src}
+        t={t}
+        poster={poster}
+        open={open}
+        onClose={onClose}
+      />
+    </>
+  );
+}
+
+/** A controlled full-size clip player shared by any compact trigger. */
+export function ClipModal({
+  src,
+  t,
+  poster,
+  open,
+  onClose,
+}: {
+  src?: string;
+  t: number;
+  poster?: string;
+  open: boolean;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onClose, open]);
+
+  if (!src || !open) return null;
+
+  return (
+    <ClipModalView src={src} t={t} poster={poster} onClose={onClose} />
+  );
+}
+
+export function ClipModalView({
+  src,
+  t,
+  poster,
+  onClose,
+}: {
+  src: string;
+  t: number;
+  poster?: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Video clip at ${timecode(t)}`}
+      onClick={onClose}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-6"
+    >
+      <div
+        className="relative w-full max-w-5xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          aria-label="Close clip"
+          onClick={onClose}
+          className="absolute -right-2 -top-10 cursor-pointer px-2 text-[28px] leading-none text-white"
+        >
+          ×
+        </button>
         <video
           src={src}
           poster={poster}
-          muted
-          playsInline
-          preload="metadata"
-          className="size-full object-cover"
-          onMouseEnter={(e) => void e.currentTarget.play().catch(() => {})}
-          onMouseLeave={(e) => {
-            e.currentTarget.pause();
-            e.currentTarget.currentTime = 0;
-          }}
+          controls
+          autoPlay
+          className="max-h-[85vh] w-full border border-line bg-black"
         />
-      ) : (
-        <div className="pitch-bg size-full" />
-      )}
-      <span className="tnum absolute bottom-1 right-1 bg-black/60 px-1 font-mono text-[9px] text-white">
-        {timecode(t)}
-      </span>
+      </div>
     </div>
   );
 }

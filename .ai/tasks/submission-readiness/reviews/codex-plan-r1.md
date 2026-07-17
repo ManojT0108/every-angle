@@ -1,0 +1,9 @@
+- **P1 — lines 32–33:** `data/` is gitignored and the release-bundle exporter is still a TODO, so a Git-based cloud build will contain no match data and `/api/matches` will return empty. **Recommended fix:** commit a minimal CC-BY deploy bundle containing `CURRENT_REV`, `windows.json`, required metadata, `staging/rev-1/manifest.json`, the five staged clips, and only retained evidence frames, then copy it directly into the image.
+
+- **P1 — lines 26–29, 34–35:** A clean container must obtain the FastEmbed model; startup intentionally swallows model-load failures, leaving the URL healthy-looking while every search returns 503. Qdrant seeding is also unspecified, and using the existing destructive rebuild during container startup would briefly delete the live collection on every restart. **Recommended fix:** bake and prewarm the embedding model during image build, seed Qdrant Cloud once outside web startup, and gate readiness on an actual golden search plus expected collection count after a cold restart.
+
+- **P2 — lines 43–44:** The deployed Verify UI mutates only the draft manifest, while Search and Reel read the promoted revision; a judge adding a moment will be told it flows downstream but will not see it in search or have a published clip. **Recommended fix:** cut public Verify mutations for submission—make Verify read-only or hide it and demo the reliable Search → clip → Reel path.
+
+- **P2 — lines 26, 34–35:** Dynamic reel creation re-encodes clips with `libx264` preset `medium`, which can exceed request limits on a throttled free-tier CPU even though it works locally. **Recommended fix:** use stream-copy concat for the already normalized clips or prebuild the scripted fallback reel, then include reel generation in the cold-host smoke test.
+
+REQUEST_CHANGES

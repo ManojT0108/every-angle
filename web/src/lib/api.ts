@@ -1,9 +1,9 @@
 /**
  * The API contract, typed once.
  *
- * The invariant that matters: SEARCH and REEL read the PUBLISHED revision;
- * VERIFY works on the draft. The backend enforces it — these types just make it
- * hard to forget which one you are holding.
+ * The invariant that matters: Review, Search, and Reel all read the current
+ * promoted manifest. The backend enforces it — these types keep the boundary
+ * explicit at the client.
  */
 
 export type EventType =
@@ -25,6 +25,10 @@ export interface Match {
   event_count: number;
 }
 
+export interface MatchCapabilities {
+  source_video_available: boolean;
+}
+
 /** A candidate window the detector opened — where the machine LOOKED. */
 export interface Window {
   id: string;
@@ -44,7 +48,7 @@ export interface MomentEvent {
   t_end: number;
   type: EventType;
   caption: string;
-  clip: string;
+  clip: string | null;
   team: string | null;
   player: string | null;
 }
@@ -71,6 +75,7 @@ export interface Proposal {
   confidence: Confidence;
   caption: string;
   status: Decision;
+  clip: string | null;
   frames: string[];
 }
 
@@ -118,12 +123,26 @@ export const api = {
   matches: () => req<Match[]>("/api/matches"),
   timeline: (id: string) => req<Timeline>(`/api/matches/${id}/timeline`),
   proposals: (id: string) => req<Proposal[]>(`/api/matches/${id}/proposals`),
+  capabilities: (id: string) =>
+    req<MatchCapabilities>(`/api/matches/${id}/capabilities`),
 
   decide: (id: string, proposal_id: string, status: Exclude<Decision, "pending">) =>
-    req<{ proposal_id: string; status: Decision }>(`/api/matches/${id}/decisions`, {
-      method: "POST",
-      body: JSON.stringify({ proposal_id, status }),
-    }),
+    req<{ proposal_id: string; status: Decision; event_id?: string }>(
+      `/api/matches/${id}/proposals/${encodeURIComponent(proposal_id)}/${
+        status === "accepted" ? "accept" : "reject"
+      }`,
+      { method: "POST" },
+    ),
+
+  editProposal: (
+    id: string,
+    proposal_id: string,
+    body: { caption?: string; type?: ProposalType },
+  ) =>
+    req<{ proposal_id: string; status: Decision; event_id?: string }>(
+      `/api/matches/${id}/proposals/${encodeURIComponent(proposal_id)}/edit`,
+      { method: "POST", body: JSON.stringify(body) },
+    ),
 
   addEvent: (
     id: string,

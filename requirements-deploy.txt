@@ -1,0 +1,8 @@
+# Runtime deps for the deployed demo API (lean — no captioning/streamlit at runtime).
+# Pins match requirements.txt. fastembed pulls numpy (pipeline.track needs it).
+fastapi==0.129.0
+uvicorn[standard]==0.41.0
+qdrant-client==1.14.2
+fastembed==0.7.1
+python-dotenv==1.1.1
+httpx==0.28.1

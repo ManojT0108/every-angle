@@ -23,4 +23,7 @@ Checks:
 ```bash
 npm run lint
 npm run build
+npm test
 ```
+
+Unit tests use Vitest, the Vite-native test runner installed as a development dependency.

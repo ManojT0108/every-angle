@@ -1,8 +1,9 @@
-"""Pre-cut verified manifest events to uniform browser-friendly clips."""
+"""Pre-cut match moments to uniform browser-friendly clips."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -113,6 +114,97 @@ def cut_event(source: Path, event: dict[str, Any], clips_dir: Path) -> Path:
     return destination
 
 
+def latest_claude_run_id(proposals: dict[str, Any]) -> str | None:
+    """Return the newest Claude proposal run in an artifact."""
+
+    runs = proposals.get("runs", [])
+    if not isinstance(runs, list):
+        raise ValueError("Invalid proposals runs")
+    candidates = [
+        (str(run.get("created_at", "")), index, str(run.get("run_id", "")))
+        for index, run in enumerate(runs)
+        if isinstance(run, dict)
+        and isinstance(run.get("captioner"), dict)
+        and run["captioner"].get("name") == "claude"
+        and run.get("run_id")
+    ]
+    return max(candidates)[2] if candidates else None
+
+
+def proposal_clip_id(proposal_id: str) -> str:
+    """Return the stable, path-safe id used for a proposal-only clip."""
+
+    if not proposal_id:
+        raise ValueError("proposal id must not be empty")
+    digest = hashlib.sha256(proposal_id.encode("utf-8")).hexdigest()[:16]
+    return f"proposal-{digest}"
+
+
+def resolve_proposal_clip(
+    data_dir: Path,
+    proposal_id: str,
+    decision: Any,
+) -> Path | None:
+    """Resolve an event clip first, then a proposal-only clip."""
+
+    clips_dir = data_dir / "clips"
+    event_id = decision.get("event_id") if isinstance(decision, dict) else None
+    if (
+        isinstance(event_id, str)
+        and event_id
+        and Path(event_id).name == event_id
+    ):
+        event_clip = clips_dir / f"{event_id}.mp4"
+        if event_clip.is_file():
+            return event_clip
+    proposal_clip = clips_dir / f"{proposal_clip_id(proposal_id)}.mp4"
+    return proposal_clip if proposal_clip.is_file() else None
+
+
+def precut_proposal_clips(
+    source: Path | None,
+    proposals_path: Path,
+    decisions_path: Path,
+    *,
+    data_dir: Path | None = None,
+) -> list[Path]:
+    """Cut missing notable proposal clips for the latest Claude run."""
+
+    if source is None or not source.is_file():
+        return []
+    data_dir = data_dir or proposals_path.parent
+    proposals = _read_json_object(proposals_path)
+    decisions = (
+        _read_json_object(decisions_path) if decisions_path.is_file() else {}
+    )
+    run_id = latest_claude_run_id(proposals)
+    if run_id is None:
+        return []
+    rows = proposals.get("proposals", [])
+    if not isinstance(rows, list):
+        raise ValueError("Invalid proposals artifact")
+
+    destinations: list[Path] = []
+    for row in rows:
+        if (
+            not isinstance(row, dict)
+            or row.get("run_id") != run_id
+            or row.get("type") == "none"
+        ):
+            continue
+        proposal_id = str(row.get("id", ""))
+        decision = decisions.get(proposal_id, {})
+        if resolve_proposal_clip(data_dir, proposal_id, decision) is not None:
+            continue
+        event = {
+            "id": proposal_clip_id(proposal_id),
+            "t_start": row["t_start"],
+            "t_end": row["t_end"],
+        }
+        destinations.append(cut_event(source, event, data_dir / "clips"))
+    return destinations
+
+
 def precut_verified_events(
     source: Path,
     manifest_path: Path,
@@ -138,23 +230,45 @@ def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
+def _read_json_object(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Invalid JSON object: {path}")
+    return payload
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True, help="Source MP4 path")
-    parser.add_argument(
-        "--manifest", type=Path, required=True, help="Verified manifest.json"
-    )
+    artifact = parser.add_mutually_exclusive_group(required=True)
+    artifact.add_argument("--manifest", type=Path, help="Verified manifest.json")
+    artifact.add_argument("--proposals", type=Path, help="Proposals artifact")
+    parser.add_argument("--decisions", type=Path, help="Decisions artifact")
     parser.add_argument(
         "--output-dir", type=Path, default=None, help="data/<video-id> directory"
     )
     args = parser.parse_args()
     if not args.input.is_file():
         parser.error(f"input does not exist: {args.input}")
-    data_dir = args.output_dir or args.manifest.parent
-    payload = precut_verified_events(args.input, args.manifest, data_dir=data_dir)
-    print(
-        f"encoded {len(payload.get('events', []))} verified clips in {data_dir / 'clips'}"
-    )
+    artifact_path = args.manifest or args.proposals
+    assert artifact_path is not None
+    data_dir = args.output_dir or artifact_path.parent
+    if args.proposals is not None:
+        decisions_path = args.decisions or args.proposals.with_name("decisions.json")
+        destinations = precut_proposal_clips(
+            args.input,
+            args.proposals,
+            decisions_path,
+            data_dir=data_dir,
+        )
+        print(f"encoded {len(destinations)} proposal clips in {data_dir / 'clips'}")
+    else:
+        assert args.manifest is not None
+        payload = precut_verified_events(args.input, args.manifest, data_dir=data_dir)
+        print(
+            f"encoded {len(payload.get('events', []))} verified clips in "
+            f"{data_dir / 'clips'}"
+        )
 
 
 if __name__ == "__main__":

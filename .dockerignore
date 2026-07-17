@@ -1,0 +1,30 @@
+# Deny-by-default: the build context must NOT include data/ (11 GB, gitignored),
+# source videos, match-002 (copyrighted), secrets, or node_modules.
+*
+
+# --- allowlist: only what the image needs ---
+!api/
+!pipeline/
+!requirements-deploy.txt
+!scripts/seed_qdrant.py
+!deploy/bundle/
+!deploy/entrypoint.sh
+
+# frontend BUILD INPUTS (web/dist is built in-container, node_modules excluded)
+!web/package.json
+!web/package-lock.json
+!web/index.html
+!web/src/
+!web/public/
+!web/tsconfig.json
+!web/tsconfig.app.json
+!web/tsconfig.node.json
+!web/vite.config.ts
+
+# re-exclude heavy / secret things even under allowlisted dirs
+web/node_modules/
+web/dist/
+**/__pycache__/
+**/*.pyc
+.env
+.env.*

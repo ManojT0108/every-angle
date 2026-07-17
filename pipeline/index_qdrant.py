@@ -57,6 +57,24 @@ def _next_revision(data_dir: Path) -> int:
         raise ValueError(f"invalid revision pointer: {pointer}") from exc
 
 
+def _canonical_manifest_path(data_dir: Path, initial_manifest: Path) -> Path:
+    """Use the promoted manifest after the first revision exists."""
+
+    pointer = data_dir / "CURRENT_REV"
+    if not pointer.is_file():
+        return initial_manifest
+    try:
+        current_revision = int(pointer.read_text(encoding="utf-8").strip())
+    except ValueError as exc:
+        raise ValueError(f"invalid revision pointer: {pointer}") from exc
+    canonical = data_dir / "staging" / f"rev-{current_revision}" / "manifest.json"
+    if not canonical.is_file():
+        raise FileNotFoundError(
+            f"promoted revision {current_revision} is missing its manifest: {canonical}"
+        )
+    return canonical
+
+
 def _safe_relative_path(value: str, *, label: str) -> PurePosixPath:
     path = PurePosixPath(value)
     if path.is_absolute() or ".." in path.parts:
@@ -84,7 +102,8 @@ def assert_no_mock_provenance(data_dir: Path, manifest: dict[str, Any]) -> None:
         # unverifiable claim of "AI-proposed" is exactly what this gate exists
         # to stop.
         orphans = [
-            e.get("id") for e in manifest.get("events", [])
+            e.get("id")
+            for e in manifest.get("events", [])
             if e.get("from_proposal") is not None
         ]
         if orphans:
@@ -101,7 +120,7 @@ def assert_no_mock_provenance(data_dir: Path, manifest: dict[str, Any]) -> None:
     for event in manifest.get("events", []):
         pid = event.get("from_proposal")
         if pid is None:
-            continue                                   # human-added; legitimate
+            continue  # human-added; legitimate
         proposal = by_id.get(pid)
         if proposal is None:
             raise MockProposalError(
@@ -228,8 +247,10 @@ def validate_staged_revision(staging_dir: Path) -> dict[str, Any]:
     return manifest
 
 
-def _event_text(event: dict[str, Any]) -> str:
-    return f"{event.get('caption', '')} {event.get('type', '')}".strip()
+def event_text(event: dict[str, Any]) -> str:
+    """Return the one canonical representation embedded for an event."""
+
+    return f"{event.get('caption', '')}. {event.get('type', '')}"
 
 
 def _embed_texts(texts: list[str]) -> list[list[float]]:
@@ -265,7 +286,7 @@ def rebuild_collection_from_manifest(
     events = manifest.get("events", [])
     if not isinstance(events, list):
         raise ValueError("manifest must contain an events list")
-    texts = [_event_text(event) for event in events]
+    texts = [event_text(event) for event in events]
     vectors = _embed_texts(texts) if texts else []
     vector_size = len(vectors[0]) if vectors else DEFAULT_VECTOR_SIZE
     client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key or None)
@@ -317,7 +338,8 @@ def publish_revision(
 ) -> dict[str, Any]:
     """Stage, validate, index, then atomically promote a complete revision."""
 
-    staging_dir = stage_revision(data_dir, manifest_path, revision=revision)
+    source_manifest = _canonical_manifest_path(data_dir, manifest_path)
+    staging_dir = stage_revision(data_dir, source_manifest, revision=revision)
     staged_manifest = validate_staged_revision(staging_dir)
     revision = int(staging_dir.name.removeprefix("rev-"))
     name = collection_name(revision)

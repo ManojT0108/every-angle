@@ -1,6 +1,8 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { api, isHumanAdded, timecode, type MomentEvent } from "../lib/api";
 import { Button, Empty, ErrorNote } from "../components/bits";
+import { pickHighlights } from "../lib/highlights";
 
 /**
  * Reel — deterministic assembly.
@@ -11,26 +13,31 @@ import { Button, Empty, ErrorNote } from "../components/bits";
  */
 export function Reel({
   matchId,
+  events,
   selected,
   setSelected,
+  onApplySelection,
 }: {
   matchId: string;
+  events: MomentEvent[];
   selected: string[];
   setSelected: (ids: string[]) => void;
+  onApplySelection: (ids: string[]) => void;
 }) {
-  const { data: tl } = useQuery({
-    queryKey: ["timeline", matchId],
-    queryFn: () => api.timeline(matchId),
-  });
+  const chosen = selected
+    .map((id) => events.find((event) => event.id === id))
+    .filter((event): event is MomentEvent => Boolean(event));
+  const orderedIds = chosen.map((event) => event.id);
 
   const build = useMutation({
-    mutationFn: () => api.reel(matchId, selected),
+    mutationFn: () => api.reel(matchId, orderedIds),
   });
+  const resetBuild = build.reset;
 
-  const events = tl?.events ?? [];
-  const chosen = selected
-    .map((id) => events.find((e) => e.id === id))
-    .filter((e): e is MomentEvent => Boolean(e));
+  useEffect(() => {
+    resetBuild();
+  }, [selected, resetBuild]);
+
   const runtime = chosen.reduce((a, e) => a + (e.t_end - e.t_start), 0);
   const goals = chosen.filter((e) => e.type === "goal").length;
 
@@ -50,7 +57,7 @@ export function Reel({
             <div className="pitch-bg absolute inset-0 flex items-center justify-center opacity-90">
               <p className="max-w-[36ch] text-center text-[13px] text-chalk">
                 {chosen.length === 0
-                  ? "Add moments from Search, or keep them in Verify."
+                  ? "Add moments from Search, or keep them in Review."
                   : `${chosen.length} moment${chosen.length > 1 ? "s" : ""} ready. Build the reel.`}
               </p>
             </div>
@@ -87,6 +94,51 @@ export function Reel({
           label="Human-verified"
           value={`${chosen.length} / ${chosen.length}`}
         />
+
+        <Button
+          tone="primary"
+          disabled={events.length === 0}
+          onClick={() => onApplySelection(pickHighlights(events))}
+        >
+          Quick Highlights
+        </Button>
+
+        {chosen.length > 0 && (
+          <ol className="mt-4 space-y-1 border-y border-line py-2">
+            {chosen.map((event, index) => (
+              <li key={event.id} className="bg-ink-800 px-2 py-2">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="min-w-0 truncate text-[12px] text-chalk-dim">
+                    {event.caption}
+                  </span>
+                  <span className="tnum shrink-0 font-mono text-[10px] text-chalk-faint">
+                    {timecode(event.t_start)}
+                  </span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  <Button
+                    disabled={index === 0}
+                    onClick={() => setSelected(move(orderedIds, index, -1))}
+                  >
+                    Up
+                  </Button>
+                  <Button
+                    disabled={index === chosen.length - 1}
+                    onClick={() => setSelected(move(orderedIds, index, 1))}
+                  >
+                    Down
+                  </Button>
+                  <Button
+                    tone="drop"
+                    onClick={() => setSelected(orderedIds.filter((id) => id !== event.id))}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
 
         <div className="mt-4 space-y-2">
           <Button
@@ -125,7 +177,7 @@ export function Reel({
 
       {events.length === 0 && (
         <div className="lg:col-span-2">
-          <Empty>No verified moments yet. Keep some in Verify first.</Empty>
+          <Empty>No verified moments yet. Keep some in Review first.</Empty>
         </div>
       )}
     </div>
@@ -139,4 +191,12 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="tnum font-mono">{value}</span>
     </div>
   );
+}
+
+function move(ids: string[], index: number, offset: -1 | 1): string[] {
+  const target = index + offset;
+  if (target < 0 || target >= ids.length) return ids;
+  const reordered = [...ids];
+  [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+  return reordered;
 }

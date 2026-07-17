@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import threading
 import uuid
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterable
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -20,23 +22,36 @@ from urllib.parse import quote
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from qdrant_client import QdrantClient
+from qdrant_client import QdrantClient, models
 from starlette.responses import Response
 from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
+from pipeline.clip import cut_event, latest_claude_run_id, resolve_proposal_clip
 from pipeline.index_qdrant import (
     DEFAULT_QDRANT_URL,
     EMBEDDING_MODEL,
+    _point_id,
     collection_name,
+    event_text,
 )
 
 
 DATA_ROOT = Path(os.getenv("DATA_ROOT", "data")).resolve()
 FRONTEND_DIST = Path(__file__).resolve().parents[1] / "web" / "dist"
-EVENT_TYPES = Literal[
-    "goal", "save", "penalty", "card", "counterattack", "celebration"
+LOGGER = logging.getLogger(__name__)
+EVENT_TYPES = Literal["goal", "save", "penalty", "card", "counterattack", "celebration"]
+PROPOSAL_TYPES = Literal[
+    "goal", "save", "penalty", "card", "counterattack", "celebration", "none"
 ]
+EVENT_TYPE_VALUES = {
+    "goal",
+    "save",
+    "penalty",
+    "card",
+    "counterattack",
+    "celebration",
+}
 
 _EMBEDDING_MODEL_INSTANCE: Any | None = None
 _EMBEDDING_LOAD_ERROR: str | None = None
@@ -111,14 +126,14 @@ class ProposalResponse(BaseModel):
     confidence: str
     caption: str
     status: Literal["pending", "accepted", "rejected"]
+    clip: str | None
     frames: list[str]
 
 
-class DecisionRequest(BaseModel):
-    """A human accept/reject action for one proposal."""
+class MatchCapabilities(BaseModel):
+    """Request-time features available for one match."""
 
-    proposal_id: str = Field(min_length=1)
-    status: Literal["accepted", "rejected"]
+    source_video_available: bool
 
 
 class DecisionResponse(BaseModel):
@@ -127,6 +142,21 @@ class DecisionResponse(BaseModel):
     proposal_id: str
     status: Literal["accepted", "rejected"]
     event_id: str | None = None
+
+
+class ProposalEditRequest(BaseModel):
+    """Human corrections to a proposal before materialization."""
+
+    caption: str | None = Field(default=None, min_length=1)
+    type: PROPOSAL_TYPES | None = None
+
+    @model_validator(mode="after")
+    def validate_edit(self) -> ProposalEditRequest:
+        if self.caption is None and self.type is None:
+            raise ValueError("caption or type is required")
+        if self.caption is not None and not self.caption.strip():
+            raise ValueError("caption must not be blank")
+        return self
 
 
 class HumanEventRequest(BaseModel):
@@ -268,7 +298,9 @@ def _published_manifest(
 
 def _artifact_events(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     events = manifest.get("events", [])
-    if not isinstance(events, list) or not all(isinstance(event, dict) for event in events):
+    if not isinstance(events, list) or not all(
+        isinstance(event, dict) for event in events
+    ):
         raise HTTPException(status_code=500, detail="Invalid manifest events")
     return cast(list[dict[str, Any]], events)
 
@@ -281,41 +313,49 @@ def _media_url(video_id: str, relative_path: str) -> str | None:
     return f"/media/{quote(full_path.as_posix(), safe='/')}"
 
 
-def _latest_claude_run_id(proposals: dict[str, Any]) -> str | None:
-    runs = proposals.get("runs", [])
-    if not isinstance(runs, list):
-        raise HTTPException(status_code=500, detail="Invalid proposals runs")
-    candidates = [
-        (str(run.get("created_at", "")), index, str(run.get("run_id", "")))
-        for index, run in enumerate(runs)
-        if isinstance(run, dict)
-        and isinstance(run.get("captioner"), dict)
-        and run["captioner"].get("name") == "claude"
-        and run.get("run_id")
-    ]
-    return max(candidates)[2] if candidates else None
-
-
 def _proposal_responses(match_dir: Path, video_id: str) -> list[ProposalResponse]:
     artifact = _read_json_object(
         match_dir / "proposals.json", default={"runs": [], "proposals": []}
     )
-    run_id = _latest_claude_run_id(artifact)
+    try:
+        run_id = latest_claude_run_id(artifact)
+    except ValueError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
     if run_id is None:
         return []
     rows = artifact.get("proposals", [])
     if not isinstance(rows, list):
         raise HTTPException(status_code=500, detail="Invalid proposals artifact")
     decisions = _read_json_object(match_dir / "decisions.json", default={})
+    _, _, manifest = _published_manifest(match_dir)
+    accepted_by_proposal = {
+        str(event["from_proposal"]): event
+        for event in _artifact_events(manifest)
+        if event.get("from_proposal") is not None
+    }
     responses: list[ProposalResponse] = []
     for row in rows:
         if not isinstance(row, dict) or row.get("run_id") != run_id:
             continue
         proposal_id = str(row.get("id", ""))
         decision = decisions.get(proposal_id, {})
-        status = decision.get("status", "pending") if isinstance(decision, dict) else "pending"
-        if status not in {"pending", "accepted", "rejected"}:
-            status = "pending"
+        accepted_event = accepted_by_proposal.get(proposal_id)
+        if accepted_event is not None and isinstance(accepted_event.get("clip"), str):
+            clip = _media_url(video_id, str(accepted_event["clip"]))
+        else:
+            clip_path = resolve_proposal_clip(match_dir, proposal_id, decision)
+            clip = (
+                _media_url(video_id, clip_path.relative_to(match_dir).as_posix())
+                if clip_path is not None
+                else None
+            )
+        status = "accepted" if accepted_event is not None else "pending"
+        if (
+            status == "pending"
+            and isinstance(decision, dict)
+            and decision.get("status") == "rejected"
+        ):
+            status = "rejected"
         evidence = row.get("evidence")
         raw_frames = evidence.get("frames", []) if isinstance(evidence, dict) else []
         frames = [
@@ -330,10 +370,19 @@ def _proposal_responses(match_dir: Path, video_id: str) -> list[ProposalResponse
                     id=proposal_id,
                     t_start=row["t_start"],
                     t_end=row["t_end"],
-                    type=str(row.get("type", "")),
+                    type=str(
+                        accepted_event.get("type", "")
+                        if accepted_event is not None
+                        else row.get("type", "")
+                    ),
                     confidence=str(row.get("confidence", "")),
-                    caption=str(row.get("caption", "")),
+                    caption=str(
+                        accepted_event.get("caption", "")
+                        if accepted_event is not None
+                        else row.get("caption", "")
+                    ),
                     status=status,
+                    clip=clip,
                     frames=frames,
                 )
             )
@@ -355,14 +404,30 @@ def _load_embedding_model() -> None:
         try:
             from fastembed import TextEmbedding
 
-            _EMBEDDING_MODEL_INSTANCE = TextEmbedding(model_name=EMBEDDING_MODEL)
+            # In the deployed container the model cache is baked into the image, so
+            # load strictly offline (FASTEMBED_LOCAL_ONLY=1). This removes the only
+            # network dependency at startup: without it, a transient Hugging Face
+            # metadata request during a cold start could fail, and because the error
+            # is cached and never retried, Search would stay 503 until a restart.
+            # Local dev leaves the env unset so a first run may still download.
+            local_only = os.environ.get("FASTEMBED_LOCAL_ONLY") == "1"
+            _EMBEDDING_MODEL_INSTANCE = TextEmbedding(
+                model_name=EMBEDDING_MODEL, local_files_only=local_only
+            )
         except Exception as exc:  # startup remains available for non-search endpoints
             _EMBEDDING_LOAD_ERROR = str(exc) or type(exc).__name__
 
 
 @asynccontextmanager
-async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
+async def _lifespan(application: FastAPI) -> AsyncIterator[None]:
     _load_embedding_model()
+    try:
+        _reconcile_baseline(application.state.data_root)
+    except Exception as exc:
+        application.state.reconciliation_error = str(exc) or type(exc).__name__
+        LOGGER.warning("Qdrant baseline reconciliation failed: %s", exc)
+    else:
+        application.state.reconciliation_error = None
     yield
 
 
@@ -390,25 +455,298 @@ def _make_qdrant_client() -> QdrantClient:
     )
 
 
-def _next_event_id(events: list[dict[str, Any]]) -> str:
-    numbers = [
-        int(match.group(1))
-        for event in events
-        if (match := _EVENT_ID_PATTERN.fullmatch(str(event.get("id", ""))))
-    ]
-    return f"e-{max(numbers, default=0) + 1:03d}"
+def _request_qdrant_client() -> QdrantClient:
+    try:
+        return _make_qdrant_client()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Qdrant is unavailable; verify QDRANT_URL and retry",
+        ) from exc
 
 
-def _safe_published_clip(published_dir: Path, clip_value: Any) -> Path:
+def _proposal_event_id(proposal_id: str) -> str:
+    digest = hashlib.sha256(proposal_id.encode("utf-8")).hexdigest()[:16]
+    return f"e-{digest}"
+
+
+def _source_video(match_dir: Path) -> Path | None:
+    windows = _read_json_object(match_dir / "windows.json", default={})
+    value = windows.get("source")
+    if not isinstance(value, str) or not value:
+        return None
+    raw = Path(value)
+    candidates = [raw] if raw.is_absolute() else [Path.cwd() / raw, match_dir / raw]
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve()
+        except (OSError, RuntimeError, ValueError):
+            continue
+        if resolved.is_file():
+            return resolved
+    return None
+
+
+def _event_clip(match_dir: Path, clip_value: Any) -> Path:
     if not isinstance(clip_value, str):
         raise HTTPException(status_code=500, detail="Published event has no clip")
     relative = PurePosixPath(clip_value)
     if relative.is_absolute() or ".." in relative.parts:
-        raise HTTPException(status_code=500, detail="Published event has an invalid clip")
-    clip = (published_dir / Path(*relative.parts)).resolve()
-    if not clip.is_relative_to(published_dir.resolve()) or not clip.is_file():
+        raise HTTPException(
+            status_code=500, detail="Published event has an invalid clip"
+        )
+    clip = (match_dir / Path(*relative.parts)).resolve()
+    if not clip.is_relative_to(match_dir.resolve()) or not clip.is_file():
         raise HTTPException(status_code=500, detail="Published event clip is missing")
     return clip
+
+
+def _proposal_row(match_dir: Path, proposal_id: str) -> dict[str, Any]:
+    proposals = _read_json_object(
+        match_dir / "proposals.json", default={"proposals": []}
+    )
+    rows = proposals.get("proposals", [])
+    if not isinstance(rows, list):
+        raise HTTPException(status_code=500, detail="Invalid proposals artifact")
+    for row in rows:
+        if isinstance(row, dict) and row.get("id") == proposal_id:
+            return row
+    raise HTTPException(status_code=404, detail="Proposal not found")
+
+
+def _event_for_proposal(
+    proposal: dict[str, Any],
+    manifest_events: list[dict[str, Any]],
+    decisions: dict[str, Any],
+    *,
+    caption: str | None = None,
+    event_type: str | None = None,
+) -> dict[str, Any]:
+    proposal_id = str(proposal.get("id", ""))
+    if not proposal_id:
+        raise HTTPException(status_code=500, detail="Invalid proposal id")
+    for event in manifest_events:
+        if event.get("from_proposal") == proposal_id:
+            edited = dict(event)
+            if caption is not None:
+                edited["caption"] = caption
+            if event_type is not None:
+                edited["type"] = event_type
+            return EventResponse.model_validate(edited).model_dump()
+    previous = decisions.get(proposal_id, {})
+    event_id = (
+        previous.get("event_id")
+        if isinstance(previous, dict) and isinstance(previous.get("event_id"), str)
+        else _proposal_event_id(proposal_id)
+    )
+    materialized_type = event_type or str(proposal.get("type", ""))
+    if materialized_type not in EVENT_TYPE_VALUES:
+        raise HTTPException(
+            status_code=400, detail="Ordinary-play proposals cannot be accepted"
+        )
+    try:
+        event = {
+            "id": event_id,
+            "from_proposal": proposal_id,
+            "t_start": float(proposal["t_start"]),
+            "t_end": float(proposal["t_end"]),
+            "type": materialized_type,
+            "caption": caption if caption is not None else str(proposal["caption"]),
+            "team": None,
+            "player": None,
+            "clip": f"clips/{event_id}.mp4",
+            "verified_at": datetime.now(timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z"),
+        }
+        return EventResponse.model_validate(event).model_dump()
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(status_code=500, detail="Invalid proposal") from exc
+
+
+def _require_collection(client: QdrantClient, revision: int) -> str:
+    name = collection_name(revision)
+    try:
+        exists = client.collection_exists(name)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Qdrant is unavailable; verify QDRANT_URL and retry",
+        ) from exc
+    if not exists:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Published collection {name} does not exist; publish the match first",
+        )
+    return name
+
+
+def _upsert_event(
+    client: QdrantClient,
+    *,
+    revision: int,
+    video_id: str,
+    event: dict[str, Any],
+) -> None:
+    name = _require_collection(client, revision)
+    vector = _query_vector(event_text(event))
+    try:
+        client.upsert(
+            collection_name=name,
+            points=[
+                models.PointStruct(
+                    id=_point_id(video_id, str(event["id"])),
+                    vector=vector,
+                    payload=event,
+                )
+            ],
+            wait=True,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Qdrant upsert failed") from exc
+
+
+def _delete_event_point(
+    client: QdrantClient, *, revision: int, video_id: str, event_id: str
+) -> None:
+    name = _require_collection(client, revision)
+    try:
+        client.delete(
+            collection_name=name,
+            points_selector=models.PointIdsList(points=[_point_id(video_id, event_id)]),
+            wait=True,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Qdrant delete failed") from exc
+
+
+def _capture_event_point(
+    client: QdrantClient, *, revision: int, video_id: str, event_id: str
+) -> tuple[Any, Any, dict[str, Any]] | None:
+    name = _require_collection(client, revision)
+    try:
+        records = client.retrieve(
+            collection_name=name,
+            ids=[_point_id(video_id, event_id)],
+            with_payload=True,
+            with_vectors=True,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Qdrant read failed") from exc
+    if not records:
+        return None
+    record = records[0]
+    if record.vector is None:
+        raise HTTPException(status_code=503, detail="Qdrant point has no vector")
+    return record.id, record.vector, cast(dict[str, Any], record.payload or {})
+
+
+def _restore_event_point(
+    client: QdrantClient,
+    *,
+    revision: int,
+    video_id: str,
+    event_id: str,
+    snapshot: tuple[Any, Any, dict[str, Any]] | None,
+) -> None:
+    name = collection_name(revision)
+    if snapshot is None:
+        client.delete(
+            collection_name=name,
+            points_selector=models.PointIdsList(
+                points=[_point_id(video_id, event_id)]
+            ),
+            wait=True,
+        )
+        return
+    point_id, vector, payload = snapshot
+    client.upsert(
+        collection_name=name,
+        points=[models.PointStruct(id=point_id, vector=vector, payload=payload)],
+        wait=True,
+    )
+
+
+def _reconcile_baseline(data_root: Path) -> None:
+    if not data_root.is_dir():
+        return
+    client: QdrantClient | None = None
+    try:
+        client = _make_qdrant_client()
+        for match_dir in sorted(data_root.iterdir(), key=lambda path: path.name):
+            if not match_dir.is_dir() or not (match_dir / "CURRENT_REV").is_file():
+                continue
+            revision, _, manifest = _published_manifest(match_dir, required=True)
+            assert revision is not None
+            name = collection_name(revision)
+            # A match with no seeded collection is simply unpublished — skip it
+            # here (its endpoints surface an actionable 409 via _require_collection)
+            # rather than turning a non-transient state into a transient reconcile
+            # failure. Genuine connectivity errors still propagate as transient.
+            if not client.collection_exists(name):
+                LOGGER.warning(
+                    "Skipping reconcile for %s: collection %s missing",
+                    match_dir.name,
+                    name,
+                )
+                continue
+            events = _artifact_events(manifest)
+            if events:
+                points = [
+                    models.PointStruct(
+                        id=_point_id(match_dir.name, str(event["id"])),
+                        vector=_query_vector(event_text(event)),
+                        payload=event,
+                    )
+                    for event in events
+                ]
+                client.upsert(collection_name=name, points=points, wait=True)
+
+            expected = {_point_id(match_dir.name, str(event["id"])) for event in events}
+            actual: set[str] = set()
+            offset: Any | None = None
+            while True:
+                records, next_offset = client.scroll(
+                    collection_name=name,
+                    limit=256,
+                    offset=offset,
+                    with_payload=False,
+                    with_vectors=False,
+                )
+                actual.update(str(record.id) for record in records)
+                if next_offset is None:
+                    break
+                offset = next_offset
+            extra = sorted(actual - expected)
+            if extra:
+                client.delete(
+                    collection_name=name,
+                    points_selector=models.PointIdsList(points=extra),
+                    wait=True,
+                )
+    finally:
+        if client is not None:
+            try:
+                client.close()
+            except Exception:
+                pass
+
+
+def _next_event_id(
+    events: list[dict[str, Any]], reserved_ids: Iterable[str] = ()
+) -> str:
+    # Allocate against manifest event ids AND ids reserved in decisions, so an
+    # id freed by an undo (removed from the manifest but still recorded in
+    # decisions) is never reused and then duplicated when the proposal is
+    # re-accepted.
+    candidates = [str(event.get("id", "")) for event in events]
+    candidates.extend(str(rid) for rid in reserved_ids)
+    numbers = [
+        int(match.group(1))
+        for candidate in candidates
+        if (match := _EVENT_ID_PATTERN.fullmatch(candidate))
+    ]
+    return f"e-{max(numbers, default=0) + 1:03d}"
 
 
 def _ffconcat_path(path: Path) -> str:
@@ -418,7 +756,9 @@ def _ffconcat_path(path: Path) -> str:
 def _build_reel(destination: Path, clips: list[Path]) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     concat_path: Path | None = None
-    encoded_path = destination.parent / f".{destination.stem}.{uuid.uuid4().hex}.tmp.mp4"
+    encoded_path = (
+        destination.parent / f".{destination.stem}.{uuid.uuid4().hex}.tmp.mp4"
+    )
     try:
         with tempfile.NamedTemporaryFile(
             mode="w",
@@ -431,7 +771,7 @@ def _build_reel(destination: Path, clips: list[Path]) -> None:
             concat_path = Path(handle.name)
             for clip in clips:
                 handle.write(f"file '{_ffconcat_path(clip)}'\n")
-        result = subprocess.run(
+        copy_result = subprocess.run(
             [
                 "ffmpeg",
                 "-hide_banner",
@@ -443,23 +783,8 @@ def _build_reel(destination: Path, clips: list[Path]) -> None:
                 "0",
                 "-i",
                 str(concat_path),
-                "-vf",
-                "scale=1280:720:force_original_aspect_ratio=decrease,"
-                "pad=1280:720:(ow-iw)/2:(oh-ih)/2,format=yuv420p",
-                "-c:v",
-                "libx264",
-                "-preset",
-                "medium",
-                "-crf",
-                "23",
-                "-c:a",
-                "aac",
-                "-b:a",
-                "128k",
-                "-ar",
-                "48000",
-                "-ac",
-                "2",
+                "-c",
+                "copy",
                 "-movflags",
                 "+faststart",
                 "-y",
@@ -468,9 +793,56 @@ def _build_reel(destination: Path, clips: list[Path]) -> None:
             capture_output=True,
             check=False,
         )
+        result = copy_result
+        if copy_result.returncode != 0:
+            encoded_path.unlink(missing_ok=True)
+            result = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-f",
+                    "concat",
+                    "-safe",
+                    "0",
+                    "-i",
+                    str(concat_path),
+                    "-vf",
+                    "scale=1280:720:force_original_aspect_ratio=decrease,"
+                    "pad=1280:720:(ow-iw)/2:(oh-ih)/2,format=yuv420p",
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "medium",
+                    "-crf",
+                    "23",
+                    "-c:a",
+                    "aac",
+                    "-b:a",
+                    "128k",
+                    "-ar",
+                    "48000",
+                    "-ac",
+                    "2",
+                    "-movflags",
+                    "+faststart",
+                    "-y",
+                    str(encoded_path),
+                ],
+                capture_output=True,
+                check=False,
+            )
         if result.returncode != 0:
-            message = result.stderr.decode(errors="replace").strip()
-            raise HTTPException(status_code=500, detail=f"Reel encoding failed: {message}")
+            copy_message = copy_result.stderr.decode(errors="replace").strip()
+            fallback_message = result.stderr.decode(errors="replace").strip()
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Reel encoding failed: stream-copy concat failed "
+                    f"({copy_message}); re-encode fallback failed ({fallback_message})"
+                ),
+            )
         os.replace(encoded_path, destination)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=500, detail="ffmpeg is not installed") from exc
@@ -486,6 +858,39 @@ def create_app(data_root: Path | None = None) -> FastAPI:
     root = (data_root or DATA_ROOT).resolve()
     application = FastAPI(title="Every Angle API", lifespan=_lifespan)
     application.state.data_root = root
+    match_locks: dict[str, threading.Lock] = {}
+    match_locks_guard = threading.Lock()
+
+    def match_lock(video_id: str) -> threading.Lock:
+        with match_locks_guard:
+            return match_locks.setdefault(video_id, threading.Lock())
+
+    reconcile_guard = threading.Lock()
+
+    def ensure_reconciled() -> None:
+        # If startup reconciliation failed (a transient Qdrant outage), retry it
+        # lazily before touching the index, and 503 until it succeeds — so Search
+        # never silently serves a stale pre-reset collection (code-review fix).
+        if not getattr(application.state, "reconciliation_error", None):
+            return
+        with reconcile_guard:
+            # Re-check under the lock: another request may have reconciled while
+            # we waited. Serializing here prevents two concurrent reconciles, one
+            # of which could delete a point the other just accepted (code-review).
+            if not getattr(application.state, "reconciliation_error", None):
+                return
+            try:
+                _reconcile_baseline(root)
+            except Exception as exc:
+                application.state.reconciliation_error = (
+                    str(exc) or type(exc).__name__
+                )
+                raise HTTPException(
+                    status_code=503,
+                    detail="Index is reconciling after a startup issue; retry shortly",
+                ) from exc
+            application.state.reconciliation_error = None
+
     application.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:5173"],
@@ -535,9 +940,17 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         try:
             windows = [TimelineWindow.model_validate(window) for window in raw_windows]
         except (TypeError, ValueError) as exc:
-            raise HTTPException(status_code=500, detail="Invalid timeline window") from exc
+            raise HTTPException(
+                status_code=500, detail="Invalid timeline window"
+            ) from exc
         _, _, manifest = _published_manifest(match_dir)
-        events = [EventResponse.model_validate(event) for event in _artifact_events(manifest)]
+        artifact_events = _artifact_events(manifest)
+        events = [EventResponse.model_validate(event) for event in artifact_events]
+        accepted_proposals = {
+            str(event["from_proposal"])
+            for event in artifact_events
+            if event.get("from_proposal") is not None
+        }
         proposals = _read_json_object(
             match_dir / "proposals.json", default={"proposals": []}
         )
@@ -552,7 +965,11 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         decisions = _read_json_object(match_dir / "decisions.json", default={})
         rejected: list[RejectedProposal] = []
         for proposal_id, decision in decisions.items():
-            if not isinstance(decision, dict) or decision.get("status") != "rejected":
+            if (
+                proposal_id in accepted_proposals
+                or not isinstance(decision, dict)
+                or decision.get("status") != "rejected"
+            ):
                 continue
             proposal = by_id.get(proposal_id)
             if proposal is None:
@@ -580,66 +997,347 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         match_dir = _match_dir(root, video_id)
         return _proposal_responses(match_dir, video_id)
 
-    @application.post(
-        "/api/matches/{video_id}/decisions", response_model=DecisionResponse
+    @application.get(
+        "/api/matches/{video_id}/capabilities",
+        response_model=MatchCapabilities,
     )
-    def update_decision(video_id: str, request: DecisionRequest) -> DecisionResponse:
+    def get_capabilities(video_id: str) -> MatchCapabilities:
         match_dir = _match_dir(root, video_id)
-        proposals = _read_json_object(
-            match_dir / "proposals.json", default={"proposals": []}
+        return MatchCapabilities(
+            source_video_available=_source_video(match_dir) is not None
         )
-        rows = proposals.get("proposals", [])
-        known_ids = {
-            str(row.get("id"))
-            for row in rows
-            if isinstance(row, dict) and row.get("id")
-        } if isinstance(rows, list) else set()
-        if request.proposal_id not in known_ids:
-            raise HTTPException(status_code=404, detail="Proposal not found")
-        path = match_dir / "decisions.json"
-        decisions = _read_json_object(path, default={})
-        previous = decisions.get(request.proposal_id, {})
-        updated: dict[str, Any] = {"status": request.status}
-        if (
-            request.status == "accepted"
-            and isinstance(previous, dict)
-            and isinstance(previous.get("event_id"), str)
-        ):
-            updated["event_id"] = previous["event_id"]
-        decisions[request.proposal_id] = updated
-        _write_json_atomic(path, decisions)
-        return DecisionResponse(proposal_id=request.proposal_id, **updated)
+
+    def compensate_point_or_mark_reconciliation(
+        client: QdrantClient,
+        *,
+        revision: int,
+        video_id: str,
+        event_id: str,
+        snapshot: tuple[Any, Any, dict[str, Any]] | None,
+    ) -> None:
+        try:
+            _restore_event_point(
+                client,
+                revision=revision,
+                video_id=video_id,
+                event_id=event_id,
+                snapshot=snapshot,
+            )
+        except Exception as exc:
+            application.state.reconciliation_error = (
+                str(exc) or type(exc).__name__
+            )
+            raise HTTPException(
+                status_code=503,
+                detail="Proposal update failed and the index requires reconciliation",
+            ) from exc
+
+    def accept_proposal_change(
+        video_id: str,
+        proposal_id: str,
+        *,
+        caption: str | None = None,
+        event_type: str | None = None,
+    ) -> DecisionResponse:
+        match_dir = _match_dir(root, video_id)
+        proposal = _proposal_row(match_dir, proposal_id)
+        with match_lock(video_id):
+            ensure_reconciled()
+            revision, published_dir, manifest = _published_manifest(
+                match_dir, required=True
+            )
+            assert revision is not None and published_dir is not None
+            events = _artifact_events(manifest)
+            decisions_path = match_dir / "decisions.json"
+            decisions = _read_json_object(decisions_path, default={})
+            event = _event_for_proposal(
+                proposal,
+                events,
+                decisions,
+                caption=caption,
+                event_type=event_type,
+            )
+            try:
+                _event_clip(match_dir, event.get("clip"))
+            except HTTPException:
+                # Prefer the hosted proposal preview. Cutting from the source is
+                # the local fallback when no preview was prepared.
+                clips_dir = match_dir / "clips"
+                target = clips_dir / f"{event['id']}.mp4"
+                proposal_clip = resolve_proposal_clip(match_dir, proposal_id, {})
+                if proposal_clip is not None:
+                    clips_dir.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(proposal_clip, target)
+                else:
+                    source = _source_video(match_dir)
+                    if source is None:
+                        raise HTTPException(
+                            status_code=409,
+                            detail=(
+                                f"No clip for proposal {proposal_id} and no source "
+                                "video available to cut it"
+                            ),
+                        ) from None
+                    try:
+                        cut_event(source, event, clips_dir)
+                    except (OSError, RuntimeError, TypeError, ValueError) as exc:
+                        raise HTTPException(
+                            status_code=500,
+                            detail="Could not cut the clip for this proposal",
+                        ) from exc
+
+            updated_events: list[dict[str, Any]] = []
+            replaced = False
+            for row in events:
+                if row.get("from_proposal") == proposal_id:
+                    updated_events.append(event)
+                    replaced = True
+                else:
+                    updated_events.append(row)
+            if not replaced:
+                updated_events.append(event)
+            updated_manifest = dict(manifest)
+            updated_manifest["events"] = updated_events
+            updated_manifest.setdefault("video_id", video_id)
+
+            client: QdrantClient | None = None
+            try:
+                client = _request_qdrant_client()
+                snapshot = _capture_event_point(
+                    client,
+                    revision=revision,
+                    video_id=video_id,
+                    event_id=str(event["id"]),
+                )
+                try:
+                    _upsert_event(
+                        client,
+                        revision=revision,
+                        video_id=video_id,
+                        event=event,
+                    )
+                    # The manifest is the commit: Search holds this same match
+                    # lock and cannot observe the point before this write lands.
+                    _write_json_atomic(
+                        published_dir / "manifest.json", updated_manifest
+                    )
+                except Exception as exc:
+                    compensate_point_or_mark_reconciliation(
+                        client,
+                        revision=revision,
+                        video_id=video_id,
+                        event_id=str(event["id"]),
+                        snapshot=snapshot,
+                    )
+                    if isinstance(exc, HTTPException):
+                        raise
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Could not commit the proposal update",
+                    ) from exc
+            finally:
+                if client is not None:
+                    try:
+                        client.close()
+                    except Exception:
+                        pass
+
+            decision = {"status": "accepted", "event_id": str(event["id"])}
+            decisions[proposal_id] = decision
+            try:
+                _write_json_atomic(decisions_path, decisions)
+            except OSError as exc:
+                raise HTTPException(
+                    status_code=500, detail="Could not persist the proposal decision"
+                ) from exc
+            return DecisionResponse(proposal_id=proposal_id, **decision)
+
+    def reject_proposal_change(
+        video_id: str, proposal_id: str
+    ) -> DecisionResponse:
+        match_dir = _match_dir(root, video_id)
+        _proposal_row(match_dir, proposal_id)
+        with match_lock(video_id):
+            ensure_reconciled()
+            revision, published_dir, manifest = _published_manifest(
+                match_dir, required=True
+            )
+            assert revision is not None and published_dir is not None
+            events = _artifact_events(manifest)
+            decisions_path = match_dir / "decisions.json"
+            decisions = _read_json_object(decisions_path, default={})
+            accepted_event = next(
+                (
+                    event
+                    for event in events
+                    if event.get("from_proposal") == proposal_id
+                ),
+                None,
+            )
+            previous = decisions.get(proposal_id, {})
+            event_id = (
+                str(accepted_event["id"])
+                if accepted_event is not None
+                else str(previous["event_id"])
+                if isinstance(previous, dict)
+                and isinstance(previous.get("event_id"), str)
+                else _proposal_event_id(proposal_id)
+            )
+
+            client: QdrantClient | None = None
+            try:
+                client = _request_qdrant_client()
+                snapshot = _capture_event_point(
+                    client,
+                    revision=revision,
+                    video_id=video_id,
+                    event_id=event_id,
+                )
+                try:
+                    _delete_event_point(
+                        client,
+                        revision=revision,
+                        video_id=video_id,
+                        event_id=event_id,
+                    )
+                    if accepted_event is not None:
+                        updated_manifest = dict(manifest)
+                        updated_manifest["events"] = [
+                            event
+                            for event in events
+                            if event.get("from_proposal") != proposal_id
+                        ]
+                        # As in acceptance, this manifest write is the commit.
+                        _write_json_atomic(
+                            published_dir / "manifest.json", updated_manifest
+                        )
+                except Exception as exc:
+                    compensate_point_or_mark_reconciliation(
+                        client,
+                        revision=revision,
+                        video_id=video_id,
+                        event_id=event_id,
+                        snapshot=snapshot,
+                    )
+                    if isinstance(exc, HTTPException):
+                        raise
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Could not commit the proposal rejection",
+                    ) from exc
+            finally:
+                if client is not None:
+                    try:
+                        client.close()
+                    except Exception:
+                        pass
+
+            decision = {"status": "rejected", "event_id": event_id}
+            decisions[proposal_id] = decision
+            try:
+                _write_json_atomic(decisions_path, decisions)
+            except OSError as exc:
+                raise HTTPException(
+                    status_code=500, detail="Could not persist the proposal decision"
+                ) from exc
+            return DecisionResponse(proposal_id=proposal_id, **decision)
 
     @application.post(
-        "/api/matches/{video_id}/events", response_model=EventResponse
+        "/api/matches/{video_id}/proposals/{proposal_id}/accept",
+        response_model=DecisionResponse,
     )
+    def accept_proposal(video_id: str, proposal_id: str) -> DecisionResponse:
+        return accept_proposal_change(video_id, proposal_id)
+
+    @application.post(
+        "/api/matches/{video_id}/proposals/{proposal_id}/reject",
+        response_model=DecisionResponse,
+    )
+    def reject_proposal(video_id: str, proposal_id: str) -> DecisionResponse:
+        return reject_proposal_change(video_id, proposal_id)
+
+    @application.post(
+        "/api/matches/{video_id}/proposals/{proposal_id}/edit",
+        response_model=DecisionResponse,
+    )
+    def edit_proposal(
+        video_id: str, proposal_id: str, request: ProposalEditRequest
+    ) -> DecisionResponse:
+        if request.type == "none":
+            return reject_proposal_change(video_id, proposal_id)
+        return accept_proposal_change(
+            video_id,
+            proposal_id,
+            caption=request.caption.strip() if request.caption is not None else None,
+            event_type=request.type,
+        )
+
+    @application.post("/api/matches/{video_id}/events", response_model=EventResponse)
     def add_human_event(video_id: str, request: HumanEventRequest) -> EventResponse:
         match_dir = _match_dir(root, video_id)
-        path = match_dir / "manifest.json"
-        manifest = _read_json_object(
-            path, default={"video_id": video_id, "events": []}
-        )
-        events = _artifact_events(manifest)
-        event_id = _next_event_id(events)
-        event = {
-            "id": event_id,
-            "from_proposal": None,
-            "t_start": request.t_start,
-            "t_end": request.t_end,
-            "type": request.type,
-            "caption": request.caption,
-            "team": None,
-            "player": None,
-            "clip": f"clips/{event_id}.mp4",
-            "verified_at": datetime.now(timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z"),
-        }
-        events.append(event)
-        manifest["events"] = events
-        manifest.setdefault("video_id", video_id)
-        _write_json_atomic(path, manifest)
-        return EventResponse.model_validate(event)
+        with match_lock(video_id):
+            ensure_reconciled()
+            source = _source_video(match_dir)
+            if source is None:
+                raise HTTPException(
+                    status_code=409,
+                    detail="Add Moment requires the source video for this match",
+                )
+            revision, published_dir, manifest = _published_manifest(
+                match_dir, required=True
+            )
+            assert revision is not None and published_dir is not None
+            events = _artifact_events(manifest)
+            decisions = _read_json_object(match_dir / "decisions.json", default={})
+            reserved_ids = [
+                decision["event_id"]
+                for decision in decisions.values()
+                if isinstance(decision, dict)
+                and isinstance(decision.get("event_id"), str)
+            ]
+            event_id = _next_event_id(events, reserved_ids)
+            event = {
+                "id": event_id,
+                "from_proposal": None,
+                "t_start": request.t_start,
+                "t_end": request.t_end,
+                "type": request.type,
+                "caption": request.caption,
+                "team": None,
+                "player": None,
+                "clip": f"clips/{event_id}.mp4",
+                "verified_at": datetime.now(timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z"),
+            }
+            try:
+                cut_event(source, event, match_dir / "clips")
+            except (OSError, RuntimeError, TypeError, ValueError) as exc:
+                raise HTTPException(
+                    status_code=500, detail="Could not cut the added moment"
+                ) from exc
+
+            client: QdrantClient | None = None
+            try:
+                client = _request_qdrant_client()
+                _upsert_event(
+                    client,
+                    revision=revision,
+                    video_id=video_id,
+                    event=event,
+                )
+            finally:
+                if client is not None:
+                    try:
+                        client.close()
+                    except Exception:
+                        pass
+
+            events.append(event)
+            manifest["events"] = events
+            manifest.setdefault("video_id", video_id)
+            _write_json_atomic(published_dir / "manifest.json", manifest)
+            return EventResponse.model_validate(event)
 
     @application.get(
         "/api/matches/{video_id}/search", response_model=list[SearchResult]
@@ -650,43 +1348,61 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         limit: int = Query(default=8, ge=1, le=50),
     ) -> list[SearchResult]:
         match_dir = _match_dir(root, video_id)
-        revision, _, _ = _published_manifest(match_dir, required=True)
-        assert revision is not None
-        vector = _query_vector(q)
-        client: QdrantClient | None = None
-        try:
-            client = _make_qdrant_client()
-            response = client.query_points(
-                collection_name=collection_name(revision),
-                query=vector,
-                limit=limit,
-                with_payload=True,
-                with_vectors=False,
-            )
-        except Exception as exc:
-            raise HTTPException(
-                status_code=503,
-                detail="Qdrant search is unavailable; verify QDRANT_URL and retry",
-            ) from exc
-        finally:
-            if client is not None:
-                try:
-                    client.close()
-                except Exception:
-                    pass
-        results: list[SearchResult] = []
-        for point in response.points:
-            payload = point.payload or {}
-            results.append(SearchResult.model_validate({**payload, "score": point.score}))
-        return results
+        with match_lock(video_id):
+            # Re-check reconciliation only after acquiring the edit lock. A
+            # Search that began while an edit was in flight must observe a
+            # compensation failure raised by that edit, not the split point.
+            ensure_reconciled()
+            revision, _, manifest = _published_manifest(match_dir, required=True)
+            assert revision is not None
+            event_ids = [
+                str(event["id"])
+                for event in _artifact_events(manifest)
+                if event.get("id") is not None
+            ]
+            if not event_ids:
+                return []
+            vector = _query_vector(q)
+            client: QdrantClient | None = None
+            try:
+                client = _make_qdrant_client()
+                response = client.query_points(
+                    collection_name=collection_name(revision),
+                    query=vector,
+                    query_filter=models.Filter(
+                        must=[
+                            models.FieldCondition(
+                                key="id", match=models.MatchAny(any=event_ids)
+                            )
+                        ]
+                    ),
+                    limit=limit,
+                    with_payload=True,
+                    with_vectors=False,
+                )
+            except Exception as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Qdrant search is unavailable; verify QDRANT_URL and retry",
+                ) from exc
+            finally:
+                if client is not None:
+                    try:
+                        client.close()
+                    except Exception:
+                        pass
+            results: list[SearchResult] = []
+            for point in response.points:
+                payload = point.payload or {}
+                results.append(
+                    SearchResult.model_validate({**payload, "score": point.score})
+                )
+            return results
 
-    @application.post(
-        "/api/matches/{video_id}/reel", response_model=ReelResponse
-    )
+    @application.post("/api/matches/{video_id}/reel", response_model=ReelResponse)
     def create_reel(video_id: str, request: ReelRequest) -> ReelResponse:
         match_dir = _match_dir(root, video_id)
-        _, published_dir, manifest = _published_manifest(match_dir, required=True)
-        assert published_dir is not None
+        _, _, manifest = _published_manifest(match_dir, required=True)
         events = _artifact_events(manifest)
         by_id = {str(event.get("id")): event for event in events}
         missing = [event_id for event_id in request.event_ids if event_id not in by_id]
@@ -701,10 +1417,7 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         ).hexdigest()
         destination = match_dir / "reels" / f"{digest}.mp4"
         if not destination.is_file():
-            clips = [
-                _safe_published_clip(published_dir, event.get("clip"))
-                for event in selected
-            ]
+            clips = [_event_clip(match_dir, event.get("clip")) for event in selected]
             _build_reel(destination, clips)
         duration = round(
             sum(float(event["t_end"]) - float(event["t_start"]) for event in selected),
@@ -716,9 +1429,7 @@ def create_app(data_root: Path | None = None) -> FastAPI:
             event_ids=request.event_ids,
         )
 
-    application.mount(
-        "/media", GuardedStaticFiles(directory=root), name="media"
-    )
+    application.mount("/media", GuardedStaticFiles(directory=root), name="media")
     if FRONTEND_DIST.is_dir():
         application.mount(
             "/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend"

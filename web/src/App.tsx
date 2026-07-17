@@ -1,17 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { api, timecode } from "./lib/api";
 import { Timeline } from "./components/Timeline";
-import { Empty, ErrorNote, Figure, Figures } from "./components/bits";
+import { Button, Empty, ErrorNote, Figure, Figures } from "./components/bits";
 import { Verify } from "./views/Verify";
 import { Search } from "./views/Search";
 import { Reel } from "./views/Reel";
+import {
+  mergeSelection,
+  reconcileSelection,
+  replaceSelection,
+} from "./lib/reelSelection";
 
 type Tab = "verify" | "search" | "reel";
+const TAB_LABELS: Record<Tab, string> = {
+  verify: "Review",
+  search: "Search",
+  reel: "Reel",
+};
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("search");
   const [reel, setReel] = useState<string[]>([]);
+  const [pendingSelection, setPendingSelection] = useState<string[] | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
 
   const { data: matches, error: matchErr } = useQuery({
@@ -25,6 +36,42 @@ export default function App() {
     queryFn: () => api.timeline(matchId as string),
     enabled: Boolean(matchId),
   });
+  const { data: proposals } = useQuery({
+    queryKey: ["proposals", matchId],
+    queryFn: () => api.proposals(matchId as string),
+    enabled: Boolean(matchId),
+  });
+
+  useEffect(() => {
+    if (!tl) return;
+    setReel((current) => reconcileSelection(current, tl.events));
+    setPendingSelection((current) =>
+      current ? reconcileSelection(current, tl.events) : null,
+    );
+  }, [tl]);
+
+  const reconciledReel = tl ? reconcileSelection(reel, tl.events) : reel;
+
+  const applySelection = (ids: string[]) => {
+    const incoming = reconcileSelection(replaceSelection(ids), tl?.events ?? []);
+    if (reconciledReel.length === 0) {
+      setReel(incoming);
+    } else {
+      setPendingSelection(incoming);
+    }
+  };
+
+  const resolveSelection = (mode: "replace" | "merge") => {
+    if (!pendingSelection) return;
+    const incoming = reconcileSelection(pendingSelection, tl?.events ?? []);
+    setReel((current) => {
+      const reconciled = reconcileSelection(current, tl?.events ?? []);
+      return mode === "replace"
+        ? replaceSelection(incoming)
+        : mergeSelection(reconciled, incoming);
+    });
+    setPendingSelection(null);
+  };
 
   const shellProps = {
     matches: matches ?? [],
@@ -32,6 +79,7 @@ export default function App() {
     onPick: (id: string) => {
       setPicked(id);
       setReel([]);
+      setPendingSelection(null);
     },
   };
 
@@ -53,8 +101,15 @@ export default function App() {
       </Shell>
     );
 
+  // The proposal-derived figures degrade gracefully if /proposals is slow or
+  // errors — the app (Timeline/Search/Reel) must never stall on them, and the
+  // tiles show "—" (not a misleading 0) until the data actually arrives.
   const reviewed = tl.windows.reduce((a, w) => a + (w.t_end - w.t_start), 0);
-  const goals = tl.events.filter((e) => e.type === "goal").length;
+  const proposalsReady = proposals !== undefined;
+  const notableProposals = (proposals ?? []).filter((proposal) => proposal.type !== "none");
+  const awaitingReview = notableProposals.filter(
+    (proposal) => proposal.status === "pending",
+  ).length;
 
   return (
     <Shell {...shellProps} duration={tl.duration}>
@@ -65,13 +120,12 @@ export default function App() {
           unit={`of ${timecode(tl.duration)}`}
           hero
         />
-        <Figure label="Candidate windows" value={tl.windows.length} />
-        <Figure label="Goals kept" value={goals} />
-        <Figure label="Rejected by human" value={tl.rejected.length} />
-        <Figure label="Verified moments" value={tl.events.length} />
+        <Figure label="AI proposals" value={proposalsReady ? notableProposals.length : "—"} />
+        <Figure label="Verified clips" value={tl.events.length} />
+        <Figure label="Awaiting review" value={proposalsReady ? awaitingReview : "—"} />
       </Figures>
 
-      <Timeline data={tl} />
+      <Timeline matchId={matchId} data={tl} />
 
       <nav className="mt-9 flex border-b border-line" role="tablist">
         {(["verify", "search", "reel"] as Tab[]).map((t) => (
@@ -86,10 +140,10 @@ export default function App() {
                 : "border-b-transparent text-chalk-faint hover:text-chalk-dim"
             }`}
           >
-            {t}
-            {t === "reel" && reel.length > 0 && (
+            {TAB_LABELS[t]}
+            {t === "reel" && reconciledReel.length > 0 && (
               <span className="tnum ml-2 bg-sodium px-1.5 text-[11px] text-sodium-ink">
-                {reel.length}
+                {reconciledReel.length}
               </span>
             )}
           </button>
@@ -101,12 +155,47 @@ export default function App() {
         {tab === "search" && (
           <Search
             matchId={matchId}
-            inReel={new Set(reel)}
-            onAdd={(id) => setReel((r) => (r.includes(id) ? r : [...r, id]))}
+            events={tl.events}
+            inReel={new Set(reconciledReel)}
+            onApplySelection={applySelection}
           />
         )}
-        {tab === "reel" && <Reel matchId={matchId} selected={reel} setSelected={setReel} />}
+        {tab === "reel" && (
+          <Reel
+            matchId={matchId}
+            events={tl.events}
+            selected={reconciledReel}
+            setSelected={setReel}
+            onApplySelection={applySelection}
+          />
+        )}
       </div>
+
+      {pendingSelection && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-6">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="selection-prompt-title"
+            className="w-full max-w-md border border-line bg-ink-800 p-5"
+          >
+            <h2 id="selection-prompt-title" className="display text-[17px]">
+              Update reel selection
+            </h2>
+            <p className="mt-2 text-[13px] text-chalk-dim">
+              Replace the current reel with this selection, or merge in new moments while
+              preserving the current order?
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button tone="primary" onClick={() => resolveSelection("replace")}>
+                Replace
+              </Button>
+              <Button onClick={() => resolveSelection("merge")}>Merge</Button>
+              <Button onClick={() => setPendingSelection(null)}>Cancel</Button>
+            </div>
+          </section>
+        </div>
+      )}
     </Shell>
   );
 }

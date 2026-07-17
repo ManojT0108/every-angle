@@ -1,14 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { api, timecode, type EventType, type Proposal } from "../lib/api";
-import { Button, Empty, ErrorNote, TypeChip } from "../components/bits";
+import {
+  api,
+  timecode,
+  type EventType,
+  type Proposal,
+  type ProposalType,
+} from "../lib/api";
+import { invalidateReviewQueries, judgedProposals } from "../lib/verify";
+import { Button, ClipThumb, Empty, ErrorNote, TypeChip } from "../components/bits";
 
 /**
- * Verify — the human-in-the-loop step, and the honest heart of the product.
+ * Review — the human-in-the-loop step, and the honest heart of the product.
  *
- * We show the frames the model ACTUALLY SAW: the tight ball-tracked crops it
- * used to judge the play, then the wide frames of what happened next. If the
- * model was wrong, you can see exactly why it was wrong. Nothing is hidden
+ * We show playable footage of the proposed window, with the frames the model
+ * actually saw as a fallback when a clip is unavailable. Nothing is hidden
  * behind a confidence score.
  */
 export function Verify({ matchId }: { matchId: string }) {
@@ -17,80 +23,118 @@ export function Verify({ matchId }: { matchId: string }) {
     queryKey: ["proposals", matchId],
     queryFn: () => api.proposals(matchId),
   });
+  const { data: capabilities } = useQuery({
+    queryKey: ["capabilities", matchId],
+    queryFn: () => api.capabilities(matchId),
+  });
 
   const decide = useMutation({
     mutationFn: ({ id, status }: { id: string; status: "accepted" | "rejected" }) =>
       api.decide(matchId, id, status),
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ["proposals", matchId] });
-      void qc.invalidateQueries({ queryKey: ["timeline", matchId] });
-    },
+    onSuccess: () => invalidateReviewQueries(qc, matchId),
+  });
+
+  const edit = useMutation({
+    mutationFn: ({
+      id,
+      caption,
+      type,
+    }: {
+      id: string;
+      caption: string;
+      type: ProposalType;
+    }) => api.editProposal(matchId, id, { caption, type }),
+    onSuccess: () => invalidateReviewQueries(qc, matchId),
   });
 
   if (error) return <ErrorNote>Could not load proposals — {(error as Error).message}</ErrorNote>;
   if (isLoading) return <Empty>Loading proposals…</Empty>;
 
   const pending = (data ?? []).filter((p) => p.status === "pending" && p.type !== "none");
-  const settled = (data ?? []).filter((p) => p.status !== "pending");
+  const settled = judgedProposals(data ?? []);
   const dismissed = (data ?? []).filter((p) => p.status === "pending" && p.type === "none").length;
 
   return (
     <div className="space-y-8">
       <div>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-3">
-          <span className="eyebrow">Awaiting your judgement</span>
+          <span className="eyebrow">Awaiting your review</span>
           <span className="tnum font-mono text-[11px] text-chalk-faint">
             {dismissed} windows dismissed as ordinary play
           </span>
         </div>
 
         {pending.length === 0 ? (
-          <Empty>Every proposal has been judged.</Empty>
+          <Empty>Every proposal has been reviewed.</Empty>
         ) : (
           <div className="grid gap-px border border-line bg-line">
             {pending.map((p) => (
               <ProposalCard
                 key={p.id}
                 p={p}
-                busy={decide.isPending}
+                busy={decide.isPending || edit.isPending}
                 onDecide={(status) => decide.mutate({ id: p.id, status })}
+                onEdit={(caption, type) =>
+                  edit.mutateAsync({ id: p.id, caption, type })
+                }
               />
             ))}
           </div>
         )}
       </div>
 
-      <AddMoment matchId={matchId} />
+      {decide.error && <ErrorNote>{(decide.error as Error).message}</ErrorNote>}
+      {edit.error && <ErrorNote>{(edit.error as Error).message}</ErrorNote>}
+
+      {capabilities?.source_video_available && <AddMoment matchId={matchId} />}
 
       {settled.length > 0 && (
         <div>
-          <div className="eyebrow mb-3">Judged</div>
+          <div className="eyebrow mb-3">Reviewed</div>
           <div className="grid gap-px border border-line bg-line">
             {settled.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center gap-4 bg-ink-800 px-4 py-2.5 text-[13px]"
-              >
-                <span
-                  className={`chip ${
-                    p.status === "accepted"
-                      ? "border-turf/50 text-turf"
-                      : "border-line text-chalk-faint"
-                  }`}
-                >
-                  {p.status}
-                </span>
-                <span className="tnum font-mono text-[11px] text-chalk-faint">
-                  {timecode(p.t_start)}
-                </span>
-                <span
-                  className={`truncate ${
-                    p.status === "rejected" ? "text-chalk-faint line-through" : "text-chalk-dim"
-                  }`}
-                >
-                  {p.caption}
-                </span>
-              </div>
+              <article key={p.id} className="bg-ink-800 px-4 py-3 text-[13px]">
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`chip ${
+                      p.status === "accepted"
+                        ? "border-turf/50 text-turf"
+                        : "border-line text-chalk-faint"
+                    }`}
+                  >
+                    {p.status}
+                  </span>
+                  <span className="tnum font-mono text-[11px] text-chalk-faint">
+                    {timecode(p.t_start)}
+                  </span>
+                  <span
+                    className={`min-w-0 flex-1 truncate ${
+                      p.status === "rejected"
+                        ? "text-chalk-faint line-through"
+                        : "text-chalk-dim"
+                    }`}
+                  >
+                    {p.caption}
+                  </span>
+                  {p.status === "accepted" && (
+                    <Button
+                      tone="drop"
+                      disabled={decide.isPending}
+                      onClick={() => decide.mutate({ id: p.id, status: "rejected" })}
+                    >
+                      Undo
+                    </Button>
+                  )}
+                </div>
+                <ProposalEditor
+                  p={p}
+                  busy={decide.isPending || edit.isPending}
+                  onSave={(caption, type) =>
+                    edit.mutateAsync({ id: p.id, caption, type })
+                  }
+                />
+                <ProposalMedia p={p} />
+              </article>
             ))}
           </div>
         </div>
@@ -102,16 +146,14 @@ export function Verify({ matchId }: { matchId: string }) {
 function ProposalCard({
   p,
   onDecide,
+  onEdit,
   busy,
 }: {
   p: Proposal;
   onDecide: (s: "accepted" | "rejected") => void;
+  onEdit: (caption: string, type: ProposalType) => Promise<unknown>;
   busy: boolean;
 }) {
-  const tight = p.frames.filter((f) => f.includes("tight"));
-  const wide = p.frames.filter((f) => f.includes("wide"));
-  const strip = tight.length || wide.length ? [...tight, ...wide] : p.frames;
-
   return (
     <article className="bg-ink-800 p-4">
       <div className="flex items-start justify-between gap-6">
@@ -136,6 +178,135 @@ function ProposalCard({
         </div>
       </div>
 
+      <ProposalEditor p={p} busy={busy} onSave={onEdit} />
+      <ProposalMedia p={p} />
+    </article>
+  );
+}
+
+function ProposalEditor({
+  p,
+  busy,
+  onSave,
+}: {
+  p: Proposal;
+  busy: boolean;
+  onSave: (caption: string, type: ProposalType) => Promise<unknown>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [caption, setCaption] = useState(p.caption);
+  const [type, setType] = useState<ProposalType>(p.type);
+
+  if (!editing) {
+    return (
+      <div className="mt-3">
+        <Button
+          disabled={busy}
+          onClick={() => {
+            setCaption(p.caption);
+            setType(p.type);
+            setEditing(true);
+          }}
+        >
+          Edit
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <ProposalEditForm
+      caption={caption}
+      type={type}
+      busy={busy}
+      onCaptionChange={setCaption}
+      onTypeChange={setType}
+      onSave={() => {
+        void onSave(caption.trim(), type)
+          .then(() => setEditing(false))
+          .catch(() => {});
+      }}
+      onCancel={() => setEditing(false)}
+    />
+  );
+}
+
+export function ProposalEditForm({
+  caption,
+  type,
+  busy,
+  onCaptionChange,
+  onTypeChange,
+  onSave,
+  onCancel,
+}: {
+  caption: string;
+  type: ProposalType;
+  busy: boolean;
+  onCaptionChange: (caption: string) => void;
+  onTypeChange: (type: ProposalType) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <form
+      className="mt-3 space-y-3 border border-line bg-ink-900 p-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSave();
+      }}
+    >
+      <Field label="Caption">
+        <textarea
+          value={caption}
+          onChange={(event) => onCaptionChange(event.target.value)}
+          required
+          rows={2}
+          className="w-full resize-y border border-line bg-ink-800 px-3 py-2 text-[14px] outline-none focus:border-sodium"
+        />
+      </Field>
+      <Field label="Type">
+        <select
+          value={type}
+          onChange={(event) => onTypeChange(event.target.value as ProposalType)}
+          className="border border-line bg-ink-800 px-2 py-1.5 text-[13px] outline-none focus:border-sodium"
+        >
+          {["goal", "save", "penalty", "card", "counterattack", "celebration", "none"].map(
+            (value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ),
+          )}
+        </select>
+      </Field>
+      <div className="flex gap-2">
+        <Button type="submit" tone="primary" disabled={busy || !caption.trim()}>
+          {busy ? "Saving…" : "Save"}
+        </Button>
+        <Button disabled={busy} onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export function ProposalMedia({ p }: { p: Proposal }) {
+  const tight = p.frames.filter((f) => f.includes("tight"));
+  const wide = p.frames.filter((f) => f.includes("wide"));
+  const strip = tight.length || wide.length ? [...tight, ...wide] : p.frames;
+
+  if (p.clip) {
+    return (
+      <div className="mt-3.5">
+        <ClipThumb src={p.clip} poster={p.frames[0]} t={p.t_start} />
+      </div>
+    );
+  }
+
+  return (
+    <>
       {/* the evidence — exactly what the model was shown, in order */}
       {strip.length > 0 && (
         <div className="mt-3.5">
@@ -158,7 +329,7 @@ function ProposalCard({
           </div>
         </div>
       )}
-    </article>
+    </>
   );
 }
 
@@ -185,7 +356,7 @@ function AddMoment({ matchId }: { matchId: string }) {
     onSuccess: () => {
       setOpen(false);
       setCaption("");
-      void qc.invalidateQueries({ queryKey: ["timeline", matchId] });
+      invalidateReviewQueries(qc, matchId);
     },
   });
 

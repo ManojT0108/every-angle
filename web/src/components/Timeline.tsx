@@ -1,4 +1,12 @@
-import { isHumanAdded, timecode, type Timeline as TL } from "../lib/api";
+import { useState } from "react";
+import {
+  isHumanAdded,
+  mediaUrl,
+  timecode,
+  type MomentEvent,
+  type Timeline as TL,
+} from "../lib/api";
+import { ClipModal } from "./bits";
 
 /**
  * The match timeline — the signature element of the whole app.
@@ -12,13 +20,47 @@ import { isHumanAdded, timecode, type Timeline as TL } from "../lib/api";
  * It is not decoration. It is the product argument in one graphic.
  */
 export function Timeline({
+  matchId,
   data,
   onSeek,
   activeId,
 }: {
+  matchId: string;
   data: TL;
   onSeek?: (t: number) => void;
   activeId?: string | null;
+}) {
+  const [playing, setPlaying] = useState<MomentEvent | null>(null);
+
+  return (
+    <TimelineView
+      matchId={matchId}
+      data={data}
+      onSeek={onSeek}
+      activeId={activeId}
+      playing={playing}
+      onPlay={setPlaying}
+      onClose={() => setPlaying(null)}
+    />
+  );
+}
+
+export function TimelineView({
+  matchId,
+  data,
+  onSeek,
+  activeId,
+  playing,
+  onPlay,
+  onClose,
+}: {
+  matchId: string;
+  data: TL;
+  onSeek?: (t: number) => void;
+  activeId?: string | null;
+  playing: MomentEvent | null;
+  onPlay: (event: MomentEvent) => void;
+  onClose: () => void;
 }) {
   const { duration, windows, events, rejected } = data;
   const pct = (t: number) => (t / duration) * 100;
@@ -54,15 +96,10 @@ export function Timeline({
           {events.map((e) => {
             const human = isHumanAdded(e);
             const active = activeId === e.id;
-            return (
-              <button
-                key={e.id}
-                onClick={() => onSeek?.(e.t_start)}
-                style={{ left: `${pct(e.t_start)}%` }}
-                title={e.caption}
-                className="group absolute bottom-0 flex -translate-x-1/2 flex-col items-center"
-                aria-label={`${e.type} at ${timecode(e.t_start)}`}
-              >
+            const className =
+              "group absolute bottom-0 flex -translate-x-1/2 flex-col items-center";
+            const mark = (
+              <>
                 {/* Labels collide when moments cluster, so only GOALS are labelled
                     at rest — the rest reveal on hover. The marks stay legible. */}
                 <span
@@ -82,7 +119,32 @@ export function Timeline({
                   }`}
                 />
                 <span className={`h-5 w-0.5 ${human ? "bg-chalk" : "bg-sodium"}`} />
+              </>
+            );
+            return e.clip ? (
+              <button
+                type="button"
+                key={e.id}
+                onClick={() => {
+                  onSeek?.(e.t_start);
+                  onPlay(e);
+                }}
+                style={{ left: `${pct(e.t_start)}%` }}
+                title={e.caption}
+                className={`${className} cursor-pointer`}
+                aria-label={`Play ${e.type} clip at ${timecode(e.t_start)}`}
+              >
+                {mark}
               </button>
+            ) : (
+              <div
+                key={e.id}
+                style={{ left: `${pct(e.t_start)}%` }}
+                title={e.caption}
+                className={className}
+              >
+                {mark}
+              </div>
             );
           })}
 
@@ -137,6 +199,13 @@ export function Timeline({
           <span className="absolute right-0">{timecode(duration)}</span>
         </div>
       </div>
+
+      <ClipModal
+        src={playing?.clip ? mediaUrl(matchId, playing.clip) : undefined}
+        t={playing?.t_start ?? 0}
+        open={Boolean(playing?.clip)}
+        onClose={onClose}
+      />
 
       <p className="mt-3.5 max-w-[66ch] text-[12.5px] text-chalk-faint">
         Ticks below the line are where the detector{" "}

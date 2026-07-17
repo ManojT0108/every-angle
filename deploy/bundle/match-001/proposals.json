@@ -1,0 +1,1900 @@
+{
+  "video_id": "match-001",
+  "asset": "docs/assets-manifest.md#match-001",
+  "runs": [
+    {
+      "run_id": "r-20260714T020019Z-07d703fe",
+      "created_at": "2026-07-14T02:00:54.093793Z",
+      "source_sha256": "e54eabc74b4fa4e80dc9f38bbc5955d8d47dd13874785e6d83fd41f8c040a105",
+      "detector_config_hash": "72fd4fb41290c206b3bd16bad42b0376f015d430d9c6de17a263a00b84e859c3",
+      "captioner": {
+        "name": "mock",
+        "model": "mock-captioner",
+        "prompt_version": "p1"
+      }
+    },
+    {
+      "run_id": "r-20260714T180504Z-claude",
+      "created_at": "2026-07-14T18:13:59.377152Z",
+      "source_sha256": "f50dfebc70743439a8c778abe06953885a50be8b47e3c9d3d1ce8d533fe315c8",
+      "detector_config_hash": "64fbefbee15a0421e31dcdd8ca931cd45db8276ed16e38fb496f731c35406bc1",
+      "captioner": {
+        "name": "claude",
+        "model": "claude-opus-4-8",
+        "prompt_version": "p2-strict-none"
+      }
+    },
+    {
+      "run_id": "r-20260714T182221Z-v2",
+      "created_at": "2026-07-14T18:37:25.246930Z",
+      "source_sha256": "f50dfebc70743439a8c778abe06953885a50be8b47e3c9d3d1ce8d533fe315c8",
+      "detector_config_hash": "64fbefbee15a0421e31dcdd8ca931cd45db8276ed16e38fb496f731c35406bc1",
+      "captioner": {
+        "name": "claude",
+        "model": "claude-opus-4-8",
+        "prompt_version": "p2-strict-none"
+      }
+    }
+  ],
+  "proposals": [
+    {
+      "id": "r-20260714T020019Z-07d703fe-p-001",
+      "run_id": "r-20260714T020019Z-07d703fe",
+      "t_start": 203.25,
+      "t_end": 218.25,
+      "type": "counterattack",
+      "confidence": "low",
+      "caption": "Potential football moment (audio cue); review the play in this window.",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T020019Z-07d703fe-p-001/frame-001.jpg",
+          "frames/r-20260714T020019Z-07d703fe-p-001/frame-002.jpg",
+          "frames/r-20260714T020019Z-07d703fe-p-001/frame-003.jpg",
+          "frames/r-20260714T020019Z-07d703fe-p-001/frame-004.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-001",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 203.25,
+      "t_end": 218.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield with play developing near the halfway line, no clear notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-001/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-001/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-002",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 937.5,
+      "t_end": 955.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "team breaks quickly out of midfield and drives forward into the right-side attacking third toward the box",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-002/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-002/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-003",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 990.5,
+      "t_end": 1008.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the centre circle with players spread across the pitch, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-003/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-003/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-004",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1388.5,
+      "t_end": 1403.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "attacking move into the box with a white player carrying the ball toward goal, defenders tracking back before play spreads back out to midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-004/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-004/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-005",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1392.5,
+      "t_end": 1410.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "team breaks forward on the counter toward the goal, ball played into the attacking third but attack breaks down with play settling back near midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-005/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-005/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-006",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1411.5,
+      "t_end": 1429.5,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "attack builds into the box and the keeper goes down, followed by players returning to the centre circle for a restart suggesting a goal was scored",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-006/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-006/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-007",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1434.5,
+      "t_end": 1449.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "players spread across midfield building play around the centre circle, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-007/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-007/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-008",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1447.5,
+      "t_end": 1465.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield build-up play with players advancing the ball through the centre circle, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-008/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-008/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-009",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1480.5,
+      "t_end": 1495.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the halfway line, no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-009/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-009/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-010",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1497.5,
+      "t_end": 1512.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the pitch, no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-010/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-010/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-011",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1505.5,
+      "t_end": 1520.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the halfway line, no clear shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-011/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-011/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-012",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1509.5,
+      "t_end": 1527.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield build-up play with players passing across the centre of the pitch, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-012/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-012/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-013",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1516.5,
+      "t_end": 1531.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the centre circle with players advancing the ball, no shot or scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-013/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-013/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-014",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1568.5,
+      "t_end": 1583.5,
+      "type": "counterattack",
+      "confidence": "low",
+      "caption": "attack builds down the right toward the box, play then settles near the corner with players spread across midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-014/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-014/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-015",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1605.5,
+      "t_end": 1623.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with an attack developing toward the right-side box, no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-015/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-015/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-016",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1723.5,
+      "t_end": 1741.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attack builds down the right into the box but is cleared, play resumes in midfield with no restart from the centre circle",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-016/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-016/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-017",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1793.5,
+      "t_end": 1808.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with build-up from the back, ball moved across the middle third, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-017/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-017/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-018",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1836.5,
+      "t_end": 1854.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield in a settled phase of play, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-018/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-018/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-019",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1849.5,
+      "t_end": 1867.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield with slow buildup, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-019/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-019/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-020",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1870.5,
+      "t_end": 1885.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield in open play, ball moving in the defensive third with no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-020/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-020/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-021",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1874.5,
+      "t_end": 1892.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the centre circle, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-021/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-021/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-022",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1892.5,
+      "t_end": 1907.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play near the centre circle with players contesting a loose ball and transitioning across halfway",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-022/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-022/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-023",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1898.5,
+      "t_end": 1913.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play with teams spread out, ball moving across the centre, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-023/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-023/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-024",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1936.5,
+      "t_end": 1954.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the pitch, ball circulating without a clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-024/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-024/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-025",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1955.5,
+      "t_end": 1976.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with players spread across the pitch, no clear scoring chance or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-025/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-025/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-026",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1980.5,
+      "t_end": 1995.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with players spread across the halfway line, ball being moved sideways with no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-026/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-026/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-027",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 1986.5,
+      "t_end": 2004.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with ball moving toward the box, no clear shot or goal, play continues",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-027/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-027/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-028",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2023.5,
+      "t_end": 2041.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "attacking build-up toward the right-side box but play stays near the penalty area with no clear shot on goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-028/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-028/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-029",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2039.5,
+      "t_end": 2054.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attacking players clustered near the right-side penalty box, but play remains around the edge with no clear shot or restart",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-029/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-029/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-030",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2096.5,
+      "t_end": 2111.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the halfway line, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-030/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-030/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-031",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2126.5,
+      "t_end": 2144.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players passing the ball around the centre circle, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-031/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-031/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-032",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2295.5,
+      "t_end": 2310.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with possession changing hands, ball moved around the center circle with no clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-032/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-032/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-033",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2360.5,
+      "t_end": 2381.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attacking play builds toward the right-side penalty box but play continues without a clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-033/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-033/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-034",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2410.5,
+      "t_end": 2428.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the centre circle with players spread across the pitch, no clear shot or scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-034/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-034/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-035",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2419.5,
+      "t_end": 2437.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with players spread across the centre circle, ball moving through the middle of the pitch, no clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-035/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-035/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-036",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2464.5,
+      "t_end": 2479.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield with the goalkeeper positioned near his box, ball loose near the sideline, no clear scoring action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-036/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-036/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-037",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2547.5,
+      "t_end": 2562.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the centre circle, no clear shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-037/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-037/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-038",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2578.5,
+      "t_end": 2596.5,
+      "type": "counterattack",
+      "confidence": "low",
+      "caption": "attack building down the right side toward the box, play continues without a clear shot on goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-038/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-038/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-039",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2590.5,
+      "t_end": 2611.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attack develops toward the box then play transitions to midfield build-up, no clear shot or restart from centre",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-039/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-039/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T180504Z-claude-p-040",
+      "run_id": "r-20260714T180504Z-claude",
+      "t_start": 2639.5,
+      "t_end": 2657.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "players clustered near the goal for a set piece or corner, play then resets with the ball being cleared upfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T180504Z-claude-p-040/frame-001.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-002.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-003.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-004.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-005.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-006.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-007.jpg",
+          "frames/r-20260714T180504Z-claude-p-040/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-001",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 203.25,
+      "t_end": 218.25,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play in the defensive half with players jogging into position, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-001/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-001/frame-008.jpg"
+        ],
+        "audio_peak": true,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-002",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 937.5,
+      "t_end": 955.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "fast break down the middle leading to a shot near the box, keeper comes off his line to deal with the attack near the far goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-002/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-002/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-003",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 990.5,
+      "t_end": 1008.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the halfway line with players spread across the pitch, no clear shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-003/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-003/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-004",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1388.5,
+      "t_end": 1403.5,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "attack down the right into the box, players then reset around the halfway line for a centre-circle restart suggesting a goal was scored",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-004/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-004/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-005",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1392.5,
+      "t_end": 1410.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play developing with the ball moving toward the wing, no clear shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-005/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-005/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-006",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1411.5,
+      "t_end": 1429.5,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "attack builds toward the right-side box, then all players return to the centre circle for a kickoff restart, suggesting a goal was scored",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-006/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-006/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-007",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1434.5,
+      "t_end": 1449.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield build-up play near the centre circle with players spread across the halfway line, no clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-007/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-007/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-008",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1447.5,
+      "t_end": 1465.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with the ball being passed around near the centre circle, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-008/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-008/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-009",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1480.5,
+      "t_end": 1495.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the centre circle with players jogging into position, no clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-009/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-009/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-010",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1497.5,
+      "t_end": 1512.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "team building play in their own half near the goalkeeper, ball worked out from the back with no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-010/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-010/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-011",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1505.5,
+      "t_end": 1520.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the halfway line with both teams spread across the pitch, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-011/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-011/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-012",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1509.5,
+      "t_end": 1527.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play near the centre circle with players spread across the pitch, no shot or clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-012/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-012/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-013",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1516.5,
+      "t_end": 1531.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "buildup play in midfield with a controlled pass, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-013/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-013/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-014",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1568.5,
+      "t_end": 1583.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play with players spread across the pitch, ball moving toward the right-side goal area with no clear shot or scoring outcome",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-014/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-014/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-015",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1605.5,
+      "t_end": 1623.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "attack builds down the right toward the box but is cleared, play transitions back toward midfield with no shot on goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-015/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-015/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-016",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1723.5,
+      "t_end": 1741.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "team breaks from midfield and drives forward into the attacking third toward the box",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-016/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-016/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-017",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1793.5,
+      "t_end": 1808.5,
+      "type": "counterattack",
+      "confidence": "medium",
+      "caption": "team builds an attack down the left flank toward the box but play breaks up with the goalkeeper collecting and no shot on goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-017/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-017/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-018",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1836.5,
+      "t_end": 1854.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread across midfield in a calm build-up phase with no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-018/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-018/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-019",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1849.5,
+      "t_end": 1867.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "buildup play in the defensive third with players spread across the pitch, no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-019/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-019/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-020",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1870.5,
+      "t_end": 1885.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up with players spread across the pitch, ordinary passing play near the halfway line",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-020/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-020/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-021",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1874.5,
+      "t_end": 1892.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play in the defensive half with players spread across the pitch, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-021/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-021/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-022",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1892.5,
+      "t_end": 1907.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players passing the ball around near the centre, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-022/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-022/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-023",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1898.5,
+      "t_end": 1913.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield build-up and transition play, ball moved forward with players spread across the centre, no shot or clear chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-023/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-023/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-024",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1936.5,
+      "t_end": 1954.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the pitch, ball moving in the defensive third near the touchline",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-024/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-024/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-025",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1955.5,
+      "t_end": 1976.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the pitch, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-025/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-025/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-026",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1980.5,
+      "t_end": 1995.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play with players spread across the pitch, no shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-026/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-026/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-027",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 1986.5,
+      "t_end": 2004.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play in open field with players spread out, ball being moved around without a clear scoring chance",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-027/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-027/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-028",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2023.5,
+      "t_end": 2041.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "attack develops toward the box but the ball is cleared, and play shifts to the far side with no restart from the centre",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-028/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-028/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-029",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2039.5,
+      "t_end": 2054.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attacking players clustered near the box in the corner of the pitch, play continues with no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-029/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-029/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-030",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2096.5,
+      "t_end": 2111.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield transition with players carrying the ball forward, no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-030/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-030/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-031",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2126.5,
+      "t_end": 2144.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield build-up play moving across the pitch with no shot or notable event",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-031/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-031/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-032",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2295.5,
+      "t_end": 2310.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play near the centre circle with players spread across the pitch, no clear shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-032/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-032/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-033",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2360.5,
+      "t_end": 2381.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "attacking build-up toward the right-side penalty box, defenders clear and play continues with players spread across midfield",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-033/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-033/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-034",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2410.5,
+      "t_end": 2428.5,
+      "type": "none",
+      "confidence": "medium",
+      "caption": "midfield play near the centre circle with both teams building up, no clear scoring chance or stoppage",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-034/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-034/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-035",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2419.5,
+      "t_end": 2437.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play transitioning toward one goal, ball moved around the box but play continues with no clear shot or restart",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-035/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-035/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-036",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2464.5,
+      "t_end": 2479.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players spread out in midfield with a goalkeeper walking near his box, no clear attacking action or shot",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-036/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-036/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-037",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2547.5,
+      "t_end": 2562.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "midfield play near the centre circle with players spread out, no clear shot or notable action",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-037/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-037/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-038",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2578.5,
+      "t_end": 2596.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "attack builds down the right into the box, ball worked wide near the byline with play continuing",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-038/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-038/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-039",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2590.5,
+      "t_end": 2611.5,
+      "type": "goal",
+      "confidence": "medium",
+      "caption": "attack on the box with players clustered near the goal, followed by all players returning to the centre circle for a kickoff restart, suggesting a goal was scored",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-039/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-039/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    },
+    {
+      "id": "r-20260714T182221Z-v2-p-040",
+      "run_id": "r-20260714T182221Z-v2",
+      "t_start": 2639.5,
+      "t_end": 2657.5,
+      "type": "none",
+      "confidence": "low",
+      "caption": "players clustered near the penalty area for a set piece, then play spreads out across the pitch with no clear shot or goal",
+      "evidence": {
+        "frames": [
+          "frames/r-20260714T182221Z-v2-p-040/frame-001.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-002.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-003.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-004.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-005.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-006.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-007.jpg",
+          "frames/r-20260714T182221Z-v2-p-040/frame-008.jpg"
+        ],
+        "audio_peak": false,
+        "scene_cut": false
+      }
+    }
+  ]
+}

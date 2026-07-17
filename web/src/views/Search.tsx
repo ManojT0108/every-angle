@@ -1,7 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { api, isHumanAdded, mediaUrl, timecode, type SearchHit } from "../lib/api";
+import {
+  api,
+  isHumanAdded,
+  mediaUrl,
+  timecode,
+  type MomentEvent,
+  type SearchHit,
+} from "../lib/api";
 import { Button, ClipThumb, Empty, ErrorNote, Provenance, TypeChip } from "../components/bits";
+import { pickHighlights } from "../lib/highlights";
 
 const GOLDEN = [
   "keeper beaten at close range",
@@ -13,28 +21,30 @@ const GOLDEN = [
 /**
  * Search — the hero.
  *
- * Runs over VERIFIED captions only, never raw model output. The score shown is
- * the real cosine similarity from Qdrant; we don't dress it up. The only
- * inference on this path is a local embedding of the query, so it cannot fail
- * on a network blip during a live demo.
+ * Browse mode reads the verified manifest directly in match order. A submitted
+ * query switches to relevance-ranked Qdrant results over the same events.
  */
 export function Search({
   matchId,
-  onAdd,
+  events,
+  onApplySelection,
   inReel,
 }: {
   matchId: string;
-  onAdd: (id: string) => void;
+  events: MomentEvent[];
+  onApplySelection: (ids: string[]) => void;
   inReel: Set<string>;
 }) {
-  const [q, setQ] = useState("keeper beaten at close range");
-  const [submitted, setSubmitted] = useState("keeper beaten at close range");
+  const [q, setQ] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const browsing = submitted.trim().length === 0;
 
   const { data, isFetching, error } = useQuery({
     queryKey: ["search", matchId, submitted],
     queryFn: () => api.search(matchId, submitted),
-    enabled: submitted.trim().length > 0,
+    enabled: !browsing,
   });
+  const rows: MomentEvent[] = browsing ? chronologicalEvents(events) : (data ?? []);
 
   return (
     <div className="space-y-5">
@@ -73,6 +83,13 @@ export function Search({
             {g}
           </button>
         ))}
+        <Button
+          tone="primary"
+          disabled={events.length === 0}
+          onClick={() => onApplySelection(pickHighlights(events))}
+        >
+          Quick Highlights
+        </Button>
       </div>
 
       {error && (
@@ -83,30 +100,43 @@ export function Search({
         </ErrorNote>
       )}
 
-      {isFetching && <Empty>Searching…</Empty>}
+      {!browsing && isFetching && <Empty>Searching…</Empty>}
 
-      {!isFetching && data && data.length === 0 && (
-        <Empty>Nothing verified matches that yet.</Empty>
+      {!error && !isFetching && rows.length === 0 && (
+        <Empty>
+          {browsing ? "No verified moments yet." : "Nothing verified matches that yet."}
+        </Empty>
       )}
 
-      {!isFetching && data && data.length > 0 && (
+      {!isFetching && rows.length > 0 && (
         <div className="grid gap-px border border-line bg-line">
-          {data.map((hit) => (
+          {rows.map((hit) => (
             <Hit
               key={hit.id}
               hit={hit}
               matchId={matchId}
-              onAdd={onAdd}
+              onAdd={(id) => onApplySelection([id])}
               added={inReel.has(hit.id)}
+              score={browsing ? undefined : (hit as SearchHit).score}
             />
           ))}
         </div>
       )}
 
       <p className="max-w-[66ch] text-[12.5px] text-chalk-faint">
-        Search runs over <b className="font-semibold text-chalk-dim">verified captions only</b> —
-        never raw model output. Scores are cosine similarity from Qdrant against the published
-        revision.
+        {browsing ? (
+          <>
+            Browse shows every{" "}
+            <b className="font-semibold text-chalk-dim">verified moment</b> in match order.
+          </>
+        ) : (
+          <>
+            Search runs over{" "}
+            <b className="font-semibold text-chalk-dim">verified captions only</b> — never raw
+            model output. Scores are cosine similarity from Qdrant against the published
+            revision.
+          </>
+        )}
       </p>
     </div>
   );
@@ -117,15 +147,20 @@ function Hit({
   matchId,
   onAdd,
   added,
+  score,
 }: {
-  hit: SearchHit;
+  hit: MomentEvent;
   matchId: string;
   onAdd: (id: string) => void;
   added: boolean;
+  score?: number;
 }) {
   return (
     <article className="flex items-center gap-4 bg-ink-800 p-4 transition-colors hover:bg-ink-700">
-      <ClipThumb src={mediaUrl(matchId, hit.clip)} t={hit.t_start} />
+      <ClipThumb
+        src={hit.clip ? mediaUrl(matchId, hit.clip) : undefined}
+        t={hit.t_start}
+      />
       <div className="min-w-0 flex-1">
         <p className="mb-2 text-[14px] leading-relaxed">{hit.caption}</p>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -135,11 +170,19 @@ function Hit({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-4">
-        <span className="tnum font-mono text-[12px] text-sodium">{hit.score.toFixed(3)}</span>
+        {score !== undefined && (
+          <span className="tnum font-mono text-[12px] text-sodium">{score.toFixed(3)}</span>
+        )}
         <Button onClick={() => onAdd(hit.id)} disabled={added}>
           {added ? "In reel" : "Add to reel"}
         </Button>
       </div>
     </article>
+  );
+}
+
+function chronologicalEvents(events: MomentEvent[]): MomentEvent[] {
+  return [...events].sort(
+    (a, b) => a.t_start - b.t_start || a.id.localeCompare(b.id),
   );
 }

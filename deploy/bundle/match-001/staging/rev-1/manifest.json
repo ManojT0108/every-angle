@@ -1,0 +1,67 @@
+{
+  "video_id": "match-001",
+  "manifest_rev": 1,
+  "events": [
+    {
+      "id": "e-001",
+      "from_proposal": "r-20260714T182221Z-v2-p-002",
+      "t_start": 937.5,
+      "t_end": 955.5,
+      "type": "counterattack",
+      "caption": "fast break down the middle leading to a shot near the box, keeper comes off his line to deal with the attack near the far goal",
+      "team": null,
+      "player": null,
+      "clip": "clips/e-001.mp4",
+      "verified_at": "2026-07-14T18:41:16.595034Z"
+    },
+    {
+      "id": "e-002",
+      "from_proposal": "r-20260714T182221Z-v2-p-006",
+      "t_start": 1411.5,
+      "t_end": 1429.5,
+      "type": "goal",
+      "caption": "attack builds toward the right-side box, then all players return to the centre circle for a kickoff restart, suggesting a goal was scored",
+      "team": null,
+      "player": null,
+      "clip": "clips/e-002.mp4",
+      "verified_at": "2026-07-14T18:41:16.595368Z"
+    },
+    {
+      "id": "e-003",
+      "from_proposal": "r-20260714T182221Z-v2-p-016",
+      "t_start": 1723.5,
+      "t_end": 1741.5,
+      "type": "counterattack",
+      "caption": "team breaks from midfield and drives forward into the attacking third toward the box",
+      "team": null,
+      "player": null,
+      "clip": "clips/e-003.mp4",
+      "verified_at": "2026-07-14T18:41:16.595371Z"
+    },
+    {
+      "id": "e-004",
+      "from_proposal": "r-20260714T182221Z-v2-p-017",
+      "t_start": 1793.5,
+      "t_end": 1808.5,
+      "type": "counterattack",
+      "caption": "team builds an attack down the left flank toward the box but play breaks up with the goalkeeper collecting and no shot on goal",
+      "team": null,
+      "player": null,
+      "clip": "clips/e-004.mp4",
+      "verified_at": "2026-07-14T18:41:16.595374Z"
+    },
+    {
+      "id": "e-005",
+      "from_proposal": null,
+      "t_start": 2366.0,
+      "t_end": 2384.0,
+      "type": "goal",
+      "caption": "goal from a scramble in the right-side box, keeper beaten at close range",
+      "team": null,
+      "player": null,
+      "clip": "clips/e-005.mp4",
+      "verified_at": "2026-07-14T18:41:16.595376Z"
+    }
+  ],
+  "collection": "moments_rev_1"
+}

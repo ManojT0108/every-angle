@@ -1,0 +1,21 @@
+{
+  "r-20260714T182221Z-v2-p-002": {
+    "status": "accepted",
+    "event_id": "e-001"
+  },
+  "r-20260714T182221Z-v2-p-004": {
+    "status": "rejected"
+  },
+  "r-20260714T182221Z-v2-p-006": {
+    "status": "accepted",
+    "event_id": "e-002"
+  },
+  "r-20260714T182221Z-v2-p-016": {
+    "status": "accepted",
+    "event_id": "e-003"
+  },
+  "r-20260714T182221Z-v2-p-017": {
+    "status": "accepted",
+    "event_id": "e-004"
+  }
+}

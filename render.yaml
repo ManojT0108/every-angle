@@ -1,0 +1,15 @@
+# Render Blueprint for the Every Angle demo. Import in Render → New → Blueprint,
+# then set QDRANT_URL and QDRANT_API_KEY as secrets (sync:false = entered by hand).
+services:
+  - type: web
+    name: every-angle
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/matches
+    autoDeploy: false
+    envVars:
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
