@@ -12,6 +12,8 @@ function proposal(overrides: Partial<Proposal> = {}): Proposal {
     type: "goal",
     confidence: "high",
     caption: "A shot finds the net",
+    team: null,
+    player: null,
     status: "pending",
     clip: null,
     frames: ["/media/match/frames/wide-1.jpg"],
@@ -56,7 +58,9 @@ describe("Review proposal media", () => {
     const form = renderToStaticMarkup(
       <ProposalEditForm
         caption="Corrected caption"
-        type="save"
+        type="goal"
+        team="Blue FC"
+        player="Alex Striker"
         busy={false}
         onCaptionChange={() => {}}
         onTypeChange={() => {}}
@@ -66,6 +70,10 @@ describe("Review proposal media", () => {
     );
     expect(form).toContain("<textarea");
     expect(form).toContain('<option value="none">none</option>');
+    expect(form).toContain("Scoring team (optional)");
+    expect(form).toContain("Scorer (optional)");
+    expect(form).toContain('value="Blue FC"');
+    expect(form).toContain('value="Alex Striker"');
     expect(form).toContain("Save");
     expect(form).toContain("Cancel");
 
@@ -81,14 +89,21 @@ describe("Review proposal media", () => {
 
     await api.editProposal("match-test", "proposal/1", {
       caption: "Corrected caption",
-      type: "save",
+      type: "goal",
+      team: "Blue FC",
+      player: "Alex Striker",
     });
 
     expect(fetch).toHaveBeenCalledWith(
       "/api/matches/match-test/proposals/proposal%2F1/edit",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ caption: "Corrected caption", type: "save" }),
+        body: JSON.stringify({
+          caption: "Corrected caption",
+          type: "goal",
+          team: "Blue FC",
+          player: "Alex Striker",
+        }),
       }),
     );
 

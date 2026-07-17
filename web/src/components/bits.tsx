@@ -93,7 +93,7 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`cursor-pointer border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${tones}`}
+      className={`min-h-9 cursor-pointer whitespace-nowrap border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${tones}`}
     >
       {children}
     </button>
@@ -239,7 +239,7 @@ export function ClipModalView({
       aria-modal="true"
       aria-label={`Video clip at ${timecode(t)}`}
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-6"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-3 sm:p-6"
     >
       <div
         className="relative w-full max-w-5xl"

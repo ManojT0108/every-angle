@@ -74,6 +74,8 @@ export interface Proposal {
   type: ProposalType;
   confidence: Confidence;
   caption: string;
+  team: string | null;
+  player: string | null;
   status: Decision;
   clip: string | null;
   frames: string[];
@@ -137,7 +139,12 @@ export const api = {
   editProposal: (
     id: string,
     proposal_id: string,
-    body: { caption?: string; type?: ProposalType },
+    body: {
+      caption?: string;
+      type?: ProposalType;
+      team?: string | null;
+      player?: string | null;
+    },
   ) =>
     req<{ proposal_id: string; status: Decision; event_id?: string }>(
       `/api/matches/${id}/proposals/${encodeURIComponent(proposal_id)}/edit`,

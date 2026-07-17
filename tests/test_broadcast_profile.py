@@ -32,9 +32,7 @@ def _write_stub_frame(
     destination.write_bytes(b"fake jpg")
 
 
-def test_broadcast_sampling_skips_tracking_and_uses_full_frames(
-    tmp_path, monkeypatch
-):
+def test_broadcast_sampling_skips_tracking_and_uses_full_frames(tmp_path, monkeypatch):
     calls = []
 
     def fail_track(*args, **kwargs):
@@ -148,9 +146,9 @@ def test_claude_captioner_selects_prompt_for_profile():
     broadcast = ClaudeCaptioner(profile="broadcast")
 
     assert fixed.system_prompt is SYSTEM_PROMPT
-    assert fixed.prompt_version == "p3-celebration"
+    assert fixed.prompt_version == "p4-goal-identity"
     assert broadcast.system_prompt is SYSTEM_PROMPT_BROADCAST
-    assert broadcast.prompt_version == "p3-broadcast-celebration"
+    assert broadcast.prompt_version == "p4-broadcast-goal-identity"
 
 
 def test_make_captioner_propagates_broadcast_profile():
@@ -159,4 +157,4 @@ def test_make_captioner_propagates_broadcast_profile():
     assert isinstance(captioner, ClaudeCaptioner)
     assert captioner.profile == "broadcast"
     assert captioner.system_prompt is SYSTEM_PROMPT_BROADCAST
-    assert captioner.prompt_version == "p3-broadcast-celebration"
+    assert captioner.prompt_version == "p4-broadcast-goal-identity"

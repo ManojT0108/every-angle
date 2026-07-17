@@ -5,7 +5,7 @@ import subprocess
 
 import pytest
 
-from pipeline.captioner import MockCaptioner
+from pipeline.captioner import CaptionResult, MockCaptioner
 from pipeline.propose import build_proposals, validate_evidence_ownership
 
 
@@ -15,9 +15,18 @@ def tiny_video(tmp_path):
     path = tmp_path / "source.mp4"
     subprocess.run(
         [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
-            "-f", "lavfi", "-i", "testsrc=duration=2:size=320x180:rate=10",
-            "-pix_fmt", "yuv420p", "-y", str(path),
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-f",
+            "lavfi",
+            "-i",
+            "testsrc=duration=2:size=320x180:rate=10",
+            "-pix_fmt",
+            "yuv420p",
+            "-y",
+            str(path),
         ],
         check=True,
     )
@@ -30,8 +39,20 @@ def _windows_artifact(source):
         "source": str(source),
         "detector_config": {"scene_threshold": 0.35},
         "windows": [
-            {"id": "w-001", "t_start": 0.0, "t_end": 1.0, "audio_peak": True, "scene_cut": False},
-            {"id": "w-002", "t_start": 1.0, "t_end": 2.0, "audio_peak": False, "scene_cut": True},
+            {
+                "id": "w-001",
+                "t_start": 0.0,
+                "t_end": 1.0,
+                "audio_peak": True,
+                "scene_cut": False,
+            },
+            {
+                "id": "w-002",
+                "t_start": 1.0,
+                "t_end": 2.0,
+                "audio_peak": False,
+                "scene_cut": True,
+            },
         ],
     }
 
@@ -61,7 +82,9 @@ def test_contract_round_trip(tmp_path, tiny_video):
     assert run["source_sha256"] and len(run["source_sha256"]) == 64
     assert run["detector_config_hash"]
     assert run["captioner"] == {
-        "name": "mock", "model": "mock-captioner", "prompt_version": "p1",
+        "name": "mock",
+        "model": "mock-captioner",
+        "prompt_version": "p1",
     }
     # Run-scoped globally-unique ids (r3 finding 1)
     ids = [p["id"] for p in artifact["proposals"]]
@@ -93,18 +116,57 @@ def test_second_run_appends_without_collision(tmp_path, tiny_video):
     assert len({p["id"] for p in artifact["proposals"]}) == 4
 
 
+def test_structured_goal_identity_is_persisted(tmp_path, tiny_video, monkeypatch):
+    data_dir = tmp_path / "data"
+    frames = data_dir / "frames"
+    _seed_frames(frames, "r-identity", ["w-001", "w-002"])
+    captioner = MockCaptioner()
+    monkeypatch.setattr(
+        captioner,
+        "caption",
+        lambda *_: CaptionResult(
+            caption="A directly attributed goal",
+            type="goal",
+            confidence="high",
+            team="Blue FC",
+            player="Alex Striker",
+        ),
+    )
+
+    artifact = build_proposals(
+        _windows_artifact(tiny_video),
+        source=tiny_video,
+        output_dir=data_dir,
+        frames_dir=frames,
+        captioner=captioner,
+        run_id="r-identity",
+    )
+
+    assert {(row["team"], row["player"]) for row in artifact["proposals"]} == {
+        ("Blue FC", "Alex Striker")
+    }
+
+
 def test_duplicate_run_id_rejected(tmp_path, tiny_video):
     data_dir = tmp_path / "data"
     frames = data_dir / "frames"
     _seed_frames(frames, "r-dup", ["w-001", "w-002"])
     build_proposals(
-        _windows_artifact(tiny_video), source=tiny_video, output_dir=data_dir,
-        frames_dir=frames, captioner=MockCaptioner(), run_id="r-dup",
+        _windows_artifact(tiny_video),
+        source=tiny_video,
+        output_dir=data_dir,
+        frames_dir=frames,
+        captioner=MockCaptioner(),
+        run_id="r-dup",
     )
     with pytest.raises(ValueError, match="run_id already exists"):
         build_proposals(
-            _windows_artifact(tiny_video), source=tiny_video, output_dir=data_dir,
-            frames_dir=frames, captioner=MockCaptioner(), run_id="r-dup",
+            _windows_artifact(tiny_video),
+            source=tiny_video,
+            output_dir=data_dir,
+            frames_dir=frames,
+            captioner=MockCaptioner(),
+            run_id="r-dup",
         )
 
 
@@ -112,8 +174,14 @@ def test_evidence_ownership_rejects_cross_proposal_paths(tmp_path):
     frames = tmp_path / "frames" / "r-1-p-001"
     frames.mkdir(parents=True)
     (frames / "frame-001.jpg").write_bytes(b"x")
-    good = {"id": "r-1-p-001", "evidence": {"frames": ["frames/r-1-p-001/frame-001.jpg"]}}
-    thief = {"id": "r-2-p-001", "evidence": {"frames": ["frames/r-1-p-001/frame-001.jpg"]}}
+    good = {
+        "id": "r-1-p-001",
+        "evidence": {"frames": ["frames/r-1-p-001/frame-001.jpg"]},
+    }
+    thief = {
+        "id": "r-2-p-001",
+        "evidence": {"frames": ["frames/r-1-p-001/frame-001.jpg"]},
+    }
     validate_evidence_ownership([good], tmp_path)
     with pytest.raises(ValueError, match="belongs to"):
         validate_evidence_ownership([thief], tmp_path)

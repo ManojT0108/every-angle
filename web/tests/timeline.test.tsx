@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { TimelineView } from "../src/components/Timeline";
 import type { MomentEvent, Timeline } from "../src/lib/api";
+import { positionTimelineEvents } from "../src/lib/timeline";
 
 type ElementProps = Record<string, unknown> & { children?: ReactNode };
 
@@ -110,5 +111,57 @@ describe("match timeline clips", () => {
     expect(markup).toContain('title="clipless caption"');
     expect(markup).not.toContain("<button");
     expect(markup).not.toContain('role="dialog"');
+  });
+
+  it("puts clustered playable moments in separate selectable lanes", () => {
+    const clustered = [
+      event("save-one", "clips/one.mp4", 42),
+      event("save-two", "clips/two.mp4", 43),
+      event("save-three", "clips/three.mp4", 44),
+    ];
+    const positioned = positionTimelineEvents(clustered, 32);
+
+    expect(new Set(positioned.map(({ lane }) => lane)).size).toBe(3);
+    expect(positioned.every(({ hitboxWidth }) => hitboxWidth >= 24)).toBe(true);
+
+    const markup = renderToStaticMarkup(
+      <TimelineView
+        matchId="match-test"
+        data={timeline(clustered)}
+        playing={null}
+        onPlay={() => {}}
+        onClose={() => {}}
+        pixelsPerMinute={32}
+      />,
+    );
+    expect(markup.match(/aria-label="Play save clip/g)).toHaveLength(3);
+    expect(markup).toContain('data-event-lane="2"');
+  });
+
+  it("renders a wider time canvas as the zoom level increases", () => {
+    const renderAt = (pixelsPerMinute: number) =>
+      renderToStaticMarkup(
+        <TimelineView
+          matchId="match-test"
+          data={{ ...timeline([]), duration: 600 }}
+          playing={null}
+          onPlay={() => {}}
+          onClose={() => {}}
+          pixelsPerMinute={pixelsPerMinute}
+          onZoomIn={() => {}}
+          onZoomOut={() => {}}
+        />,
+      );
+
+    const compact = renderAt(20);
+    const expanded = renderAt(64);
+    expect(compact).toContain('data-pixels-per-minute="20"');
+    expect(compact).toContain("width:352px");
+    expect(expanded).toContain('data-pixels-per-minute="64"');
+    expect(expanded).toContain("width:792px");
+    expect(expanded).toContain('aria-label="Zoom timeline in"');
+    expect(expanded).toContain('aria-label="Scrollable match timeline"');
+    expect(expanded).toContain("Human-added");
+    expect(expanded).toContain("AI-proposed");
   });
 });

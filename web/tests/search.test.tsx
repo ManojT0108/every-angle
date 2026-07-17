@@ -44,5 +44,8 @@ describe("Search browse mode", () => {
     expect(markup).toContain("2:00");
     expect(markup).not.toContain("0.999");
     expect(markup).toContain("Browse shows every");
+    expect(markup).toContain("Quick Highlights");
+    expect(markup).not.toContain("keeper beaten at close range");
+    expect(markup).not.toContain("fast counter down the middle");
   });
 });

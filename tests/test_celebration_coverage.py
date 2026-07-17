@@ -86,8 +86,7 @@ def test_cue_projection_and_ids_are_unchanged_when_tail_precedes_a_cue():
         ("w-001", 6495.0, 6510.0, True, False, False, 1.2),
     ]
     assert any(
-        window.tail and window.t_start < cue_windows[0].t_start
-        for window in windows
+        window.tail and window.t_start < cue_windows[0].t_start for window in windows
     )
     assert all(
         int(window.id.removeprefix("w-")) > len(cue_windows)
@@ -100,15 +99,22 @@ def test_celebration_schema_prompt_and_versions():
     assert EVENT_TYPES[-1] == "celebration"
     assert "celebration" in PROPOSAL_TYPES
     assert "celebration" in RESULT_SCHEMA["properties"]["type"]["enum"]
+    assert RESULT_SCHEMA["properties"]["team"]["type"] == ["string", "null"]
+    assert RESULT_SCHEMA["properties"]["player"]["type"] == ["string", "null"]
+    assert {"team", "player"}.issubset(RESULT_SCHEMA["required"])
 
     for prompt in (SYSTEM_PROMPT, SYSTEM_PROMPT_BROADCAST):
-        assert 'Reserve "celebration" exclusively for match-ending or ceremonial scenes' in prompt
+        assert (
+            'Reserve "celebration" exclusively for match-ending or ceremonial scenes'
+            in prompt
+        )
         assert 'between "goal" and "celebration", choose "goal"' in prompt
+        assert "directly attributes that identity to the goal" in prompt
 
-    assert ClaudeCaptioner().prompt_version == "p3-celebration"
+    assert ClaudeCaptioner().prompt_version == "p4-goal-identity"
     assert (
         ClaudeCaptioner(profile="broadcast").prompt_version
-        == "p3-broadcast-celebration"
+        == "p4-broadcast-goal-identity"
     )
 
 

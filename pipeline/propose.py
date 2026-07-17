@@ -198,6 +198,8 @@ def build_proposals(
                     "type": result.type,
                     "confidence": result.confidence,
                     "caption": result.caption,
+                    "team": result.team,
+                    "player": result.player,
                     "evidence": {
                         "frames": evidence,
                         "audio_peak": bool(window.get("audio_peak", False)),
@@ -205,7 +207,7 @@ def build_proposals(
                     },
                 }
             )
-            checkpoint()          # this window is paid for — never lose it
+            checkpoint()  # this window is paid for — never lose it
         all_proposals = [*artifact["proposals"], *new_proposals]
         validate_evidence_ownership(all_proposals, output_dir)
         artifact["runs"].append(run)
@@ -240,8 +242,12 @@ def main() -> None:
     )
     parser.add_argument("--frames-dir", type=Path, default=None)
     parser.add_argument("--captioner", choices=("mock", "claude"), default="mock")
-    parser.add_argument("--budget-usd", type=float, default=None,
-                        help="hard spend cap; the run aborts rather than exceed it")
+    parser.add_argument(
+        "--budget-usd",
+        type=float,
+        default=None,
+        help="hard spend cap; the run aborts rather than exceed it",
+    )
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--asset", default=None)
     args = parser.parse_args()

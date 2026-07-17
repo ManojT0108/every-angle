@@ -25,6 +25,31 @@ function byPriority(a: MomentEvent, b: MomentEvent): number {
   return TYPE_RANK[a.type] - TYPE_RANK[b.type] || chronological(a, b);
 }
 
+export interface Incident {
+  events: MomentEvent[];
+  representative: MomentEvent;
+  end: number;
+}
+
+/** Group replay-adjacent moments using a rolling incident end. */
+export function groupIncidents(events: MomentEvent[]): Incident[] {
+  const incidents: Incident[] = [];
+  for (const event of [...events].sort(chronological)) {
+    const incident = incidents.at(-1);
+    if (!incident || event.t_start > incident.end + INCIDENT_GAP) {
+      incidents.push({ events: [event], representative: event, end: event.t_end });
+      continue;
+    }
+
+    incident.events.push(event);
+    incident.end = Math.max(incident.end, event.t_end);
+    if (byPriority(event, incident.representative) < 0) {
+      incident.representative = event;
+    }
+  }
+  return incidents;
+}
+
 /** Pick a deterministic reel within the six-minute runtime budget. */
 export function pickHighlights(events: MomentEvent[]): string[] {
   const celebrations = events.filter((event) => event.type === "celebration");
@@ -38,19 +63,7 @@ export function pickHighlights(events: MomentEvent[]): string[] {
       : undefined;
   let secondsRemaining = MAX_SECONDS - (terminal ? duration(terminal) : 0);
 
-  const incidents: { representative: MomentEvent; end: number }[] = [];
-  for (const event of plays) {
-    const incident = incidents.at(-1);
-    if (!incident || event.t_start > incident.end + INCIDENT_GAP) {
-      incidents.push({ representative: event, end: event.t_end });
-      continue;
-    }
-
-    incident.end = Math.max(incident.end, event.t_end);
-    if (byPriority(event, incident.representative) < 0) {
-      incident.representative = event;
-    }
-  }
+  const incidents = groupIncidents(plays);
 
   const selected: MomentEvent[] = [];
   for (const { representative } of incidents.sort((a, b) =>

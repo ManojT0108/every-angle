@@ -11,13 +11,6 @@ import {
 import { Button, ClipThumb, Empty, ErrorNote, Provenance, TypeChip } from "../components/bits";
 import { pickHighlights } from "../lib/highlights";
 
-const GOLDEN = [
-  "keeper beaten at close range",
-  "goalkeeper comes off his line",
-  "fast counter down the middle",
-  "attack down the left that breaks down",
-];
-
 /**
  * Search — the hero.
  *
@@ -53,36 +46,24 @@ export function Search({
           e.preventDefault();
           setSubmitted(q);
         }}
-        className="flex border border-line bg-ink-800 focus-within:border-sodium"
+        className="flex min-w-0 border border-line bg-ink-800 focus-within:border-sodium"
       >
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search verified moments"
           placeholder="Describe the moment you want…"
-          className="flex-1 bg-transparent px-4 py-3.5 text-[16px] outline-none placeholder:text-chalk-faint"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3.5 text-[15px] outline-none placeholder:text-chalk-faint sm:px-4 sm:text-[16px]"
         />
         <button
           type="submit"
-          className="display cursor-pointer bg-sodium px-6 text-[13px] text-sodium-ink hover:brightness-110"
+          className="display min-h-12 shrink-0 cursor-pointer bg-sodium px-4 text-[12px] text-sodium-ink hover:brightness-110 sm:px-6 sm:text-[13px]"
         >
           Search
         </button>
       </form>
 
       <div className="flex flex-wrap gap-2">
-        {GOLDEN.map((g) => (
-          <button
-            key={g}
-            onClick={() => {
-              setQ(g);
-              setSubmitted(g);
-            }}
-            className="cursor-pointer border border-dashed border-line px-2.5 py-1.5 font-mono text-[10.5px] text-chalk-faint transition-colors hover:border-chalk-faint hover:text-chalk"
-          >
-            {g}
-          </button>
-        ))}
         <Button
           tone="primary"
           disabled={events.length === 0}
@@ -156,7 +137,7 @@ function Hit({
   score?: number;
 }) {
   return (
-    <article className="flex items-center gap-4 bg-ink-800 p-4 transition-colors hover:bg-ink-700">
+    <article className="flex min-w-0 flex-col items-start gap-4 bg-ink-800 p-4 transition-colors hover:bg-ink-700 sm:flex-row sm:items-center">
       <ClipThumb
         src={hit.clip ? mediaUrl(matchId, hit.clip) : undefined}
         t={hit.t_start}
@@ -169,7 +150,7 @@ function Hit({
           <span className="chip tnum">{timecode(hit.t_start)}</span>
         </div>
       </div>
-      <div className="flex shrink-0 items-center gap-4">
+      <div className="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:justify-start">
         {score !== undefined && (
           <span className="tnum font-mono text-[12px] text-sodium">{score.toFixed(3)}</span>
         )}

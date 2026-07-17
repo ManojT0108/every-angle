@@ -24,11 +24,19 @@ PROPOSAL_TYPES = (*EVENT_TYPES, "none")
 CONFIDENCE_LEVELS = ("high", "medium", "low")
 
 
+def _goal_identity(value: Any) -> str | None:
+    """Keep only a non-empty structured identity string."""
+
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
 @dataclass(frozen=True)
 class CaptionResult:
     caption: str
     type: str = "counterattack"
     confidence: str = "low"
+    team: str | None = None
+    player: str | None = None
 
 
 class Captioner(ABC):
@@ -81,6 +89,10 @@ Your job is to say what — if anything — notable happens in this window.
 Rules:
 - Describe ONLY what you can see. Never invent player names, team names, scores, or minutes: the \
   camera is too far away to read them, and downstream commentary is generated from your caption.
+- Set "team" (the scoring team) and "player" (the scorer) only for a goal when this sampled \
+  sequence directly attributes that identity to the goal. A visible player, shirt, lower-third, \
+  or goalkeeper is not enough. Use null when attribution is absent or ambiguous; fixed-camera \
+  footage will normally have both fields null.
 - Most windows are NOT notable. Ordinary passing, players jogging, a throw-in, a restart, or a \
   stoppage should be reported as type "none" with low confidence. Do not force an exciting label.
 - You will be given TIGHT frames (zoomed on the ball, so you can see the play) and then WIDE \
@@ -109,6 +121,10 @@ Rules:
 - Describe ONLY what you can see. Never invent player names, team names, scores, or minutes, even \
   if an on-screen graphic is only partly legible; downstream commentary is generated from your \
   caption.
+- Set "team" (the scoring team) and "player" (the scorer) only for a goal when this sampled \
+  sequence directly attributes that identity to the goal, such as an explicit scorer graphic or \
+  an unambiguous scoring sequence. A visible player, shirt, generic lower-third, or goalkeeper is \
+  not enough. Use null when attribution is absent or ambiguous.
 - Most windows are NOT notable. Ordinary passing, players jogging, a throw-in, a restart, or a \
   stoppage should be reported as type "none" with low confidence. Do not force an exciting label.
 - Read the frames in order. A directed broadcast can often show the ball, a shot, the net, player \
@@ -137,8 +153,10 @@ RESULT_SCHEMA = {
         "type": {"type": "string", "enum": [*EVENT_TYPES, "none"]},
         "confidence": {"type": "string", "enum": list(CONFIDENCE_LEVELS)},
         "caption": {"type": "string"},
+        "team": {"type": ["string", "null"]},
+        "player": {"type": ["string", "null"]},
     },
-    "required": ["type", "confidence", "caption"],
+    "required": ["type", "confidence", "caption", "team", "player"],
     "additionalProperties": False,
 }
 
@@ -152,7 +170,7 @@ class ClaudeCaptioner(Captioner):
     """
 
     name = "claude"
-    prompt_version = "p3-celebration"
+    prompt_version = "p4-goal-identity"
 
     def __init__(
         self,
@@ -169,9 +187,9 @@ class ClaudeCaptioner(Captioner):
         self.max_tokens = max_tokens
         self.profile = profile
         self.prompt_version = (
-            "p3-broadcast-celebration"
+            "p4-broadcast-goal-identity"
             if profile == "broadcast"
-            else "p3-celebration"
+            else "p4-goal-identity"
         )
         self.spent_usd = 0.0
         self.calls = 0
@@ -185,10 +203,7 @@ class ClaudeCaptioner(Captioner):
 
     def _cost(self, usage: Any) -> float:
         rate_in, rate_out = PRICES.get(self.model, (5.0, 25.0))
-        return (
-            usage.input_tokens * rate_in / 1e6
-            + usage.output_tokens * rate_out / 1e6
-        )
+        return usage.input_tokens * rate_in / 1e6 + usage.output_tokens * rate_out / 1e6
 
     # Worst-case input tokens for one image at our sizes. Deliberately generous:
     # a budget cap that can be exceeded is not a cap.
@@ -196,14 +211,16 @@ class ClaudeCaptioner(Captioner):
 
     def _worst_case_cost(self, n_frames: int) -> float:
         rate_in, rate_out = PRICES.get(self.model, (5.0, 25.0))
-        est_in = n_frames * self.MAX_TOKENS_PER_IMAGE + 2000     # + prompt overhead
+        est_in = n_frames * self.MAX_TOKENS_PER_IMAGE + 2000  # + prompt overhead
         return est_in * rate_in / 1e6 + self.max_tokens * rate_out / 1e6
 
     def caption(self, frames: Sequence[Path], window: dict[str, Any]) -> CaptionResult:
         if not self.api_key:
             raise RuntimeError("ClaudeCaptioner requires ANTHROPIC_API_KEY")
         if not frames:
-            return CaptionResult(caption="No frames sampled.", type="none", confidence="low")
+            return CaptionResult(
+                caption="No frames sampled.", type="none", confidence="low"
+            )
         if self.budget_usd is not None:
             # RESERVE the worst case before sending. Checking only what we have
             # already spent lets a single call sail past the cap — which is
@@ -265,16 +282,24 @@ class ClaudeCaptioner(Captioner):
         self.spent_usd += self._cost(response.usage)
 
         if response.stop_reason == "refusal":
-            return CaptionResult(caption="Model declined to describe this window.",
-                                 type="none", confidence="low")
+            return CaptionResult(
+                caption="Model declined to describe this window.",
+                type="none",
+                confidence="low",
+            )
         # A malformed or truncated response must not destroy a paid run: degrade
         # this ONE window to "none" and let the human see it in Verify.
         try:
-            payload = json.loads(next(b.text for b in response.content if b.type == "text"))
+            payload = json.loads(
+                next(b.text for b in response.content if b.type == "text")
+            )
+            is_goal = payload["type"] == "goal"
             return CaptionResult(
                 caption=payload["caption"],
                 type=payload["type"],
                 confidence=payload["confidence"],
+                team=_goal_identity(payload["team"]) if is_goal else None,
+                player=_goal_identity(payload["player"]) if is_goal else None,
             )
         except (StopIteration, json.JSONDecodeError, KeyError) as exc:
             return CaptionResult(

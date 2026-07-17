@@ -42,8 +42,8 @@ export function Reel({
   const goals = chosen.filter((e) => e.type === "goal").length;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-      <div>
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="min-w-0">
         <div className="relative aspect-video border border-line bg-ink-900">
           {build.data ? (
             <video
@@ -65,11 +65,11 @@ export function Reel({
         </div>
 
         {chosen.length > 0 && (
-          <div className="mt-px flex gap-px border border-line bg-line">
+          <div className="timeline-scroll mt-px flex gap-px overflow-x-auto border border-line bg-line">
             {chosen.map((e) => (
               <div
                 key={e.id}
-                className={`flex-1 border-t-2 bg-ink-800 px-2.5 py-2 ${
+                className={`min-w-24 flex-1 border-t-2 bg-ink-800 px-2.5 py-2 ${
                   isHumanAdded(e) ? "border-t-chalk" : "border-t-sodium"
                 }`}
               >

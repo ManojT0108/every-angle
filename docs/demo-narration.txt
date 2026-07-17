@@ -1,0 +1,15 @@
+A full football match contains a few moments people need, buried inside everything else. Every Angle finds those moments, then makes a human the final authority.
+
+The system narrows the footage, Claude proposes what happened, and an editor reviews the evidence. Only verified events reach this match summary, search, or the final reel.
+
+The provenance timeline keeps the whole process visible: candidate windows below, human decisions alongside them, and every available verified clip playable in place.
+
+Here is the human-in-the-loop step. The model suggests a goal from the visual sequence. The editor can inspect the footage, correct the description, reject it, or keep it. This decision updates the verified manifest.
+
+Search is grounded in that manifest, not raw model output. A natural-language query finds the verified moment where the keeper comes off his line, with its clip and provenance attached.
+
+Quick Highlights groups replay-adjacent incidents and selects a deterministic edit. The organizer can change the order, while FFmpeg assembles the reel without another model call.
+
+For a club or content team, that turns a long recording into searchable, ready-to-share moments — while keeping the person, the evidence, and the rights boundary in control.
+
+Every Angle. Find the moments. Prove every one.

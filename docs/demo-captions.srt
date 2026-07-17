@@ -1,0 +1,82 @@
+1
+00:00:00,000 --> 00:00:06,880
+A full football match contains a few moments people need,
+buried inside everything else.
+
+2
+00:00:07,408 --> 00:00:12,773
+Every Angle finds those moments,
+then makes a human the final authority.
+
+3
+00:00:13,259 --> 00:00:20,363
+The system narrows the footage, Claude proposes what happened,
+and an editor reviews the evidence.
+
+4
+00:00:20,885 --> 00:00:26,654
+Only verified events reach this match summary,
+search, or the final reel.
+
+5
+00:00:27,141 --> 00:00:31,182
+The provenance timeline keeps the whole process visible:
+
+6
+00:00:31,677 --> 00:00:40,441
+candidate windows below, human decisions alongside them,
+and every available verified clip playable in place.
+
+7
+00:00:40,962 --> 00:00:43,432
+Here is the human-in-the-loop step.
+
+8
+00:00:43,916 --> 00:00:47,445
+The model suggests a goal from the visual sequence.
+
+9
+00:00:47,965 --> 00:00:54,411
+The editor can inspect the footage, correct the description,
+reject it, or keep it.
+
+10
+00:00:54,895 --> 00:00:58,302
+This decision updates the verified manifest.
+
+11
+00:00:58,786 --> 00:01:03,414
+Search is grounded in that manifest,
+not raw model output.
+
+12
+00:01:03,898 --> 00:01:13,382
+A natural-language query finds the verified moment where the keeper
+comes off his line, with its clip and provenance attached.
+
+13
+00:01:13,872 --> 00:01:19,647
+Quick Highlights groups replay-adjacent incidents
+and selects a deterministic edit.
+
+14
+00:01:20,131 --> 00:01:26,904
+The organizer can change the order, while FFmpeg assembles the reel
+without another model call.
+
+15
+00:01:27,396 --> 00:01:40,761
+For a club or content team, that turns a long recording into searchable,
+ready-to-share moments — while keeping the person, the evidence, and the rights boundary in control.
+
+16
+00:01:41,252 --> 00:01:42,241
+Every Angle.
+
+17
+00:01:42,729 --> 00:01:44,165
+Find the moments.
+
+18
+00:01:44,694 --> 00:01:45,957
+Prove every one.

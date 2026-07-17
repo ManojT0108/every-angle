@@ -39,11 +39,15 @@ export function Verify({ matchId }: { matchId: string }) {
       id,
       caption,
       type,
+      team,
+      player,
     }: {
       id: string;
       caption: string;
       type: ProposalType;
-    }) => api.editProposal(matchId, id, { caption, type }),
+      team: string | null;
+      player: string | null;
+    }) => api.editProposal(matchId, id, { caption, type, team, player }),
     onSuccess: () => invalidateReviewQueries(qc, matchId),
   });
 
@@ -74,8 +78,8 @@ export function Verify({ matchId }: { matchId: string }) {
                 p={p}
                 busy={decide.isPending || edit.isPending}
                 onDecide={(status) => decide.mutate({ id: p.id, status })}
-                onEdit={(caption, type) =>
-                  edit.mutateAsync({ id: p.id, caption, type })
+                onEdit={(caption, type, team, player) =>
+                  edit.mutateAsync({ id: p.id, caption, type, team, player })
                 }
               />
             ))}
@@ -94,7 +98,7 @@ export function Verify({ matchId }: { matchId: string }) {
           <div className="grid gap-px border border-line bg-line">
             {settled.map((p) => (
               <article key={p.id} className="bg-ink-800 px-4 py-3 text-[13px]">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                   <span
                     className={`chip ${
                       p.status === "accepted"
@@ -108,7 +112,7 @@ export function Verify({ matchId }: { matchId: string }) {
                     {timecode(p.t_start)}
                   </span>
                   <span
-                    className={`min-w-0 flex-1 truncate ${
+                    className={`order-last min-w-0 w-full sm:order-none sm:flex-1 sm:truncate ${
                       p.status === "rejected"
                         ? "text-chalk-faint line-through"
                         : "text-chalk-dim"
@@ -126,11 +130,12 @@ export function Verify({ matchId }: { matchId: string }) {
                     </Button>
                   )}
                 </div>
+                <GoalIdentity p={p} />
                 <ProposalEditor
                   p={p}
                   busy={decide.isPending || edit.isPending}
-                  onSave={(caption, type) =>
-                    edit.mutateAsync({ id: p.id, caption, type })
+                  onSave={(caption, type, team, player) =>
+                    edit.mutateAsync({ id: p.id, caption, type, team, player })
                   }
                 />
                 <ProposalMedia p={p} />
@@ -151,12 +156,17 @@ function ProposalCard({
 }: {
   p: Proposal;
   onDecide: (s: "accepted" | "rejected") => void;
-  onEdit: (caption: string, type: ProposalType) => Promise<unknown>;
+  onEdit: (
+    caption: string,
+    type: ProposalType,
+    team: string | null,
+    player: string | null,
+  ) => Promise<unknown>;
   busy: boolean;
 }) {
   return (
     <article className="bg-ink-800 p-4">
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:gap-6">
         <div className="min-w-0 flex-1">
           <p className="mb-2 text-[14px] leading-relaxed">{p.caption}</p>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -167,8 +177,9 @@ function ProposalCard({
               {timecode(p.t_start)}–{timecode(p.t_end)}
             </span>
           </div>
+          <GoalIdentity p={p} />
         </div>
-        <div className="flex shrink-0 gap-2">
+        <div className="flex w-full shrink-0 gap-2 sm:w-auto">
           <Button tone="keep" disabled={busy} onClick={() => onDecide("accepted")}>
             Keep
           </Button>
@@ -191,11 +202,18 @@ function ProposalEditor({
 }: {
   p: Proposal;
   busy: boolean;
-  onSave: (caption: string, type: ProposalType) => Promise<unknown>;
+  onSave: (
+    caption: string,
+    type: ProposalType,
+    team: string | null,
+    player: string | null,
+  ) => Promise<unknown>;
 }) {
   const [editing, setEditing] = useState(false);
   const [caption, setCaption] = useState(p.caption);
   const [type, setType] = useState<ProposalType>(p.type);
+  const [team, setTeam] = useState(p.team ?? "");
+  const [player, setPlayer] = useState(p.player ?? "");
 
   if (!editing) {
     return (
@@ -205,6 +223,8 @@ function ProposalEditor({
           onClick={() => {
             setCaption(p.caption);
             setType(p.type);
+            setTeam(p.team ?? "");
+            setPlayer(p.player ?? "");
             setEditing(true);
           }}
         >
@@ -218,11 +238,20 @@ function ProposalEditor({
     <ProposalEditForm
       caption={caption}
       type={type}
+      team={team}
+      player={player}
       busy={busy}
       onCaptionChange={setCaption}
       onTypeChange={setType}
+      onTeamChange={setTeam}
+      onPlayerChange={setPlayer}
       onSave={() => {
-        void onSave(caption.trim(), type)
+        void onSave(
+          caption.trim(),
+          type,
+          team.trim() || null,
+          player.trim() || null,
+        )
           .then(() => setEditing(false))
           .catch(() => {});
       }}
@@ -234,17 +263,25 @@ function ProposalEditor({
 export function ProposalEditForm({
   caption,
   type,
+  team = "",
+  player = "",
   busy,
   onCaptionChange,
   onTypeChange,
+  onTeamChange = () => {},
+  onPlayerChange = () => {},
   onSave,
   onCancel,
 }: {
   caption: string;
   type: ProposalType;
+  team?: string;
+  player?: string;
   busy: boolean;
   onCaptionChange: (caption: string) => void;
   onTypeChange: (type: ProposalType) => void;
+  onTeamChange?: (team: string) => void;
+  onPlayerChange?: (player: string) => void;
   onSave: () => void;
   onCancel: () => void;
 }) {
@@ -280,7 +317,27 @@ export function ProposalEditForm({
           )}
         </select>
       </Field>
-      <div className="flex gap-2">
+      {type === "goal" && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field label="Scoring team (optional)">
+            <input
+              value={team}
+              onChange={(event) => onTeamChange(event.target.value)}
+              placeholder="Leave blank when unknown"
+              className="w-full border border-line bg-ink-800 px-3 py-2 text-[13px] outline-none focus:border-sodium"
+            />
+          </Field>
+          <Field label="Scorer (optional)">
+            <input
+              value={player}
+              onChange={(event) => onPlayerChange(event.target.value)}
+              placeholder="Leave blank when unknown"
+              className="w-full border border-line bg-ink-800 px-3 py-2 text-[13px] outline-none focus:border-sodium"
+            />
+          </Field>
+        </div>
+      )}
+      <div className="flex flex-wrap gap-2">
         <Button type="submit" tone="primary" disabled={busy || !caption.trim()}>
           {busy ? "Saving…" : "Save"}
         </Button>
@@ -289,6 +346,17 @@ export function ProposalEditForm({
         </Button>
       </div>
     </form>
+  );
+}
+
+function GoalIdentity({ p }: { p: Proposal }) {
+  if (p.type !== "goal") return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5 font-mono text-[10px] text-chalk-faint">
+      <span>Scoring team: {p.team || "not identified"}</span>
+      <span aria-hidden>·</span>
+      <span>Scorer: {p.player || "not identified"}</span>
+    </div>
   );
 }
 
@@ -362,7 +430,7 @@ function AddMoment({ matchId }: { matchId: string }) {
 
   if (!open) {
     return (
-      <div className="flex items-center justify-between border border-dashed border-line px-4 py-3.5">
+      <div className="flex flex-col items-start justify-between gap-3 border border-dashed border-line px-4 py-3.5 sm:flex-row sm:items-center">
         <p className="max-w-[62ch] text-[13px] text-chalk-faint">
           The AI missed a goal at 39:26. A human can add it — and it flows into search and the
           reel exactly like an AI-proposed one, because the manifest is the source of truth, not
@@ -418,12 +486,12 @@ function AddMoment({ matchId }: { matchId: string }) {
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           required
-          placeholder="goal from a scramble in the right-side box, keeper beaten at close range"
+          placeholder="Describe only what the footage confirms"
           className="w-full border border-line bg-ink-900 px-3 py-2 text-[14px] outline-none placeholder:text-chalk-faint focus:border-sodium"
         />
       </Field>
       {add.error && <ErrorNote>{(add.error as Error).message}</ErrorNote>}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button type="submit" tone="primary" disabled={add.isPending}>
           {add.isPending ? "Adding…" : "Add moment"}
         </Button>

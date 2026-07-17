@@ -320,6 +320,8 @@ def test_proposals_only_include_the_most_recent_claude_run(
             "type": "goal",
             "confidence": "high",
             "caption": "published event",
+            "team": None,
+            "player": None,
             "status": "accepted",
             "clip": "/media/match-test/clips/e-published.mp4",
             "frames": ["/media/match-test/frames/r-new-p-001/frame-001.jpg"],
@@ -331,10 +333,10 @@ def test_proposals_only_include_the_most_recent_claude_run(
             "type": "save",
             "confidence": "medium",
             "caption": "latest pending proposal",
+            "team": None,
+            "player": None,
             "status": "pending",
-            "clip": (
-                f"/media/match-test/clips/{proposal_clip_id('r-new-p-002')}.mp4"
-            ),
+            "clip": (f"/media/match-test/clips/{proposal_clip_id('r-new-p-002')}.mp4"),
             "frames": [],
         },
     ]
@@ -392,6 +394,12 @@ def test_accept_writes_through_to_manifest_index_and_media(
     proposal_id = "r-new-p-002"
     event_id = main._proposal_event_id(proposal_id)
 
+    proposals_path = match / "proposals.json"
+    proposals = json.loads(proposals_path.read_text(encoding="utf-8"))
+    pending = next(row for row in proposals["proposals"] if row["id"] == proposal_id)
+    pending.update({"type": "goal", "team": "Blue FC", "player": "Alex Striker"})
+    proposals_path.write_text(json.dumps(proposals), encoding="utf-8")
+
     response = client.post(f"/api/matches/match-test/proposals/{proposal_id}/accept")
 
     assert response.status_code == 200
@@ -404,6 +412,8 @@ def test_accept_writes_through_to_manifest_index_and_media(
     accepted = next(event for event in manifest["events"] if event["id"] == event_id)
     assert accepted["from_proposal"] == proposal_id
     assert accepted["caption"] == "latest pending proposal"
+    assert accepted["team"] == "Blue FC"
+    assert accepted["player"] == "Alex Striker"
     draft = json.loads((match / "manifest.json").read_text(encoding="utf-8"))
     assert [event["id"] for event in draft["events"]] == ["e-draft"]
 
@@ -470,6 +480,41 @@ def test_edit_updates_caption_then_type_with_canonical_embedding_and_overlay(
     assert proposal["caption"] == "corrected winning strike"
     assert proposal["type"] == "save"
     assert proposal["clip"] == "/media/match-test/clips/e-published.mp4"
+
+
+def test_goal_identity_can_be_corrected_and_explicitly_cleared(
+    api_client: tuple[TestClient, Path],
+    in_memory_qdrant: QdrantClient,
+) -> None:
+    client, match = api_client
+    path = "/api/matches/match-test/proposals/r-new-p-001/edit"
+
+    corrected = client.post(
+        path,
+        json={"team": "  Blue FC  ", "player": "  Alex Striker  "},
+    )
+
+    assert corrected.status_code == 200
+    event = _promoted_manifest(match)["events"][0]
+    assert event["team"] == "Blue FC"
+    assert event["player"] == "Alex Striker"
+    proposal = client.get("/api/matches/match-test/proposals").json()[0]
+    assert proposal["team"] == "Blue FC"
+    assert proposal["player"] == "Alex Striker"
+    point = in_memory_qdrant.retrieve(
+        collection_name="moments_rev_1",
+        ids=[main._point_id("match-test", "e-published")],
+        with_payload=True,
+    )[0]
+    assert point.payload["team"] == "Blue FC"
+    assert point.payload["player"] == "Alex Striker"
+
+    cleared = client.post(path, json={"team": None, "player": None})
+
+    assert cleared.status_code == 200
+    event = _promoted_manifest(match)["events"][0]
+    assert event["team"] is None
+    assert event["player"] is None
 
 
 def test_editing_pending_proposal_materializes_and_accepts_it(
@@ -1220,6 +1265,8 @@ def test_build_reel_stream_copies_normalized_clips(
     )
     media = json.loads(probe.stdout)
     assert {stream["codec_name"] for stream in media["streams"]} == {"h264", "aac"}
-    video = next(stream for stream in media["streams"] if stream["codec_name"] == "h264")
+    video = next(
+        stream for stream in media["streams"] if stream["codec_name"] == "h264"
+    )
     assert (video["width"], video["height"]) == (1280, 720)
     assert float(media["format"]["duration"]) > 0.9

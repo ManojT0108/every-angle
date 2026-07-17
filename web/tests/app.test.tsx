@@ -2,70 +2,44 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import App from "../src/App";
-import type { Proposal, Timeline } from "../src/lib/api";
+import type { Timeline } from "../src/lib/api";
 
-function proposal(
-  id: string,
-  type: Proposal["type"],
-  status: Proposal["status"],
-): Proposal {
-  return {
-    id,
-    t_start: 10,
-    t_end: 20,
-    type,
-    confidence: "high",
-    caption: id,
-    status,
-    clip: null,
-    frames: [],
-  };
-}
-
-describe("homepage stats", () => {
-  it("derives all four figures from the timeline and latest proposals", () => {
-    const matchId = "match-stats";
+describe("homepage match summary", () => {
+  it("shows grouped goal details from verified events without old pipeline tiles", () => {
+    const matchId = "match-summary";
     const timeline: Timeline = {
       duration: 732,
-      windows: [
-        {
-          id: "w-1",
-          t_start: 10,
-          t_end: 70,
-          audio_peak: false,
-          scene_cut: false,
-          motion_peak: true,
-          score: 1,
-        },
-        {
-          id: "w-2",
-          t_start: 100,
-          t_end: 250,
-          audio_peak: true,
-          scene_cut: false,
-          motion_peak: false,
-          score: 1,
-        },
-      ],
+      windows: [],
       events: [
         {
-          id: "e-1",
-          from_proposal: "p-accepted",
+          id: "goal-live",
+          from_proposal: "p-goal",
           t_start: 20,
           t_end: 30,
           type: "goal",
-          caption: "First verified clip",
-          clip: "clips/e-1.mp4",
-          team: null,
-          player: null,
+          caption: "Goal sequence",
+          clip: "clips/goal.mp4",
+          team: "Blue FC",
+          player: "Alex Striker",
         },
         {
-          id: "e-2",
+          id: "goal-replay",
+          from_proposal: "p-replay",
+          t_start: 35,
+          t_end: 45,
+          type: "goal",
+          caption: "Replay of the same goal",
+          clip: "clips/replay.mp4",
+          team: "Blue FC",
+          player: "Alex Striker",
+        },
+        {
+          id: "goal-unknown",
           from_proposal: null,
           t_start: 300,
           t_end: 310,
-          type: "save",
-          caption: "Second verified clip",
+          type: "goal",
+          caption: "Another goal",
           clip: null,
           team: null,
           player: null,
@@ -73,12 +47,6 @@ describe("homepage stats", () => {
       ],
       rejected: [],
     };
-    const proposals = [
-      proposal("p-pending", "goal", "pending"),
-      proposal("p-accepted", "save", "accepted"),
-      proposal("p-rejected", "card", "rejected"),
-      proposal("p-ordinary", "none", "pending"),
-    ];
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -92,7 +60,6 @@ describe("homepage stats", () => {
       },
     ]);
     queryClient.setQueryData(["timeline", matchId], timeline);
-    queryClient.setQueryData(["proposals", matchId], proposals);
 
     const markup = renderToStaticMarkup(
       <QueryClientProvider client={queryClient}>
@@ -100,14 +67,22 @@ describe("homepage stats", () => {
       </QueryClientProvider>,
     );
 
-    expect(markup).toMatch(
-      /Footage to review<\/div><div[^>]*>3:30<small[^>]*>of 12:12<\/small>/,
-    );
-    expect(markup).toMatch(/AI proposals<\/div><div[^>]*>3<\/div>/);
-    expect(markup).toMatch(/Verified clips<\/div><div[^>]*>2<\/div>/);
-    expect(markup).toMatch(/Awaiting review<\/div><div[^>]*>1<\/div>/);
-    expect(markup).not.toContain("Candidate windows");
-    expect(markup).not.toContain("Goals kept");
-    expect(markup).not.toContain("Rejected by human");
+    expect(markup).toContain("Match summary");
+    expect(markup).toContain("Find the moments. Prove every one.");
+    expect(markup).toContain("Signal scan");
+    expect(markup).toContain("AI proposes");
+    expect(markup).toContain("Human reviews");
+    expect(markup).toContain("Moments ship");
+    expect(markup).toContain('aria-label="Moment workspace"');
+    expect(markup).toContain("Search verified moments");
+    expect(markup).toContain("Review proposals");
+    expect(markup).toContain("Assemble a reel");
+    expect(markup).toContain("2 displayed goal groups");
+    expect(markup).toContain("Alex Striker · Blue FC · 0:20");
+    expect(markup).toContain("Goal · 5:00");
+    expect(markup).toContain("12:12 footage");
+    expect(markup).not.toContain("Footage to review");
+    expect(markup).not.toContain("AI proposals");
+    expect(markup).not.toContain("Awaiting review");
   });
 });

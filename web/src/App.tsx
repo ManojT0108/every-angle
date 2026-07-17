@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { api, timecode } from "./lib/api";
 import { Timeline } from "./components/Timeline";
-import { Button, Empty, ErrorNote, Figure, Figures } from "./components/bits";
+import { MatchSummary } from "./components/MatchSummary";
+import { Button, Empty, ErrorNote } from "./components/bits";
 import { Verify } from "./views/Verify";
 import { Search } from "./views/Search";
 import { Reel } from "./views/Reel";
@@ -18,6 +19,29 @@ const TAB_LABELS: Record<Tab, string> = {
   search: "Search",
   reel: "Reel",
 };
+
+const WORKFLOW = [
+  {
+    number: "01",
+    label: "Signal scan",
+    detail: "Motion, audio, and scene cues narrow the footage.",
+  },
+  {
+    number: "02",
+    label: "AI proposes",
+    detail: "Claude describes only the candidate windows it can see.",
+  },
+  {
+    number: "03",
+    label: "Human reviews",
+    detail: "An editor keeps, rejects, or corrects every notable moment.",
+  },
+  {
+    number: "04",
+    label: "Moments ship",
+    detail: "Verified clips become searchable and ready for a reel.",
+  },
+] as const;
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("search");
@@ -36,12 +60,6 @@ export default function App() {
     queryFn: () => api.timeline(matchId as string),
     enabled: Boolean(matchId),
   });
-  const { data: proposals } = useQuery({
-    queryKey: ["proposals", matchId],
-    queryFn: () => api.proposals(matchId as string),
-    enabled: Boolean(matchId),
-  });
-
   useEffect(() => {
     if (!tl) return;
     setReel((current) => reconcileSelection(current, tl.events));
@@ -73,6 +91,16 @@ export default function App() {
     setPendingSelection(null);
   };
 
+  const openWorkspace = (nextTab: Tab) => {
+    setTab(nextTab);
+    requestAnimationFrame(() => {
+      document.getElementById("workspace")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
   const shellProps = {
     matches: matches ?? [],
     matchId,
@@ -101,40 +129,27 @@ export default function App() {
       </Shell>
     );
 
-  // The proposal-derived figures degrade gracefully if /proposals is slow or
-  // errors — the app (Timeline/Search/Reel) must never stall on them, and the
-  // tiles show "—" (not a misleading 0) until the data actually arrives.
-  const reviewed = tl.windows.reduce((a, w) => a + (w.t_end - w.t_start), 0);
-  const proposalsReady = proposals !== undefined;
-  const notableProposals = (proposals ?? []).filter((proposal) => proposal.type !== "none");
-  const awaitingReview = notableProposals.filter(
-    (proposal) => proposal.status === "pending",
-  ).length;
-
   return (
     <Shell {...shellProps} duration={tl.duration}>
-      <Figures>
-        <Figure
-          label="Footage to review"
-          value={timecode(reviewed)}
-          unit={`of ${timecode(tl.duration)}`}
-          hero
-        />
-        <Figure label="AI proposals" value={proposalsReady ? notableProposals.length : "—"} />
-        <Figure label="Verified clips" value={tl.events.length} />
-        <Figure label="Awaiting review" value={proposalsReady ? awaitingReview : "—"} />
-      </Figures>
+      <ProductIntro onNavigate={openWorkspace} />
+
+      <MatchSummary data={tl} />
 
       <Timeline matchId={matchId} data={tl} />
 
-      <nav className="mt-9 flex border-b border-line" role="tablist">
+      <nav
+        id="workspace"
+        className="mt-9 grid scroll-mt-4 grid-cols-3 border-b border-line"
+        role="tablist"
+        aria-label="Moment workspace"
+      >
         {(["verify", "search", "reel"] as Tab[]).map((t) => (
           <button
             key={t}
             role="tab"
             aria-selected={tab === t}
             onClick={() => setTab(t)}
-            className={`display cursor-pointer border-b-2 px-5 pb-2 pt-2.5 text-[15px] transition-colors ${
+            className={`display min-w-0 cursor-pointer border-b-2 px-2 pb-2 pt-2.5 text-[13px] transition-colors sm:px-5 sm:text-[15px] ${
               tab === t
                 ? "border-b-sodium text-chalk"
                 : "border-b-transparent text-chalk-faint hover:text-chalk-dim"
@@ -200,6 +215,82 @@ export default function App() {
   );
 }
 
+function ProductIntro({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
+  return (
+    <section
+      aria-labelledby="product-outcome"
+      className="hero-atmosphere relative mt-6 overflow-hidden border border-line bg-ink-800"
+    >
+      <div className="relative z-10 grid gap-8 px-5 py-8 sm:px-7 md:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] md:px-9 md:py-10">
+        <div className="min-w-0 self-center">
+          <span className="eyebrow text-sodium">Grounded football intelligence</span>
+          <h2
+            id="product-outcome"
+            className="display mt-3 max-w-[13ch] text-[clamp(2.4rem,6vw,4.9rem)] leading-[0.9] tracking-[0.025em]"
+          >
+            Find the moments. Prove every one.
+          </h2>
+          <p className="mt-5 max-w-[58ch] text-[14px] leading-relaxed text-chalk-dim sm:text-[15px]">
+            Every Angle turns full-match footage into playable, searchable clips — with
+            a human decision between every AI proposal and the final edit.
+          </p>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <WorkspaceLink primary onClick={() => onNavigate("search")}>
+              Search verified moments
+            </WorkspaceLink>
+            <WorkspaceLink onClick={() => onNavigate("verify")}>
+              Review proposals
+            </WorkspaceLink>
+            <WorkspaceLink onClick={() => onNavigate("reel")}>
+              Assemble a reel
+            </WorkspaceLink>
+          </div>
+        </div>
+
+        <ol className="grid content-center gap-px border border-line bg-line sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+          {WORKFLOW.map((step) => (
+            <li key={step.number} className="min-w-0 bg-ink-900/95 p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="display text-[13px] text-chalk">{step.label}</span>
+                <span className="tnum font-mono text-[10px] text-sodium">
+                  {step.number}
+                </span>
+              </div>
+              <p className="mt-2 text-[12px] leading-relaxed text-chalk-faint">
+                {step.detail}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function WorkspaceLink({
+  children,
+  onClick,
+  primary = false,
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  primary?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`min-h-10 cursor-pointer border px-4 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] transition-colors sm:text-center ${
+        primary
+          ? "border-sodium bg-sodium text-sodium-ink hover:brightness-110"
+          : "border-line bg-ink-900/80 text-chalk-dim hover:border-chalk-faint hover:text-chalk"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 // Attribution is per-source and must be honest: SoccerTrack is CC BY and
 // shippable; a broadcast is copyrighted and local-only. Getting this wrong is
 // not a cosmetic bug.
@@ -225,9 +316,9 @@ function Shell({
 }) {
   const src = matchId ? sourceOf(matchId) : null;
   return (
-    <div className="mx-auto max-w-[1180px] px-6 pb-24 pt-7">
-      <header className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-4">
-        <div className="flex items-baseline gap-3">
+    <div className="mx-auto max-w-[1180px] px-4 pb-20 pt-5 sm:px-6 sm:pb-24 sm:pt-7">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4 sm:gap-6">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 className="display m-0 text-[30px] leading-none">Every&nbsp;Angle</h1>
           <span className="eyebrow">Moment intelligence</span>
         </div>

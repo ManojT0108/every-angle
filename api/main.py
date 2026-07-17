@@ -92,8 +92,8 @@ class EventResponse(BaseModel):
     t_end: float
     type: str
     caption: str
-    team: str | None = None
-    player: str | None = None
+    team: str | None = Field(default=None, max_length=120)
+    player: str | None = Field(default=None, max_length=120)
     clip: str | None = None
     verified_at: str | None = None
 
@@ -125,6 +125,8 @@ class ProposalResponse(BaseModel):
     type: str
     confidence: str
     caption: str
+    team: str | None = Field(default=None, max_length=120)
+    player: str | None = Field(default=None, max_length=120)
     status: Literal["pending", "accepted", "rejected"]
     clip: str | None
     frames: list[str]
@@ -149,13 +151,20 @@ class ProposalEditRequest(BaseModel):
 
     caption: str | None = Field(default=None, min_length=1)
     type: PROPOSAL_TYPES | None = None
+    team: str | None = Field(default=None, max_length=120)
+    player: str | None = Field(default=None, max_length=120)
 
     @model_validator(mode="after")
     def validate_edit(self) -> ProposalEditRequest:
-        if self.caption is None and self.type is None:
-            raise ValueError("caption or type is required")
+        identity_fields = {"team", "player"}.intersection(self.model_fields_set)
+        if self.caption is None and self.type is None and not identity_fields:
+            raise ValueError("caption, type, team, or player is required")
         if self.caption is not None and not self.caption.strip():
             raise ValueError("caption must not be blank")
+        if self.team is not None:
+            self.team = self.team.strip() or None
+        if self.player is not None:
+            self.player = self.player.strip() or None
         return self
 
 
@@ -381,6 +390,16 @@ def _proposal_responses(match_dir: Path, video_id: str) -> list[ProposalResponse
                         if accepted_event is not None
                         else row.get("caption", "")
                     ),
+                    team=(
+                        accepted_event.get("team")
+                        if accepted_event is not None
+                        else row.get("team")
+                    ),
+                    player=(
+                        accepted_event.get("player")
+                        if accepted_event is not None
+                        else row.get("player")
+                    ),
                     status=status,
                     clip=clip,
                     frames=frames,
@@ -521,6 +540,10 @@ def _event_for_proposal(
     *,
     caption: str | None = None,
     event_type: str | None = None,
+    team: str | None = None,
+    player: str | None = None,
+    team_supplied: bool = False,
+    player_supplied: bool = False,
 ) -> dict[str, Any]:
     proposal_id = str(proposal.get("id", ""))
     if not proposal_id:
@@ -532,6 +555,13 @@ def _event_for_proposal(
                 edited["caption"] = caption
             if event_type is not None:
                 edited["type"] = event_type
+            if team_supplied:
+                edited["team"] = team
+            if player_supplied:
+                edited["player"] = player
+            if edited.get("type") != "goal":
+                edited["team"] = None
+                edited["player"] = None
             return EventResponse.model_validate(edited).model_dump()
     previous = decisions.get(proposal_id, {})
     event_id = (
@@ -552,8 +582,12 @@ def _event_for_proposal(
             "t_end": float(proposal["t_end"]),
             "type": materialized_type,
             "caption": caption if caption is not None else str(proposal["caption"]),
-            "team": None,
-            "player": None,
+            "team": (team if team_supplied else proposal.get("team"))
+            if materialized_type == "goal"
+            else None,
+            "player": (player if player_supplied else proposal.get("player"))
+            if materialized_type == "goal"
+            else None,
             "clip": f"clips/{event_id}.mp4",
             "verified_at": datetime.now(timezone.utc)
             .isoformat()
@@ -653,9 +687,7 @@ def _restore_event_point(
     if snapshot is None:
         client.delete(
             collection_name=name,
-            points_selector=models.PointIdsList(
-                points=[_point_id(video_id, event_id)]
-            ),
+            points_selector=models.PointIdsList(points=[_point_id(video_id, event_id)]),
             wait=True,
         )
         return
@@ -882,9 +914,7 @@ def create_app(data_root: Path | None = None) -> FastAPI:
             try:
                 _reconcile_baseline(root)
             except Exception as exc:
-                application.state.reconciliation_error = (
-                    str(exc) or type(exc).__name__
-                )
+                application.state.reconciliation_error = str(exc) or type(exc).__name__
                 raise HTTPException(
                     status_code=503,
                     detail="Index is reconciling after a startup issue; retry shortly",
@@ -1024,9 +1054,7 @@ def create_app(data_root: Path | None = None) -> FastAPI:
                 snapshot=snapshot,
             )
         except Exception as exc:
-            application.state.reconciliation_error = (
-                str(exc) or type(exc).__name__
-            )
+            application.state.reconciliation_error = str(exc) or type(exc).__name__
             raise HTTPException(
                 status_code=503,
                 detail="Proposal update failed and the index requires reconciliation",
@@ -1038,6 +1066,10 @@ def create_app(data_root: Path | None = None) -> FastAPI:
         *,
         caption: str | None = None,
         event_type: str | None = None,
+        team: str | None = None,
+        player: str | None = None,
+        team_supplied: bool = False,
+        player_supplied: bool = False,
     ) -> DecisionResponse:
         match_dir = _match_dir(root, video_id)
         proposal = _proposal_row(match_dir, proposal_id)
@@ -1056,6 +1088,10 @@ def create_app(data_root: Path | None = None) -> FastAPI:
                 decisions,
                 caption=caption,
                 event_type=event_type,
+                team=team,
+                player=player,
+                team_supplied=team_supplied,
+                player_supplied=player_supplied,
             )
             try:
                 _event_clip(match_dir, event.get("clip"))
@@ -1152,9 +1188,7 @@ def create_app(data_root: Path | None = None) -> FastAPI:
                 ) from exc
             return DecisionResponse(proposal_id=proposal_id, **decision)
 
-    def reject_proposal_change(
-        video_id: str, proposal_id: str
-    ) -> DecisionResponse:
+    def reject_proposal_change(video_id: str, proposal_id: str) -> DecisionResponse:
         match_dir = _match_dir(root, video_id)
         _proposal_row(match_dir, proposal_id)
         with match_lock(video_id):
@@ -1270,6 +1304,10 @@ def create_app(data_root: Path | None = None) -> FastAPI:
             proposal_id,
             caption=request.caption.strip() if request.caption is not None else None,
             event_type=request.type,
+            team=request.team,
+            player=request.player,
+            team_supplied="team" in request.model_fields_set,
+            player_supplied="player" in request.model_fields_set,
         )
 
     @application.post("/api/matches/{video_id}/events", response_model=EventResponse)
