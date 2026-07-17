@@ -1,8 +1,9 @@
 """Seed Qdrant Cloud with match-001's verified events — create-if-missing + upsert-verify.
 
 Non-destructive by default (safe re-run); destructive rebuild requires --force.
-Env: QDRANT_URL, QDRANT_API_KEY. Run: ./.venv/bin/python scripts/seed_qdrant.py
+Env: QDRANT_URL, QDRANT_API_KEY. Run: ./.venv/bin/python -m scripts.seed_qdrant
 """
+
 from __future__ import annotations
 
 import argparse
@@ -26,7 +27,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bundle", default="deploy/bundle/match-001")
     ap.add_argument("--video-id", default="match-001")
-    ap.add_argument("--force", action="store_true", help="delete+recreate the collection first")
+    ap.add_argument(
+        "--force", action="store_true", help="delete+recreate the collection first"
+    )
     args = ap.parse_args()
 
     url = os.environ.get("QDRANT_URL")

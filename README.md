@@ -75,7 +75,7 @@ python3 -m venv .venv
 
 mkdir -p data/match-001
 cp -R deploy/bundle/match-001/. data/match-001/
-QDRANT_URL=http://localhost:6333 ./.venv/bin/python scripts/seed_qdrant.py \
+QDRANT_URL=http://localhost:6333 ./.venv/bin/python -m scripts.seed_qdrant \
   --bundle data/match-001
 
 ./scripts/run_app.sh --dev
@@ -101,7 +101,7 @@ Qdrant collection must be seeded once before the first demo:
 
 ```bash
 QDRANT_URL=https://your-cluster QDRANT_API_KEY=your-key \
-  ./.venv/bin/python scripts/seed_qdrant.py
+  ./.venv/bin/python -m scripts.seed_qdrant
 ```
 
 After that one-time index seed, the Docker build and `/api/matches` health check are
