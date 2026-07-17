@@ -1,5 +1,11 @@
 # Every Angle demo video
 
+> **STATUS — SUPERSEDED DRAFT (2026-07-16 PM PDT):** This guide and its matching narration/SRT
+> predate the live Broadcast Feed. There is no final screen recording or uploadable MP4. Do not
+> record or upload this version unchanged. The next revision must show both source selectors,
+> switch to **Broadcast feed**, demonstrate the verified **`trophy lift`** search and clip, and
+> update the final credits. See `.ai/HANDOFF.md` for the exact takeover sequence.
+
 Target runtime: **105–115 seconds**. Record only the bundled `match-001` SoccerTrack v2 demo from a
 freshly reset session. Do not show local broadcast footage, API keys, terminal windows, or browser
 bookmarks.

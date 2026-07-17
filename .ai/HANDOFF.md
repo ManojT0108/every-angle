@@ -1,35 +1,121 @@
-# Current handoff
+# Current handoff — Claude resumes as orchestrator
 
-- **LIVE BROADCAST MATCH: SHIPPED + LIVE-VERIFIED (2026-07-16).** The user confirmed public redistribution permission for local `match-002`; authorization is recorded in `docs/assets-manifest.md`. Commit `f296cd1` added a strict processed-only deploy bundle (rev 3, 30 published events, 35 clips, 66 Review posters), two-baseline Docker restore, the automatic `Broadcast feed` match selector, revision-aware Qdrant seeding, and Render deploy-on-commit. The 2.9 GB source, extra sampled frames, old revisions, and generated reels remain excluded. Qdrant Cloud `moments_rev_3` has 30 points. Full gate: Ruff/format clean, **78 pytest passed**, **18 Vitest passed**, Vite build + Oxlint + `git diff --check` clean, production Docker build and container smoke green, independent code review APPROVED. Live `https://every-angle.onrender.com` verified both matches; `trophy lift` semantic search returned the trophy ceremony; a 21 MB broadcast clip and 60s two-event reel both served 200. Next: record the live walkthrough, then combine it with the prepared 106.5s synthetic narration and captions; the final uploadable MP4 does not exist yet.
-- **SUBMISSION FINISH: CODE + MATERIALS APPROVED, RELEASE IN PROGRESS (2026-07-16).** Added a judge-first hero/workflow, responsive Review/Search/Reel states, calmer timeline presentation, current React/FastAPI README, portal description, exact 105–115s shot list, narration-only script, and sentence-timed SRT captions. A local Reed synthetic-voice fallback was generated outside Git at `/Users/manojt/Documents/Hackathon/every-angle-demo-assets/every-angle-narration.m4a` (AAC 48kHz mono, -16 LUFS target, 106.5s). Full gate: Ruff check clean, changed Python formatting clean, **77 pytest passed**, **18 Vitest passed**, Vite build + Oxlint + `git diff --check` clean. Independent plan and code reviews APPROVED with no code findings; durable reviews in `.ai/tasks/submission-finish/reviews/`. Embedded browser unavailable, so a manual desktop/narrow dry run is mandatory before recording. Social card safely omitted until a real public URL can be verified. Next: scoped commit/push of intended files, Render Blueprint account step, live smoke test, record/upload/submit.
-- **Match summary + explorable timeline + honest search: IMPLEMENTED + CODE-REVIEW APPROVED (2026-07-16, UNCOMMITTED).** Added directly-attributed nullable scoring-team/scorer fields to the Claude proposal contract (`p4-*`), proposal persistence, Review display/edit/clear, and live Accept materialization with legacy-null fallback. Replaced homepage pipeline tiles and its proposals query with honest verified-manifest goal groups sharing Quick Highlights' rolling incident grouping (never presented as an official score). Rebuilt the timeline as a bounded pixel-scale zoom/scroll canvas with deterministic event hitbox lanes, 24px+ playable targets for every event type, and separate proportional rejected/candidate lanes; removed Search's canned suggestions and kept Quick Highlights. Coordinator self-review tightened identity validation and goal-only controls. Full gate: Ruff clean, **77 pytest passed**, **18 Vitest passed**, web build + Oxlint clean, `git diff --check` clean. Headless Codex plan review converged in 3 rounds and code review returned APPROVED with no findings; durable reviews are in `.ai/tasks/match-summary-timeline-search/reviews/`. Local HTTP smoke check passed on Vite (`:5173`) and the live match timeline API (`:8000`), including the new nullable metadata. Interactive desktop/narrow browser QA was attempted twice but remains **NOT RUN** because the host browser-control integration could not start; manual visual QA is the only leftover check.
-- **Homepage stats + clickable timeline: IMPLEMENTED + FULL GATE GREEN (2026-07-16, UNCOMMITTED).** Implemented `.ai/tasks/homepage-timeline-polish/plan.md` sections 1–2 only: four proposal/timeline-derived homepage figures; match-scoped playable timeline marks; and a controlled modal player shared with clip thumbnails. Clipless events remain inert, and the timeline has no nested buttons. Checks: Ruff clean, 75 pytest passed, 15 Vitest passed, web build + Oxlint clean. Sections 3–4 remain coordinator-owned/deferred as directed.
-- **Review + Search polish CODE COMPLETE + FULL GATE GREEN (2026-07-16, UNCOMMITTED).** Implemented `.ai/tasks/review-search-polish/plan.md` sections A/B/C/E/F: user-facing Review rename; shared thumbnail/lightbox; chronological Search browse; six-minute highlights with stream-copy reel concat; and inline proposal caption/type editing. The proposal-keyed edit endpoint reuses locked Accept/Reject materialization, embeds canonical `caption. type` text across live/reconcile/batch paths, overlays accepted manifest edits in Review, and compensates failed index/manifest writes (forcing reconciliation after compensation failure). Checks: Ruff clean, 75 pytest passed, 12 Vitest passed, web build + oxlint clean. Section D remains the coordinator-owned deployable demo-state data step.
-- **Verify clip playback: IMPLEMENTED + FULL GATE GREEN (2026-07-16, UNCOMMITTED).** Added reuse-first, status-independent proposal clip URLs; reusable latest-Claude-run proposal cutter; video/stills rendering in pending and judged Verify rows; and judged ordinary-play exclusion. Local cutter result: match-002 reused all 35 event clips (0 encoded), match-001 encoded only 2 missing rejected-proposal clips; both matches now have clips for every notable Verify row. Checks: Ruff clean, 66 pytest passed, 9 Vitest passed, web build + oxlint clean. Awaiting coordinator self-review/code-review loop.
-- **Reel workflow implementation: CODE COMPLETE, DEPENDENCY INSTALL BLOCKED (2026-07-15).** Implemented the approved `.ai/tasks/reel-workflow/plan.md`: deterministic Quick Highlights (rolling incident dedup, rank/caps/chronological order, latest celebration last), Search/Reel actions, Replace/Merge prompt, ordered organizer, timeline reconciliation, and stale-build reset. Added Vitest tests plus the `npm test` script/declaration, but the workspace cannot resolve `registry.npmjs.org`, so `node_modules` and `web/package-lock.json` could not be updated and `npm test` cannot run here. Manual Node assertions over the same cases pass; web build + oxlint, Ruff, and all 63 Python tests pass. Coordinator leftover: run `cd web && npm install`, confirm the lockfile update, then run `npm test` before code review.
-- **Celebration coverage: DONE + PUBLISHED (2026-07-15).** match-002 re-run completed on Opus 4.8 ($3.59, 66 windows): 35 notable events incl. **12 celebration** (final-whistle mobbing 6192–6295s + medal ceremony/trophy lift/confetti 6479–6629s in the 6 tail windows). Published **rev 3 / `moments_rev_3`** (35 events); orphaned `moments_rev_2` deleted; match-001 rev 1 intact. Verified: "winning celebration by winning team" → 0.65 celebration; "trophy lift" → 6599s "winners lift the trophy amid confetti"; "players receiving medals" → 6479s medal ceremony. **Model note:** A/B (Opus 4.8 vs Sonnet 5) on goal/save/trophy showed parity on classification + caption quality; Sonnet ~40% cheaper + faster. Recommendation OPEN: switch `ClaudeCaptioner` default to `claude-sonnet-5` for future runs (rev 3 stays on Opus, no need to redo). Code changes still UNCOMMITTED.
-- **[superseded] Celebration coverage feature: CODE DONE + APPROVED (2026-07-15, UNCOMMITTED).** Added `celebration` event type (both prompts, goal-takes-precedence) + additive detector tail coverage (`ensure_tail_coverage`, six fixed EOF-aligned tiles, `DETECTOR_VERSION=d4-tail`, PROFILES/goal-recall untouched, cue-ID projection preserved) + api/web taxonomy. Full workflow-v2: plan APPROVED (5 rounds), Luna implement, self-review, code review APPROVED (2 rounds). Files: `pipeline/ingest.py`, `captioner.py`, `api/main.py`, `web/src/lib/api.ts`, `web/src/views/Verify.tsx`, tests (`test_celebration_coverage.py` + updates; 51 pass, ruff clean, web build+oxlint clean). Reviews in `.ai/tasks/celebration-coverage/reviews/`. **Re-run proved tail coverage works:** re-ingest → 66 windows (60 cue + 6 tail w-061..066 at 6478–6658s), d4-tail, profile broadcast; sample fast (66 windows); tail frames VISUALLY confirmed to contain the RMA medal/trophy ceremony (~6480s). **BLOCKER: propose (Claude captioning) died at window 15/66 — Anthropic API returned 400 "credit balance too low".** So celebration/tail windows are sampled but NOT captioned, and **rev 3 is NOT published** — match-002 still serves rev 2 (18 events, no celebration); match-001 rev 1 intact. **To finish once credits added:** frames already sampled (free), just re-run `pipeline.propose --captioner claude` on match-002 (~$3), rebuild decisions+manifest from the new run's non-none proposals, cut clips, `publish_revision` rev 3, verify "trophy lift" search. New run_id in scratchpad `match002_runid.txt`.
+Updated **2026-07-16 PM PDT**. This file is the authoritative current state; older task plans and
+reviews are historical evidence, not active instructions.
 
-- **Broadcast fast-path SHIPPED + APPROVED (2026-07-14 eve, UNCOMMITTED).** New `broadcast` profile in the sampler skips ball tracking (which is a fixed-overhead-camera algorithm that explodes on a panning broadcast: measured 184 ms/frame and one `_blobs()` frame at 6.7 s — see `.ai/tasks/broadcast-speedup/`). Broadcast now samples full aspect-preserving 1280×720 frames directly (`extract_full`) + a broadcast caption prompt (`SYSTEM_PROMPT_BROADCAST`, `prompt_version=p2-broadcast`, profile propagated windows.json→propose→captioner). Full workflow-v2 loop: plan APPROVED (3 rounds), Luna implement, self-review (+ EOF/duration hardening), code review APPROVED (2 rounds). Diff: `pipeline/sample.py`, `captioner.py`, `propose.py`, `tests/test_broadcast_profile.py` (7 new; 43 total green, ruff clean). Fixed/amateur path byte-for-byte unchanged (test-guarded). **Result on match-002 (2022 UCL Final broadcast, LOCAL ONLY):** sampling 60 windows in **60 s** (was hours), captioning 60 windows for **$3.22** (cap $15), 18 notable moments (6 goal, 11 save, 1 card); captions read real graphics (verified: "LIV 0-1 RMA", Fabinho yellow). NOT committed (repo rule). Reviews in `.ai/tasks/broadcast-speedup/reviews/`.
-- **match-002 PUBLISHED to local Qdrant (2026-07-14 eve, LOCAL ONLY).** 18 notable moments (11 save, 6 goal, 1 card) auto-accepted from the broadcast run (NOT human-verified), clips cut, indexed as **`moments_rev_2`**, `CURRENT_REV=2`. Search verified live via API for both matches; match-001 (`moments_rev_1`) untouched. **KNOWN LIMITATION surfaced here:** Qdrant collections are named `moments_rev_N` **globally, not per-match**, and `rebuild_collection_from_manifest` deletes+recreates the target — so a 2nd match must publish under a distinct revision (match-002 used rev 2) or it clobbers match-001. Search stays isolated only because each match keys its collection off its own `CURRENT_REV`. Proper fix (deferred): scope collection name by `video_id` in `pipeline/index_qdrant.py` + `api/main.py`. The 18 events include replay duplicates (the one RMA goal spans ~5 windows) — dedup deferred to verify/reel stage.
-- **Status: M0 COMPLETE and code-review APPROVED** (Sol loop, 3 rounds, `reviews/codex-code-m0.md`). Plan v5 APPROVED (`reviews/codex-plan-v2-loop.md`). Workflow v2 validated end-to-end on real work: plan loop (5 rounds) → Luna implement → coordinator self-review/fix → testing gate → code loop (3 rounds) → promote. Luna built the M0 scaffold; coordinator fixes: captioner default model claude-opus-4-8, D12 published-revision isolation in app views (`app/contracts.py`), `.venv` gitignored, `tests/` (14 passing). Footage on disk: match 117093 both halves (3.1+3.2 GB 4K panorama + 2048×540 working copy) + BAS annotations (5 goals, 23 shots — EVAL ONLY). Qdrant runs via `docker compose` (`every-angle-qdrant`). Pipeline ran end-to-end on real footage with MockCaptioner.
-- **M1a DONE + APPROVED — the Gate-2 blocker is cleared.** The motion-density detector (`reviews/codex-code-m1a.md`) fixed the dead detector: **goal recall 2/2 (100%)** on the real 45-min half, 40 windows = **11.2 min under review out of 45**, 54 s runtime. Verify with `./.venv/bin/python scripts/eval_detector.py data/match-001/windows.json data/match-001/bas/117093_12_class_events.json --half 1 --labels GOAL` (ground truth is EVAL ONLY — never pipeline input).
-- **Git: LIVE.** Public repo **https://github.com/ManojT0108/every-angle** (ManojT0108), initial commit `6ac5541` pushed 2026-07-14, branch `main`. Verified: no `data/`, no `.venv`, no `.env`, no secrets. README rewritten for judges (problem → pipeline → measured results → two-buyer story). Repo rule unchanged: **commit/push only when the user asks.**
-- **Virtual camera + ball tracker (prototype, NOT reviewed, NOT in the pipeline):** `scripts/vcam_prototype.py`, `scripts/ball_track.py`. Ball found by requiring white AND moving AND tiny AND on-grass AND **isolated** (ring of grass around it — the decisive cue; true ball scored 0.95 isolation vs 0.90 for 137 other blobs). Tracks 92–98% of frames. If promoted, it needs a plan entry + review loop.
-- **Next (M1b, Gate 2 midday Jul 14): the vertical slice — BLOCKED ON THE ANTHROPIC API KEY.** Everything else in the chain is built and reviewed. Sequence once the key lands: implement `ClaudeCaptioner.caption` (vision call over the ≤4 sampled frames per window, returns type+caption+confidence) → run propose with `--captioner claude` on the 40 windows → verify a few moments → publish (stage → validate → Qdrant `moments_rev_N` → promote) → search hit → clip plays. Cost cap: measure and log per-video spend on the first real run.
-- **Product decision (user, 2026-07-13):** two-input story — amateur single fixed camera (we generate camera work + highlights) AND pro broadcast (already directed; we do highlights + search + commentary). User will supply real broadcast clips. **Boundary: broadcast clips are LOCAL ONLY** — detector benchmarking + the app's user-upload path. They never enter the git repo, the release bundle, the deployed demo, or the demo video (all are public distribution). Only the CC BY SoccerTrack footage ships. Proposed but NOT yet approved: a "virtual broadcast camera" (crop a moving 720p window out of the 4K panorama to synthesise broadcast-style framing — legal under CC BY, and the differentiator vs Veo/Pixellot/Spiideo).
-- **Workflow v2 adopted (user decision, 2026-07-13 evening):** TRIP-style persistent Codex threads replace single-pass reviews. Sol reviews plans/code in resume-loops until APPROVED; Luna implements in workspace-write sandbox; Claude coordinates/self-reviews/fixes; always xhigh effort. Protocol: AGENTS.md "workflow v2" section. Tooling: `scripts/codex/` (re-implemented fresh from MIT-licensed TRIP-workflow after a clean safety review — provenance and fixed bugs in `.ai/tasks/workflow-v2/brief.md`). `scripts/codex-review.sh` removed (superseded). Checklist: `docs/review-checklist.md`. Thread state: `.ai/codex-state/` (gitignored).
-- **Completed today (Jul 13 PM):**
-  - `.ai/tasks/build-every-angle/` created: brief + architecture plan v1 → Codex plan review (verdict CHANGES REQUIRED, 5 findings) → all 5 accepted and folded into **plan v2** (release-bundle artifact delivery D10–D11, atomic publish + Qdrant rebuild D12, pinned runtime D13, Gate-1 acceptance fixed, verify-UI scope trimmed). Review at `reviews/codex-plan.md`.
-  - **Qdrant smoke test PASSED**: local Docker container `ea-qdrant` (port 6333, volume `ea_qdrant_storage`) — health, collection create, upsert, cosine search all green.
-  - **Footage locked (pending download):** SoccerTrack v2 — CC BY 4.0 verified on project page; `docs/assets-manifest.md` written (primary + backup + rejected sources). Rule: dataset event annotations are evaluation ground truth ONLY, never pipeline input.
-  - Environment verified: Docker 28.5.1, ffmpeg 8.1.2, Python 3.11, yt-dlp, codex CLI 0.144.3. No LLM API keys present.
-- **Portal inspection DONE (Playwright headless Chromium, 2026-07-13):** judging criteria published (7 unweighted dimensions), submission artifacts confirmed (repo + working demo URL + description + optional video — **deployed app required**), submissions open Jul 16 10:00 AM IST, **registration deadline Jul 15 9:30 PM (likely IST)**. Full detail + criteria→plan mapping: `docs/submission-checklist.md`. Portal features Lyzr/Qdrant/Enkrypt only — **InsForge absent**; its timebox stays parked until the track is confirmed.
-- **Not done / blocked (all user-side):**
-  - **USER: register on the portal before Jul 15 9:30 PM** (account/login = user-only action).
-  - Vision-LLM key + ~$5–15 budget approval — required before Gate 2.
-  - GitHub repo will be required for submission — needs user's go-ahead to commit/push (nothing committed yet).
-  - InsForge hello-world — parked pending track confirmation. NOTE (user, 2026-07-13): the Butterbase MCP in Claude's session is UNRELATED to this hackathon — do not use its hackathon-submission tooling for this project.
-- **Next step:** download one SoccerTrack v2 match (HuggingFace) + 720p working transcode; scaffold repo per plan layout; M0 pipeline (ingest → sample → propose with MockCaptioner) on real footage.
-- **Key gates:** Gate 2 midday Jul 14 = vertical slice or pivot to C. Gate 3 midday Jul 15 = feature freeze. Submit by 8:30 AM Jul 17.
-- **Coordinator:** Claude (Codex = reviewer).
+## Immediate objective
+
+Finish the hackathon presentation package and submit before **2026-07-17 10:00 AM PDT**.
+The product, repository, cloud index, and live deployment are complete. The only substantial
+unfinished artifact is the final demo video.
+
+## Shipped product
+
+- **Live app:** https://every-angle.onrender.com
+- **Public repository:** https://github.com/ManojT0108/every-angle
+- **Release commits:** `f296cd1` ships the processed broadcast match; `0a4ef92` records the
+  completed live deployment.
+- Render is configured with `autoDeployTrigger: commit`. The large broadcast release took about
+  12 minutes to replace the previous container; do not mistake the old container remaining healthy
+  during a rolling build for a failed deploy.
+- The live match selector exposes:
+  - `match-001`: SoccerTrack v2, CC BY 4.0, revision 1, 5 verified events.
+  - `match-002`: authorized user-provided broadcast feed, revision 3, 30 published events.
+- The broadcast deploy bundle contains 35 processed clips and 66 Review posters. The 2.9 GB source
+  video, extra sampled frames, old staging revisions, and generated local reels are excluded.
+- The user explicitly confirmed permission to publicly redistribute `match-002`. The authorization
+  and shipped derivative boundary are recorded in `docs/assets-manifest.md`.
+
+## Verified production state
+
+- Qdrant Cloud: `moments_rev_1` = 5 points; `moments_rev_3` = 30 points.
+- Live `/api/matches` lists both matches with the expected revisions/event counts.
+- Live broadcast query **`trophy lift`** returns the trophy ceremony first.
+- A 21 MB broadcast clip, all Review posters, and a generated 60-second two-event reel served 200.
+- The frontend bundle contains the **Broadcast feed** selector.
+- Source-video capability is false in the deployed container; manual Add Moment remains unavailable
+  without a source upload, by design.
+
+## Last quality gate
+
+- Ruff and changed-file formatting: clean.
+- Python: **78 passed**.
+- Frontend: **18 passed**; Vite production build and Oxlint clean.
+- `git diff --check`: clean.
+- Production Docker build: passed.
+- Production-container smoke against Qdrant Cloud: passed.
+- Independent workflow-v2 plan and code reviews: **APPROVED**, durable records in
+  `.ai/tasks/live-broadcast-match/reviews/`.
+- Embedded browser control was unavailable, so a human visual pass/recording in the real browser is
+  still required. API, media, search, and reel behavior were verified directly.
+
+## Demo video — important: not upload-ready
+
+There is **no final screen recording and no uploadable MP4** yet.
+
+Existing materials were prepared before the broadcast match shipped and are now a **single-match
+draft**, not the final story:
+
+- `docs/demo-video.md`
+- `docs/demo-narration.txt`
+- `docs/demo-captions.srt`
+- local synthetic narration:
+  `/Users/manojt/Documents/Hackathon/every-angle-demo-assets/every-angle-narration.m4a`
+  (Reed voice, AAC 48 kHz mono, about 106.5 seconds, normalized near -16 LUFS)
+
+Do not upload that package unchanged. It says to show only `match-001` and explicitly excludes
+broadcast footage, which is now obsolete.
+
+### Recommended next task for Claude
+
+Create a small workflow-v2 task such as `.ai/tasks/demo-video-v2/`, then:
+
+1. Rewrite the 105–115 second shot list and narration around the live two-input story:
+   hero and four-step workflow → show both source selectors → switch to **Broadcast feed** →
+   search **`trophy lift`** and play the first clip → show provenance/Review → Quick Highlights →
+   build/play a short reel → final credits.
+2. Keep the human-verification distinction explicit. Do not claim live ingest, an official feed,
+   or team/scorer certainty beyond what the reviewed artifacts show.
+3. Update `docs/demo-narration.txt` and regenerate the synthetic M4A; update the SRT to the new
+   audio timings.
+4. The agent cannot capture the user's Mac screen with the current browser integration. The user
+   must make one silent 1080p screen recording of the live walkthrough and provide its local path.
+5. Once that recording exists, combine it with narration and captions using FFmpeg, verify duration,
+   audio, captions, and link visibility, then hand back the final MP4 for upload.
+6. Final attribution should credit SoccerTrack v2 (CC BY 4.0) and label the second source
+   **Broadcast feed · user-provided** without inventing a public license.
+
+## Submission state
+
+Ready:
+
+- Project name: **Every Angle**
+- Track: **Media, Content & Broadcasting**
+- GitHub repository: https://github.com/ManojT0108/every-angle
+- Working demo: https://every-angle.onrender.com
+- Project description: `docs/project-description.md`
+
+Not ready / user action:
+
+- Final demo MP4: not recorded.
+- Upload the final video and verify it signed out.
+- Log into the hackathon portal, paste the repository, live URL, project description, and video URL,
+  then submit. Account login and final submission are user-only actions.
+
+## Operational notes
+
+- Render free instances may cold-start; wake the app and exercise Search/Reel before recording.
+- A live Review decision mutates only the current container. A redeploy/restart restores both baked
+  baselines. The match-001 pending-review fixture is
+  `r-20260714T182221Z-v2-p-039` at about 43:11.
+- Secrets remain in the gitignored `.env.deploy`; never print or commit them.
+- Qdrant collection names are still revision-global rather than match-scoped. Current revisions 1
+  and 3 avoid collision; do not republish either match onto the other's revision.
+- Worktree should be clean when Claude resumes. Read `AGENTS.md`, this file, and
+  `.ai/tasks/live-broadcast-match/plan.md` before starting the video task.
+
+## Collaboration role
+
+Claude is the orchestrator again. Continue the user-approved workflow v2 in `AGENTS.md`: Claude
+writes/triages the plan, invokes the separate Codex implement/review threads, performs the
+coordinator self-review and release, and keeps this handoff current.

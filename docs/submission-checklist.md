@@ -15,9 +15,9 @@ No weights published. Seven dimensions: **innovation, technical implementation, 
 | Project Name | ☑ | **Every Angle** |
 | Selected Track | ☑ | Track 3: Media, Content & Broadcasting |
 | **GitHub Repository** | ☑ | **https://github.com/ManojT0108/every-angle** — public, pushed 2026-07-14. Public commit history from Jul 13 onward is provenance that it was built during the hackathon period. |
-| **Working Demo URL** | ☐ | Deployed app is REQUIRED, not optional — validates plan D9/D10. |
-| Project Description | ☐ | Draft Jul 16 alongside dry run. |
-| Demo Video | ☐ optional | Still record one — it's the reliability fallback if the live demo breaks. |
+| **Working Demo URL** | ☑ | **https://every-angle.onrender.com** — live-verified Jul 16 with both matches, broadcast search, clip playback, and reel assembly. |
+| Project Description | ☑ | Portal-ready copy: **`docs/project-description.md`**. |
+| Demo Video | ☐ optional | **Not upload-ready.** Synthetic narration/captions exist, but the screen recording and final MP4 do not; the script also needs a two-match revision. |
 
 Also: "Projects must be related to sports and built during the hackathon period."
 
